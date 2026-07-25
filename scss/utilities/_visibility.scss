@@ -1,0 +1,59 @@
+// Visibility helpers (replaces Foundation visibility-classes).
+
+.hide {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+@each $size in $breakpoint-classes {
+  @if $size != $-zf-zero-breakpoint {
+    .hide-for-#{$size} {
+      @include hide-for($size);
+    }
+
+    .show-for-#{$size} {
+      @include show-for($size);
+    }
+  }
+
+  .hide-for-#{$size}-only {
+    @include hide-for-only($size);
+  }
+
+  .show-for-#{$size}-only {
+    @include show-for-only($size);
+  }
+}
+
+.show-for-sr,
+.show-on-focus {
+  @include visually-hidden;
+}
+
+.show-on-focus:active,
+.show-on-focus:focus {
+  @include visually-hidden-off;
+}
+
+.show-for-landscape,
+.hide-for-portrait {
+  @include breakpoint(portrait) {
+    display: none !important;
+  }
+}
+
+.hide-for-landscape,
+.show-for-portrait {
+  display: none !important;
+
+  @include breakpoint(portrait) {
+    display: block !important;
+  }
+}

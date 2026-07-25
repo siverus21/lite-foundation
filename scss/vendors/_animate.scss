@@ -1,0 +1,7 @@
+@use 'sass:meta';
+
+// Filesystem paths for reliable Vite + production Sass builds.
+@include meta.load-css('../../node_modules/animate.css/source/_vars.css');
+@include meta.load-css('../../node_modules/animate.css/source/_base.css');
+@include meta.load-css('../../node_modules/animate.css/source/fading_entrances/fadeIn.css');
+@include meta.load-css('../../node_modules/animate.css/source/fading_exits/fadeOut.css');

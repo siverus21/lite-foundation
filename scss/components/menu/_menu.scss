@@ -1,0 +1,210 @@
+// Base menu + dropdown / accordion / drilldown variants (replaces Foundation menus).
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu > li {
+  display: flex;
+  align-items: center;
+}
+
+.menu a,
+.menu .button {
+  display: block;
+  padding: 0.7rem 1rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.menu .is-active > a {
+  background: var(--lf-menu-item-bg-active);
+  color: var(--lf-menu-item-color-active);
+}
+
+.menu.vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.menu.vertical > li {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.menu.simple > li {
+  margin: 0;
+}
+
+.menu.simple > li + li {
+  margin-left: 1rem;
+}
+
+.menu-text {
+  padding: 0.7rem 1rem;
+  font-weight: bold;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Dropdown menu */
+.dropdown.menu {
+  position: relative;
+}
+
+.dropdown.menu > li {
+  position: relative;
+}
+
+.dropdown.menu > li > .menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--lf-z-dropdown);
+  min-width: 200px;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--lf-menu-submenu-bg);
+  border: 1px solid var(--lf-menu-submenu-border);
+}
+
+.dropdown.menu > li.is-open > .menu {
+  display: flex;
+}
+
+.dropdown.menu > li > .menu > li {
+  width: 100%;
+}
+
+.dropdown.menu > li.has-submenu > a::after {
+  content: '';
+  display: inline-block;
+  margin-left: 0.5rem;
+  border: 4px solid transparent;
+  border-top-color: var(--lf-color-primary);
+  vertical-align: middle;
+}
+
+/* Accordion menu — smooth expand via grid 0fr/1fr on a wrapper panel */
+.accordion-menu .submenu-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s ease-in-out;
+}
+
+.accordion-menu li.is-open > .submenu-panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion-menu .submenu-panel > .nested {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  margin-left: 1rem;
+}
+
+.accordion-menu li.has-submenu > a {
+  position: relative;
+  padding-right: 2rem;
+}
+
+.accordion-menu li.has-submenu > a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 2px solid var(--lf-color-primary);
+  border-bottom: 2px solid var(--lf-color-primary);
+  transform: translateY(-65%) rotate(45deg);
+  transition: transform 0.35s ease;
+}
+
+.accordion-menu li.has-submenu.is-open > a::after {
+  transform: translateY(-35%) rotate(225deg);
+}
+
+/* Drilldown menu — Foundation-like slide panels */
+.is-drilldown {
+  position: relative;
+  overflow: hidden;
+}
+
+.is-drilldown.animate-height {
+  transition: height 0.35s ease;
+}
+
+.is-drilldown li {
+  display: block;
+  width: 100%;
+}
+
+.is-drilldown .drilldown {
+  width: 100%;
+  margin: 0;
+}
+
+.drilldown .is-drilldown-submenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: var(--lf-z-behind);
+  display: flex;
+  width: 100%;
+  margin: 0;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--lf-menu-submenu-bg);
+  transition: transform 0.15s linear;
+}
+
+.drilldown .is-drilldown-submenu.is-active {
+  z-index: var(--lf-z-content);
+  visibility: visible;
+  transform: translateX(-100%);
+}
+
+.drilldown .is-drilldown-submenu.is-closing {
+  transform: translateX(100%);
+}
+
+.drilldown .invisible {
+  visibility: hidden;
+}
+
+.drilldown .js-drilldown-back > a {
+  font-weight: bold;
+}
+
+.drilldown .js-drilldown-back > a::before {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.75rem;
+  border: 6px solid transparent;
+  border-right-color: var(--lf-color-primary);
+}
+
+.drilldown .is-drilldown-submenu-parent > a {
+  position: relative;
+  padding-right: 2rem;
+}
+
+.drilldown .is-drilldown-submenu-parent > a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  margin-top: -6px;
+  border: 6px solid transparent;
+  border-left-color: var(--lf-color-primary);
+}

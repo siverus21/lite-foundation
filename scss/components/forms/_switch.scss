@@ -1,0 +1,136 @@
+// Switch (replaces Foundation switch). Uses settings/_feedback.scss.
+
+.switch {
+  position: relative;
+  height: $switch-height;
+  margin-bottom: $switch-margin;
+  outline: 0;
+  font-size: rem-calc(14);
+  font-weight: bold;
+  color: $white;
+  user-select: none;
+}
+
+.switch-input {
+  position: absolute;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+.switch-paddle {
+  $switch-width: $switch-height * 2;
+  $paddle-size: $switch-height - ($switch-paddle-offset * 2);
+  $paddle-active: $switch-width - $paddle-size - $switch-paddle-offset;
+
+  position: relative;
+  display: block;
+  width: $switch-width;
+  height: $switch-height;
+  margin: 0;
+  border-radius: $switch-radius;
+  background: $switch-background;
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: $switch-paddle-transition;
+}
+
+.switch-input + .switch-paddle {
+  margin: 0;
+}
+
+.switch-paddle::after {
+  content: '';
+  position: absolute;
+  top: $switch-paddle-offset;
+  left: $switch-paddle-offset;
+  display: block;
+  width: $switch-height - ($switch-paddle-offset * 2);
+  height: $switch-height - ($switch-paddle-offset * 2);
+  border-radius: $switch-paddle-radius;
+  background: $switch-paddle-background;
+  transition: $switch-paddle-transition;
+  transform: translate3d(0, 0, 0);
+}
+
+.switch-input:checked ~ .switch-paddle {
+  background: $switch-background-active;
+}
+
+.switch-input:checked ~ .switch-paddle::after {
+  left: ($switch-height * 2) - ($switch-height - ($switch-paddle-offset * 2)) - $switch-paddle-offset;
+}
+
+.switch-input:focus-visible ~ .switch-paddle {
+  background: $switch-background-focus;
+}
+
+.switch-input:checked:focus-visible ~ .switch-paddle {
+  background: $switch-background-active-focus;
+}
+
+.switch-input:disabled ~ .switch-paddle {
+  cursor: $switch-cursor-disabled;
+  opacity: $switch-opacity-disabled;
+}
+
+.switch-active,
+.switch-inactive {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.switch-active {
+  left: 8%;
+  display: none;
+}
+
+.switch-input:checked + label > .switch-active {
+  display: block;
+}
+
+.switch-inactive {
+  right: 15%;
+}
+
+.switch-input:checked + label > .switch-inactive {
+  display: none;
+}
+
+@mixin -lf-switch-size($font-size, $height, $offset: $switch-paddle-offset) {
+  $width: $height * 2;
+  $paddle: $height - ($offset * 2);
+  $active: $width - $paddle - $offset;
+
+  height: $height;
+
+  .switch-paddle {
+    width: $width;
+    height: $height;
+    font-size: $font-size;
+  }
+
+  .switch-paddle::after {
+    top: $offset;
+    left: $offset;
+    width: $paddle;
+    height: $paddle;
+  }
+
+  input:checked ~ .switch-paddle::after {
+    left: $active;
+  }
+}
+
+.switch.tiny {
+  @include -lf-switch-size(rem-calc(10), $switch-height-tiny);
+}
+
+.switch.small {
+  @include -lf-switch-size(rem-calc(12), $switch-height-small);
+}
+
+.switch.large {
+  @include -lf-switch-size(rem-calc(16), $switch-height-large);
+}

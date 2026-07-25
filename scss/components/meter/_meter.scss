@@ -1,0 +1,55 @@
+// Meter (replaces Foundation meter). Uses settings/_feedback.scss.
+
+meter {
+  display: block;
+  width: 100%;
+  height: $meter-height;
+  margin-bottom: 1rem;
+  border: 0;
+  border-radius: $meter-radius;
+  background: $meter-background;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+meter::-webkit-meter-bar {
+  border: 0;
+  border-radius: $meter-radius;
+  background: $meter-background;
+}
+
+meter::-webkit-meter-inner-element {
+  border-radius: $meter-radius;
+}
+
+meter::-webkit-meter-optimum-value {
+  border-radius: $meter-radius;
+  background: $meter-fill-good;
+}
+
+meter::-webkit-meter-suboptimum-value {
+  border-radius: $meter-radius;
+  background: $meter-fill-medium;
+}
+
+meter::-webkit-meter-even-less-good-value {
+  border-radius: $meter-radius;
+  background: $meter-fill-bad;
+}
+
+meter::-moz-meter-bar {
+  border-radius: $meter-radius;
+  background: $primary-color;
+}
+
+meter:-moz-meter-optimum::-moz-meter-bar {
+  background: $meter-fill-good;
+}
+
+meter:-moz-meter-sub-optimum::-moz-meter-bar {
+  background: $meter-fill-medium;
+}
+
+meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+  background: $meter-fill-bad;
+}

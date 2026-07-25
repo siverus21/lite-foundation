@@ -1,0 +1,307 @@
+// Forms (replaces Foundation forms). Uses settings/_forms.scss.
+
+$input-height: ($input-font-size * unitless-calc($input-line-height))
+  + (get-side($input-padding, 'top') + get-side($input-padding, 'bottom'))
+  - rem-calc(1);
+
+/* Text inputs + textarea */
+#{text-inputs()},
+textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: $input-height;
+  margin: 0 0 $form-spacing;
+  padding: $input-padding;
+  border: $input-border;
+  border-radius: $input-radius;
+  background-color: $input-background;
+  box-shadow: $input-shadow;
+  appearance: none;
+  font-family: $input-font-family;
+  font-size: $input-font-size;
+  font-weight: $input-font-weight;
+  line-height: $input-line-height;
+  color: $input-color;
+  transition: $input-transition;
+}
+
+#{text-inputs()}:focus,
+textarea:focus {
+  outline: none;
+  border: $input-border-focus;
+  background-color: $input-background-focus;
+  box-shadow: $input-shadow-focus;
+}
+
+textarea {
+  max-width: 100%;
+}
+
+textarea[rows] {
+  height: auto;
+}
+
+input:disabled,
+input[readonly],
+textarea:disabled,
+textarea[readonly] {
+  background-color: $input-background-disabled;
+  cursor: $input-cursor-disabled;
+}
+
+[type='submit'],
+[type='button'] {
+  appearance: none;
+  border-radius: $form-button-radius;
+}
+
+input[type='search'] {
+  box-sizing: border-box;
+}
+
+@if not $input-number-spinners {
+  [type='number'] {
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+  }
+}
+
+::placeholder {
+  color: $input-placeholder-color;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin: 0;
+  font-size: $form-label-font-size;
+  font-weight: $form-label-font-weight;
+  line-height: $form-label-line-height;
+  color: $form-label-color;
+}
+
+label.middle {
+  margin: 0 0 $form-spacing;
+  padding: ($form-spacing * 0.5 + rem-calc(get-border-value($input-border, width))) 0;
+  line-height: $global-lineheight;
+}
+
+/* Help text */
+.help-text {
+  margin-top: $form-spacing * -0.5;
+  font-size: $helptext-font-size;
+  font-style: $helptext-font-style;
+  color: $helptext-color;
+}
+
+/* Checkbox / radio / file */
+[type='file'],
+[type='checkbox'],
+[type='radio'] {
+  margin: 0 0 $form-spacing;
+}
+
+[type='checkbox'] + label,
+[type='radio'] + label {
+  display: inline-block;
+  vertical-align: baseline;
+  margin-left: $form-spacing * 0.5;
+  margin-right: $form-spacing;
+  margin-bottom: 0;
+}
+
+[type='checkbox'] + label[for],
+[type='radio'] + label[for] {
+  cursor: pointer;
+}
+
+label > [type='checkbox'],
+label > [type='radio'] {
+  margin-right: $form-spacing * 0.5;
+}
+
+[type='file'] {
+  width: 100%;
+}
+
+/* Select */
+select {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: $input-height;
+  margin: 0 0 $form-spacing;
+  padding: $input-padding;
+  appearance: none;
+  border: $input-border;
+  border-radius: $select-radius;
+  background-color: $select-background;
+  font-family: $input-font-family;
+  font-size: $input-font-size;
+  font-weight: $input-font-weight;
+  line-height: $input-line-height;
+  color: $input-color;
+  transition: $input-transition;
+
+  @if $select-triangle-color != transparent {
+    padding-right: $form-spacing * 1.5;
+    background-origin: content-box;
+    background-position: right (-$form-spacing) center;
+    background-repeat: no-repeat;
+    background-size: 9px 6px;
+    @include background-triangle($select-triangle-color);
+  }
+}
+
+select:focus {
+  outline: none;
+  border: $input-border-focus;
+  background-color: $input-background-focus;
+  box-shadow: $input-shadow-focus;
+}
+
+select:disabled {
+  background-color: $input-background-disabled;
+  cursor: $input-cursor-disabled;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+select[multiple] {
+  height: auto;
+  background-image: none;
+}
+
+select:not([multiple]) {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Fieldset */
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  max-width: 100%;
+  margin-bottom: $form-spacing * 0.5;
+}
+
+.fieldset {
+  margin: $fieldset-margin;
+  padding: $fieldset-padding;
+  border: $fieldset-border;
+}
+
+.fieldset legend {
+  margin: 0 0 0 rem-calc(-3);
+  padding: $legend-padding;
+}
+
+/* Input group */
+.input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: $form-spacing;
+}
+
+.input-group > :first-child {
+  border-radius: $input-radius 0 0 $input-radius;
+}
+
+.input-group > :last-child {
+  border-radius: 0 $input-radius $input-radius 0;
+}
+
+.input-group-label {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  margin: 0;
+  padding: 0 $input-prefix-padding;
+  border: $input-prefix-border;
+  background: $input-prefix-background;
+  color: $input-prefix-color;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.input-group-label:first-child {
+  border-right: 0;
+}
+
+.input-group-label:last-child {
+  border-left: 0;
+}
+
+.input-group-field {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+.input-group-button {
+  display: flex;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.input-group-button a,
+.input-group-button input,
+.input-group-button button,
+.input-group-button label {
+  align-self: stretch;
+  height: auto;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: $input-font-size;
+  white-space: nowrap;
+}
+
+/* Abide / error */
+@if $abide-inputs {
+  .is-invalid-input:not(:focus) {
+    border-color: $input-background-invalid;
+    background-color: mix($input-background-invalid, $white, 10%);
+  }
+
+  .is-invalid-input:not(:focus)::placeholder {
+    color: $input-background-invalid;
+  }
+}
+
+@if $abide-labels {
+  .is-invalid-label {
+    color: $form-label-color-invalid;
+  }
+}
+
+.form-error {
+  display: none;
+  margin-top: $form-spacing * -0.5;
+  margin-bottom: $form-spacing;
+  font-size: $input-error-font-size;
+  font-weight: $input-error-font-weight;
+  color: $input-error-color;
+}
+
+.form-error.is-visible {
+  display: block;
+}

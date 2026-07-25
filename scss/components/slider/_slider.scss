@@ -1,0 +1,27 @@
+// Swiper kitchen-sink demo tweaks.
+
+.ks-swiper {
+  width: 100%;
+}
+
+.ks-swiper .swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: var(--lf-color-medium-gray);
+}
+
+.ks-swiper .swiper-slide figcaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem 1rem;
+  background: var(--lf-overlay-strong);
+  color: var(--lf-color-white);
+}
+
+.ks-swiper .swiper-slide {
+  position: relative;
+}

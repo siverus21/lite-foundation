@@ -1,0 +1,80 @@
+// Progress bar (replaces Foundation progress-bar). Uses settings/_feedback.scss.
+
+.progress {
+  display: grid;
+  grid-template-columns: var(--progress-value, 0%) minmax(0, 1fr);
+  height: $progress-height;
+  margin-bottom: $progress-margin-bottom;
+  border-radius: $progress-radius;
+  background-color: $progress-background;
+  overflow: hidden;
+}
+
+.progress-meter {
+  position: relative;
+  grid-column: 1;
+  min-width: 0;
+  height: 100%;
+  border-radius: $progress-radius;
+  background-color: $progress-meter-background;
+}
+
+.progress-meter-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  border-radius: $progress-radius;
+  color: $white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+@each $name, $color in $foundation-palette {
+  .progress.#{$name} .progress-meter {
+    background-color: $color;
+  }
+}
+
+/* Native <progress> */
+progress {
+  display: block;
+  width: 100%;
+  height: $progress-height;
+  margin-bottom: $progress-margin-bottom;
+  border: 0;
+  border-radius: $progress-radius;
+  background: $progress-background;
+  appearance: none;
+}
+
+progress::-webkit-progress-bar {
+  border-radius: $progress-radius;
+  background: $progress-background;
+}
+
+progress::-webkit-progress-value {
+  border-radius: $progress-radius;
+  background: $progress-meter-background;
+}
+
+progress::-moz-progress-bar {
+  border-radius: $progress-radius;
+  background: $progress-meter-background;
+}
+
+@each $name, $color in $foundation-palette {
+  progress.#{$name} {
+    color: $color;
+  }
+
+  progress.#{$name}::-webkit-progress-value {
+    background: $color;
+  }
+
+  progress.#{$name}::-moz-progress-bar {
+    background: $color;
+  }
+}

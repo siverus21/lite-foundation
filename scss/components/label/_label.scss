@@ -1,0 +1,21 @@
+// Label (replaces Foundation label). Uses settings/_feedback.scss.
+
+.label {
+  display: inline-block;
+  padding: $label-padding;
+  border-radius: $label-radius;
+  background: $label-background;
+  color: $label-color;
+  font-size: $label-font-size;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+}
+
+@each $name, $color in $label-palette {
+  .label.#{$name},
+  .#{$name}.label {
+    background: $color;
+    color: color-pick-contrast($color, ($label-color, $label-color-alt));
+  }
+}

@@ -1,0 +1,696 @@
+<!doctype html>
+<html class="no-js" lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Sink — lite-foundation</title>
+    <link rel="stylesheet" href="dist/app.css">
+    <style>
+      /* Local demo-only helpers (not part of the design system) */
+      .ks-nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: #0a0a0a;
+        padding: 0.75rem 0;
+        margin-bottom: 2rem;
+      }
+      .ks-nav .menu a { color: #fefefe; }
+      .ks-nav .menu a:hover { color: #1779ba; }
+      .ks-section {
+        padding: 2rem 0;
+        border-bottom: 1px solid #e6e6e6;
+      }
+      #sticky {
+        --sticky-offset: 4.5rem;
+      }
+      .ks-section > h2 {
+        margin-bottom: 0.25rem;
+      }
+      .ks-section > .ks-meta {
+        color: #8a8a8a;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+      }
+      .ks-demo-box {
+        background: #e6e6e6;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .ks-callout-demo {
+        position: relative;
+        max-width: 20rem;
+      }
+      .ks-menu-panel {
+        max-width: 250px;
+        width: 250px;
+      }
+      .is-drilldown:has(> .ks-menu-panel) {
+        max-width: 250px;
+        width: 250px;
+      }
+      .ks-tip-row {
+        margin-top: 1rem;
+      }
+      .ks-progress-50 {
+        --progress-value: 50%;
+      }
+      .ks-progress-75 {
+        --progress-value: 75%;
+      }
+      .ks-align-demo {
+        min-height: 4rem;
+        background: #e6e6e6;
+      }
+
+      /*
+        Critical: fully hide drawer before any CSS/JS (no FOUC).
+      */
+      .offcanvas {
+        display: none;
+      }
+      .offcanvas.is-open {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <aside
+      class="offcanvas"
+      id="offCanvas"
+      aria-hidden="true"
+      aria-label="Navigation drawer"
+    >
+      <button class="close-button" aria-label="Close menu" type="button" data-offcanvas-close>
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <ul class="vertical menu">
+        <li><a href="#grid">Grid</a></li>
+        <li><a href="#typography">Typography</a></li>
+        <li><a href="#buttons">Buttons</a></li>
+        <li><a href="#forms">Forms</a></li>
+        <li><a href="#callouts">Callouts</a></li>
+        <li><a href="#reveal">Dialog</a></li>
+      </ul>
+    </aside>
+
+    <header class="ks-nav">
+      <div class="grid-container">
+        <div class="grid-x grid-padding-x align-middle">
+          <div class="shrink cell">
+            <button type="button" class="button small hollow" data-offcanvas-open="offCanvas">Off-canvas</button>
+          </div>
+          <div class="auto cell">
+            <ul class="menu simple">
+              <li><a href="#grid">Grid</a></li>
+              <li><a href="#buttons">Buttons</a></li>
+              <li><a href="#forms">Forms</a></li>
+              <li><a href="#accordion">Accordion</a></li>
+              <li><a href="#tabs">Tabs</a></li>
+              <li><a href="#orbit">Slider</a></li>
+              <li><a href="#reveal">Dialog</a></li>
+              <li><a href="#motion">Animate</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid-container">
+          <div class="grid-x grid-padding-x">
+            <div class="cell">
+              <h1>Kitchen Sink</h1>
+              <p class="lead">Песочница для миграции Foundation → свой UI. Каждая секция — отдельный компонент для проверки.</p>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <section class="ks-section" id="grid">
+            <h2>Grid</h2>
+            <p class="ks-meta">CSS Grid: <code>grid-container</code>, <code>grid-x</code>, <code>cell</code> + CSS vars (<code>--grid-gap-x</code>, <code>--grid-columns</code>, …)</p>
+            <div class="grid-x grid-padding-x">
+              <div class="large-12 cell"><div class="ks-demo-box">12</div></div>
+            </div>
+            <div class="grid-x grid-padding-x">
+              <div class="large-6 medium-6 cell"><div class="ks-demo-box">6</div></div>
+              <div class="large-6 medium-6 cell"><div class="ks-demo-box">6</div></div>
+            </div>
+            <div class="grid-x grid-padding-x">
+              <div class="large-4 medium-4 small-4 cell"><div class="ks-demo-box">4</div></div>
+              <div class="large-4 medium-4 small-4 cell"><div class="ks-demo-box">4</div></div>
+              <div class="large-4 medium-4 small-4 cell"><div class="ks-demo-box">4</div></div>
+            </div>
+
+            <h5>shrink + auto</h5>
+            <div class="grid-x grid-padding-x">
+              <div class="shrink cell"><div class="ks-demo-box">shrink</div></div>
+              <div class="auto cell"><div class="ks-demo-box">auto (fluid)</div></div>
+            </div>
+
+            <h5>shrink + shrink</h5>
+            <div class="grid-x grid-padding-x align-justify">
+              <div class="shrink cell"><div class="ks-demo-box">shrink start</div></div>
+              <div class="shrink cell"><div class="ks-demo-box">shrink end</div></div>
+            </div>
+
+            <h5>auto + auto</h5>
+            <div class="grid-x grid-padding-x">
+              <div class="auto cell"><div class="ks-demo-box">auto</div></div>
+              <div class="auto cell"><div class="ks-demo-box">auto</div></div>
+              <div class="auto cell"><div class="ks-demo-box">auto</div></div>
+            </div>
+          </section>
+
+          <!-- Typography -->
+          <section class="ks-section" id="typography">
+            <h2>Typography</h2>
+            <p class="ks-meta">Своя typography: заголовки, lead, subheader, списки, code, blockquote</p>
+            <h1>Heading 1</h1>
+            <h2>Heading 2</h2>
+            <h3>Heading 3</h3>
+            <h4>Heading 4</h4>
+            <h5>Heading 5</h5>
+            <h6>Heading 6</h6>
+            <p class="lead">Lead paragraph — крупный вводный текст.</p>
+            <p class="subheader">Subheader text</p>
+            <p>Обычный абзац с <a href="#">ссылкой</a>, <strong>жирным</strong>, <em>курсивом</em> и <code>inline code</code>.</p>
+            <blockquote>
+              Blockquote example.
+              <cite>Source</cite>
+            </blockquote>
+            <ul>
+              <li>Unordered item</li>
+              <li>Unordered item</li>
+            </ul>
+            <ol>
+              <li>Ordered item</li>
+              <li>Ordered item</li>
+            </ol>
+            <pre><code>pre / code block</code></pre>
+          </section>
+
+          <!-- Buttons -->
+          <section class="ks-section" id="buttons">
+            <h2>Buttons</h2>
+            <p class="ks-meta">Свои <code>.button</code>, размеры, цвета, hollow, button-group, close-button</p>
+            <p>
+              <a href="#" class="button">Primary</a>
+              <a href="#" class="secondary button">Secondary</a>
+              <a href="#" class="success button">Success</a>
+              <a href="#" class="warning button">Warning</a>
+              <a href="#" class="alert button">Alert</a>
+            </p>
+            <p>
+              <a href="#" class="tiny button">Tiny</a>
+              <a href="#" class="small button">Small</a>
+              <a href="#" class="button">Default</a>
+              <a href="#" class="large button">Large</a>
+              <a href="#" class="expanded button">Expanded</a>
+            </p>
+            <p>
+              <a href="#" class="hollow button">Hollow</a>
+              <a href="#" class="hollow secondary button">Hollow secondary</a>
+              <a href="#" class="disabled button" aria-disabled="true">Disabled</a>
+            </p>
+            <div class="button-group">
+              <a class="button">One</a>
+              <a class="button">Two</a>
+              <a class="button">Three</a>
+            </div>
+            <div class="callout ks-callout-demo">
+              <button class="close-button" aria-label="Close alert" type="button">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <p>Callout with close-button (visual only here).</p>
+            </div>
+          </section>
+
+          <!-- Forms -->
+          <section class="ks-section" id="forms">
+            <h2>Forms</h2>
+            <p class="ks-meta">Свои forms: inputs, select, textarea, radio, checkbox, input-group, switch, range; slider — свой JS (без Foundation)</p>
+            <form>
+              <div class="grid-x grid-padding-x">
+                <div class="large-6 cell">
+                  <label>Text input
+                    <input type="text" placeholder="Type here">
+                  </label>
+                  <label>Select
+                    <select>
+                      <option value="husker">Husker</option>
+                      <option value="starbuck">Starbuck</option>
+                      <option value="hotdog">Hot Dog</option>
+                    </select>
+                  </label>
+                  <label>Textarea
+                    <textarea placeholder="Message" rows="3"></textarea>
+                  </label>
+                </div>
+                <div class="large-6 cell">
+                  <label>Input group</label>
+                  <div class="input-group">
+                    <input class="input-group-field" type="text" placeholder="domain">
+                    <span class="input-group-label">.com</span>
+                  </div>
+
+                  <fieldset class="fieldset">
+                    <legend>Radios</legend>
+                    <input type="radio" name="pokemon" value="Red" id="pokemonRed" checked>
+                    <label for="pokemonRed">Radio 1</label>
+                    <input type="radio" name="pokemon" value="Blue" id="pokemonBlue">
+                    <label for="pokemonBlue">Radio 2</label>
+                  </fieldset>
+
+                  <fieldset class="fieldset">
+                    <legend>Checkboxes</legend>
+                    <input id="checkbox1" type="checkbox"><label for="checkbox1">Checkbox 1</label>
+                    <input id="checkbox2" type="checkbox"><label for="checkbox2">Checkbox 2</label>
+                  </fieldset>
+
+                  <div class="switch">
+                    <input class="switch-input" id="exampleSwitch" type="checkbox" name="exampleSwitch">
+                    <label class="switch-paddle" for="exampleSwitch">
+                      <span class="show-for-sr">Switch</span>
+                    </label>
+                  </div>
+
+                  <label>
+                    Range input
+                    <input type="range" min="0" max="100" value="50">
+                  </label>
+
+                  <div class="slider" data-slider data-initial-start="50" data-end="100">
+                    <span class="slider-handle" data-slider-handle role="slider" tabindex="0"></span>
+                    <span class="slider-fill" data-slider-fill></span>
+                    <input type="hidden">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="button">Submit</button>
+            </form>
+          </section>
+
+          <!-- Callout / Card / Label / Badge -->
+          <section class="ks-section" id="callouts">
+            <h2>Callout, Card, Label, Badge</h2>
+            <p class="ks-meta">Свои callout, card, label, badge</p>
+            <div class="grid-x grid-padding-x">
+              <div class="medium-6 cell">
+                <div class="callout">Default callout</div>
+                <div class="callout primary">Primary callout</div>
+                <div class="callout success">Success callout</div>
+                <div class="callout warning">Warning callout</div>
+                <div class="callout alert">Alert callout</div>
+                <p>
+                  <span class="label">Default</span>
+                  <span class="primary label">Primary</span>
+                  <span class="secondary label">Secondary</span>
+                  <span class="success label">Success</span>
+                  <span class="warning label">Warning</span>
+                  <span class="alert label">Alert</span>
+                </p>
+                <p>
+                  <span class="badge">1</span>
+                  <span class="secondary badge">2</span>
+                  <span class="success badge">3</span>
+                  <span class="warning badge">A</span>
+                  <span class="alert badge">B</span>
+                </p>
+              </div>
+              <div class="medium-6 cell">
+                <div class="card">
+                  <img src="https://placehold.co/600x240/1779ba/ffffff?text=Card" alt="Card placeholder">
+                  <div class="card-divider">Card divider</div>
+                  <div class="card-section">
+                    <h4>Card title</h4>
+                    <p>Card section content.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Table -->
+          <section class="ks-section" id="table">
+            <h2>Table</h2>
+            <p class="ks-meta">Своя table: <code>striped</code>, <code>hover</code>, <code>stack</code></p>
+            <table class="striped hover">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Anna</td>
+                  <td>Design</td>
+                  <td><span class="success label">Active</span></td>
+                </tr>
+                <tr>
+                  <td>Boris</td>
+                  <td>Dev</td>
+                  <td><span class="warning label">Away</span></td>
+                </tr>
+                <tr>
+                  <td>Clara</td>
+                  <td>QA</td>
+                  <td><span class="alert label">Blocked</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!-- Navigation -->
+          <section class="ks-section" id="navigation">
+            <h2>Navigation</h2>
+            <p class="ks-meta">Свои menus (dropdown / accordion / drilldown), breadcrumbs и pagination</p>
+
+            <h5>Menu</h5>
+            <ul class="menu">
+              <li><a href="#">One</a></li>
+              <li><a href="#">Two</a></li>
+              <li class="is-active"><a href="#">Three</a></li>
+              <li><a href="#">Four</a></li>
+            </ul>
+
+            <h5>Dropdown menu</h5>
+            <ul class="dropdown menu" data-menu="dropdown">
+              <li>
+                <a href="#">Item 1</a>
+                <ul class="menu">
+                  <li><a href="#">Item 1A</a></li>
+                  <li><a href="#">Item 1B</a></li>
+                </ul>
+              </li>
+              <li><a href="#">Item 2</a></li>
+              <li><a href="#">Item 3</a></li>
+            </ul>
+
+            <h5>Accordion menu</h5>
+            <ul class="vertical menu accordion-menu ks-menu-panel" data-menu="accordion">
+              <li>
+                <a href="#">Item 1</a>
+                <ul class="menu vertical nested">
+                  <li><a href="#">Item 1A</a></li>
+                  <li><a href="#">Item 1B</a></li>
+                </ul>
+              </li>
+              <li><a href="#">Item 2</a></li>
+            </ul>
+
+            <h5>Drilldown menu</h5>
+            <ul class="vertical menu drilldown ks-menu-panel" data-menu="drilldown" id="ks-drilldown">
+              <li>
+                <a href="#">Item 1</a>
+                <ul class="menu vertical nested">
+                  <li><a href="#">Item 1A</a></li>
+                  <li>
+                    <a href="#">Item 1B</a>
+                    <ul class="menu vertical nested">
+                      <li><a href="#">Item 1B i</a></li>
+                      <li><a href="#">Item 1B ii</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#">Item 2</a></li>
+            </ul>
+
+            <h5>Breadcrumbs</h5>
+            <nav aria-label="You are here:" role="navigation">
+              <ul class="breadcrumbs">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Features</a></li>
+                <li class="disabled">Gene Splicing</li>
+                <li><span class="show-for-sr">Current: </span> Cloning</li>
+              </ul>
+            </nav>
+
+            <h5>Pagination</h5>
+            <ul class="pagination" role="navigation" aria-label="Pagination">
+              <li class="pagination-previous disabled">Previous <span class="show-for-sr">page</span></li>
+              <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+              <li><a href="#" aria-label="Page 2">2</a></li>
+              <li><a href="#" aria-label="Page 3">3</a></li>
+              <li class="ellipsis" aria-hidden="true"></li>
+              <li><a href="#" aria-label="Page 12">12</a></li>
+              <li class="pagination-next"><a href="#" aria-label="Next page">Next <span class="show-for-sr">page</span></a></li>
+            </ul>
+
+            <h5>Title bar</h5>
+            <div class="title-bar">
+              <div class="title-bar-left">
+                <button class="menu-icon" type="button" data-offcanvas-open="offCanvas" aria-label="Open menu"></button>
+                <span class="title-bar-title">Title Bar</span>
+              </div>
+              <div class="title-bar-right">
+                <button class="menu-icon" type="button" data-offcanvas-open="offCanvas" aria-label="Open menu"></button>
+              </div>
+            </div>
+
+            <h5>Top bar</h5>
+            <div class="top-bar">
+              <div class="top-bar-left">
+                <ul class="dropdown menu" data-menu="dropdown">
+                  <li class="menu-text">Site Title</li>
+                  <li>
+                    <a href="#">One</a>
+                    <ul class="menu vertical">
+                      <li><a href="#">One</a></li>
+                      <li><a href="#">Two</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="#">Two</a></li>
+                  <li><a href="#">Three</a></li>
+                </ul>
+              </div>
+              <div class="top-bar-right">
+                <ul class="menu">
+                  <li><input type="search" placeholder="Search"></li>
+                  <li><button type="button" class="button">Search</button></li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Accordion -->
+          <section class="ks-section" id="accordion">
+            <h2>Accordion</h2>
+            <p class="ks-meta">Нативный <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> — плавная высота, chevron, закрытие предыдущего перед открытием нового</p>
+            <div class="accordion" data-accordion>
+              <details class="accordion-item" open>
+                <summary class="accordion-title">Accordion 1</summary>
+                <div class="accordion-content">
+                  <p>Panel 1 content.</p>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary class="accordion-title">Accordion 2</summary>
+                <div class="accordion-content">
+                  <p>Panel 2 content.</p>
+                </div>
+              </details>
+              <details class="accordion-item">
+                <summary class="accordion-title">Accordion 3</summary>
+                <div class="accordion-content">
+                  <p>Panel 3 content.</p>
+                </div>
+              </details>
+            </div>
+          </section>
+
+          <!-- Tabs -->
+          <section class="ks-section" id="tabs">
+            <h2>Tabs</h2>
+            <p class="ks-meta">Свой модуль (a11y + клавиатура) вместо Foundation <code>data-tabs</code></p>
+            <ul class="tabs" data-tabs id="example-tabs" role="tablist">
+              <li class="tabs-title is-active" role="presentation">
+                <button type="button" role="tab" id="tab-panel1" aria-controls="panel1" aria-selected="true" tabindex="0">Tab 1</button>
+              </li>
+              <li class="tabs-title" role="presentation">
+                <button type="button" role="tab" id="tab-panel2" aria-controls="panel2" aria-selected="false" tabindex="-1">Tab 2</button>
+              </li>
+              <li class="tabs-title" role="presentation">
+                <button type="button" role="tab" id="tab-panel3" aria-controls="panel3" aria-selected="false" tabindex="-1">Tab 3</button>
+              </li>
+            </ul>
+            <div class="tabs-content" data-tabs-content="example-tabs">
+              <div class="tabs-panel is-active" id="panel1" role="tabpanel" aria-labelledby="tab-panel1">
+                <p>Tab panel 1.</p>
+              </div>
+              <div class="tabs-panel" id="panel2" role="tabpanel" aria-labelledby="tab-panel2" hidden>
+                <p>Tab panel 2.</p>
+              </div>
+              <div class="tabs-panel" id="panel3" role="tabpanel" aria-labelledby="tab-panel3" hidden>
+                <p>Tab panel 3.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Dropdown / Tooltip -->
+          <section class="ks-section" id="dropdown">
+            <h2>Dropdown &amp; Tooltip</h2>
+            <p class="ks-meta">Свои модули: dropdown по клику, tooltip через <code>data-tip</code> (не <code>data-tooltip</code> — его ещё слушает Foundation)</p>
+            <div class="dropdown">
+              <button
+                class="button"
+                type="button"
+                data-dropdown-open="example-dropdown"
+                aria-expanded="false"
+                aria-controls="example-dropdown"
+              >
+                Toggle Dropdown
+              </button>
+              <div class="dropdown-pane" id="example-dropdown" aria-hidden="true">
+                Example dropdown pane content.
+              </div>
+            </div>
+            <p class="ks-tip-row">
+              Hover or focus
+              <span class="has-tip" data-tip="Tooltip text">this tip</span>
+              for a tooltip.
+            </p>
+          </section>
+
+          <!-- Media / Thumbnail / Embed -->
+          <section class="ks-section" id="media">
+            <h2>Media Object, Thumbnail, Responsive Embed</h2>
+            <p class="ks-meta">Свои media-object, thumbnail, responsive-embed</p>
+            <div class="media-object">
+              <div class="media-object-section">
+                <div class="thumbnail">
+                  <img src="https://placehold.co/100x100/8a8a8a/ffffff?text=Img" alt="Thumbnail">
+                </div>
+              </div>
+              <div class="media-object-section">
+                <h4>Media Object</h4>
+                <p>Текст рядом с изображением в media-object layout.</p>
+              </div>
+            </div>
+            <div class="responsive-embed widescreen">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Demo embed" allowfullscreen></iframe>
+            </div>
+          </section>
+
+          <!-- Progress / Meter -->
+          <section class="ks-section" id="progress">
+            <h2>Progress &amp; Meter</h2>
+            <p class="ks-meta">Свои <code>progress</code>, <code>meter</code></p>
+            <div class="progress ks-progress-50" role="progressbar" tabindex="0" aria-valuenow="50" aria-valuemin="0" aria-valuetext="50 percent" aria-valuemax="100">
+              <div class="progress-meter"></div>
+            </div>
+            <div class="progress success ks-progress-75" role="progressbar" tabindex="0" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-meter"></div>
+            </div>
+            <meter value="30" min="0" low="33" high="66" optimum="80" max="100">30%</meter>
+            <meter value="60" min="0" low="33" high="66" optimum="80" max="100">60%</meter>
+            <meter value="90" min="0" low="33" high="66" optimum="80" max="100">90%</meter>
+          </section>
+
+          <!-- Slider (Swiper) -->
+          <section class="ks-section" id="orbit">
+            <h2>Slider (Swiper)</h2>
+            <p class="ks-meta">Замена Foundation Orbit → <strong>Swiper</strong></p>
+            <div class="swiper ks-swiper" data-swiper>
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <figure>
+                    <img src="https://placehold.co/1200x320/1779ba/ffffff?text=Slide+1" alt="Slide 1">
+                    <figcaption>Slide 1</figcaption>
+                  </figure>
+                </div>
+                <div class="swiper-slide">
+                  <figure>
+                    <img src="https://placehold.co/1200x320/3adb76/0a0a0a?text=Slide+2" alt="Slide 2">
+                    <figcaption>Slide 2</figcaption>
+                  </figure>
+                </div>
+                <div class="swiper-slide">
+                  <figure>
+                    <img src="https://placehold.co/1200x320/cc4b37/ffffff?text=Slide+3" alt="Slide 3">
+                    <figcaption>Slide 3</figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="swiper-button-prev"></div>
+              <div class="swiper-button-next"></div>
+              <div class="swiper-pagination"></div>
+            </div>
+          </section>
+
+          <!-- Dialog (native modal) -->
+          <section class="ks-section" id="reveal">
+            <h2>Dialog (modal)</h2>
+            <p class="ks-meta">Замена Foundation Reveal → нативный <code>&lt;dialog&gt;</code></p>
+            <p><button class="button" type="button" data-dialog-open="exampleModal">Open dialog</button></p>
+            <dialog class="modal" id="exampleModal">
+              <button class="close-button" type="button" data-dialog-close aria-label="Close modal">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h3 class="modal__title">Native dialog</h3>
+              <p>Контент модального окна. Закрытие: крестик, Esc или клик по backdrop.</p>
+              <button type="button" class="button" data-dialog-close>Close</button>
+            </dialog>
+          </section>
+
+          <!-- Sticky -->
+          <section class="ks-section" id="sticky">
+            <h2>Sticky</h2>
+            <p class="ks-meta">CSS <code>position: sticky</code> в пределах секции (page-level; off-canvas больше не блокирует)</p>
+            <div class="grid-x grid-padding-x">
+              <div class="medium-3 cell">
+                <div class="callout primary sticky-box">Sticky box</div>
+              </div>
+              <div class="medium-9 cell">
+                <p>Прокрутите страницу — бокс держится, пока видна эта секция.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
+                <p>Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.</p>
+                <p>Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra.</p>
+                <p>Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh.</p>
+                <p>Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor.</p>
+                <p>Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet.</p>
+                <p>Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Visibility / Flex -->
+          <section class="ks-section" id="helpers">
+            <h2>Visibility &amp; Flex helpers</h2>
+            <p class="ks-meta">Свои helpers: show/hide breakpoints, align-*, show-for-sr</p>
+            <p class="show-for-small-only callout">Visible only on small</p>
+            <p class="show-for-medium-only callout primary">Visible only on medium</p>
+            <p class="show-for-large callout success">Visible from large up</p>
+            <p class="hide-for-small-only callout warning">Hidden on small only</p>
+            <div class="grid-x grid-padding-x align-middle align-justify ks-align-demo">
+              <div class="shrink cell"><span class="label">flex start</span></div>
+              <div class="shrink cell"><span class="label secondary">flex end</span></div>
+            </div>
+          </section>
+
+          <!-- Animate.css -->
+          <section class="ks-section" id="motion">
+            <h2>Animate.css</h2>
+            <p class="ks-meta">Замена Motion UI → модульный <strong>Animate.css</strong> (<code>fadeIn</code> / <code>fadeOut</code>)</p>
+            <p>
+              <button type="button" class="button" id="ks-animate-trigger">Toggle fade animation</button>
+            </p>
+            <div id="ks-animate-box" class="callout primary">
+              Этот блок анимируется через Animate.css.
+            </div>
+          </section>
+
+          <section class="ks-section" id="offcanvas-note">
+            <h2>Off-canvas</h2>
+            <p class="ks-meta">Свой drawer: <code>data-offcanvas-open</code> / backdrop / Esc</p>
+            <p><button type="button" class="button" data-offcanvas-open="offCanvas">Open off-canvas</button></p>
+          </section>
+        </div>
+
+    <script type="module" src="/js/lib.js"></script>
+  </body>
+</html>

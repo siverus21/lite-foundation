@@ -1,0 +1,200 @@
+// Shared mixins (formerly Foundation util + visibility helpers).
+// Load after settings/_breakpoints.scss.
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+
+$breakpoints: (
+  'small': 0,
+  'medium': 640px,
+  'large': 1024px,
+  'xlarge': 1200px,
+  'xxlarge': 1440px,
+) !default;
+
+$breakpoints-hidpi: (
+  'hidpi-1': 1,
+  'hidpi-1-5': 1.5,
+  'hidpi-2': 2,
+  'retina': 2,
+  'hidpi-3': 3,
+) !default;
+
+$print-breakpoint: large !default;
+$breakpoint-classes: (small medium large) !default;
+$-zf-zero-breakpoint: small !default;
+$-zf-breakpoints-keys: () !default;
+$-zf-size: null !default;
+$black: #0a0a0a !default;
+
+@function -zf-bp-join($min: 0, $max: 0, $min-name: 'min-width', $max-name: 'max-width') {
+  @return zf-str-join(
+    if($min and $min > 0, '(#{$min-name}: #{$min})', null),
+    if($max and $max > 0, '(#{$max-name}: #{$max})', null),
+    ' and '
+  );
+}
+
+@function breakpoint($val: $-zf-zero-breakpoint) {
+  $bp: list.nth($val, 1);
+  $bp-next: null;
+  $bp-min: null;
+  $bp-max: null;
+  $dir: if(list.length($val) > 1, list.nth($val, 2), up);
+  $name: null;
+
+  @if $bp == 'landscape' or $bp == 'portrait' {
+    @return '(orientation: #{$bp})';
+  }
+
+  @if meta.type-of($bp) == 'string' {
+    @if map.has-key($breakpoints, $bp) {
+      $name: $bp;
+      $bp: map.get($breakpoints, $name);
+      $bp-next: -zf-map-next($breakpoints, $name);
+    }
+    @else {
+      $bp: 0;
+      @warn 'breakpoint(): "#{$val}" is not defined in `$breakpoints`.';
+    }
+  }
+
+  @if $dir == 'only' or $dir == 'up' {
+    $bp-min: -zf-bp-to-em($bp);
+  }
+  @if $dir == 'only' or $dir == 'down' {
+    @if not $name {
+      $bp-max: -zf-bp-to-em($bp);
+    }
+    @else if $bp-next {
+      $bp-max: -zf-bp-to-em($bp-next) - 0.00125;
+    }
+  }
+
+  @return -zf-bp-join($bp-min, $bp-max);
+}
+
+@mixin breakpoint($values...) {
+  @for $i from 1 through list.length($values) {
+    $value: list.nth($values, $i);
+    $str: breakpoint($value);
+    $bp: list.index($-zf-breakpoints-keys, list.nth($value, 1));
+    $pbp: list.index($-zf-breakpoints-keys, $print-breakpoint);
+    $dir: if(list.length($value) > 1, list.nth($value, 2), up);
+
+    $old-zf-size: null;
+    @if meta.global-variable-exists(-zf-size) {
+      $old-zf-size: $-zf-size;
+    }
+    $-zf-size: list.nth($value, 1) !global;
+
+    @if $str == '' or $str == null {
+      @content;
+    }
+    @else {
+      @if $bp != null and ($bp <= $pbp or $dir == down) {
+        @media print, screen and #{$str} {
+          @content;
+        }
+      }
+      @else {
+        @media screen and #{$str} {
+          @content;
+        }
+      }
+    }
+
+    $-zf-size: $old-zf-size !global;
+  }
+}
+
+@mixin -zf-each-breakpoint($small: true) {
+  @each $bp in $breakpoint-classes {
+    @if $small or $bp != $-zf-zero-breakpoint {
+      $old-zf-size: $-zf-size;
+      $-zf-size: $bp !global;
+      @include breakpoint($bp) {
+        @content;
+      }
+      $-zf-size: $old-zf-size !global;
+    }
+  }
+}
+
+@mixin show-for($size) {
+  $px: map.get($breakpoints, $size);
+  $em: -zf-bp-to-em($px) - 0.00125;
+
+  @include breakpoint($em down) {
+    display: none !important;
+  }
+}
+
+@mixin show-for-only($size) {
+  $lower-bound-size: map.get($breakpoints, $size);
+  $upper-bound-size: -zf-map-next($breakpoints, $size);
+  $lower-bound: -zf-bp-to-em($lower-bound-size) - 0.00125;
+
+  @if strip-unit($lower-bound-size) == 0 {
+    $lower-bound: -zf-bp-to-em($lower-bound-size);
+  }
+
+  @if $upper-bound-size == null {
+    @media screen and (max-width: $lower-bound) {
+      display: none !important;
+    }
+  }
+  @else {
+    $upper-bound: -zf-bp-to-em($upper-bound-size);
+    @media screen and (max-width: $lower-bound), screen and (min-width: $upper-bound) {
+      display: none !important;
+    }
+  }
+}
+
+@mixin hide-for($size) {
+  @include breakpoint($size) {
+    display: none !important;
+  }
+}
+
+@mixin hide-for-only($size) {
+  @include breakpoint($size only) {
+    display: none !important;
+  }
+}
+
+@mixin background-triangle($color: $black) {
+  $red: math.round(color.channel($color, 'red', $space: rgb));
+  $green: math.round(color.channel($color, 'green', $space: rgb));
+  $blue: math.round(color.channel($color, 'blue', $space: rgb));
+  $rgb: 'rgb%28#{$red}, #{$green}, #{$blue}%29';
+
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="24" viewBox="0 0 32 24"><polygon points="0,0 32,0 16,24" style="fill: #{$rgb}"></polygon></svg>');
+}
+
+@mixin visually-hidden($enforce: true) {
+  $important: if($enforce, '!important', null);
+
+  position: absolute #{$important};
+  width: 1px #{$important};
+  height: 1px #{$important};
+  padding: 0 #{$important};
+  overflow: hidden #{$important};
+  clip: rect(0, 0, 0, 0) #{$important};
+  white-space: nowrap #{$important};
+  border: 0 #{$important};
+}
+
+@mixin visually-hidden-off($enforce: true) {
+  $important: if($enforce, '!important', null);
+
+  position: static #{$important};
+  width: auto #{$important};
+  height: auto #{$important};
+  overflow: visible #{$important};
+  clip: auto #{$important};
+  white-space: normal #{$important};
+}

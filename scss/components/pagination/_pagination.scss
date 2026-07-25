@@ -1,0 +1,94 @@
+// Pagination (replaces Foundation pagination). Uses settings/_navigation.scss.
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 $pagination-margin-bottom;
+  padding: 0;
+  list-style: none;
+}
+
+.pagination li {
+  margin-right: $pagination-item-spacing;
+  border-radius: $pagination-radius;
+  font-size: $pagination-font-size;
+
+  @if $pagination-mobile-items {
+    display: inline-block;
+  } @else {
+    display: none;
+
+    &:first-child,
+    &:last-child {
+      display: inline-block;
+    }
+
+    @if $pagination-mobile-current-item {
+      &.current {
+        display: inline-block;
+      }
+    }
+
+    @include breakpoint(medium) {
+      display: inline-block;
+    }
+  }
+}
+
+.pagination a,
+.pagination button {
+  display: block;
+  padding: $pagination-item-padding;
+  border: 0;
+  border-radius: $pagination-radius;
+  background: transparent;
+  color: $pagination-item-color;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: none;
+}
+
+.pagination a:hover,
+.pagination button:hover {
+  background: $pagination-item-background-hover;
+}
+
+.pagination .current {
+  padding: $pagination-item-padding;
+  background: $pagination-item-background-current;
+  color: $pagination-item-color-current;
+  cursor: default;
+}
+
+.pagination .disabled {
+  padding: $pagination-item-padding;
+  color: $pagination-item-color-disabled;
+  cursor: not-allowed;
+}
+
+.pagination .disabled:hover {
+  background: transparent;
+}
+
+.pagination .ellipsis::after {
+  padding: $pagination-item-padding;
+  content: '\2026';
+  color: $pagination-ellipsis-color;
+}
+
+@if $pagination-arrows {
+  .pagination-previous a::before,
+  .pagination-previous.disabled::before {
+    display: inline-block;
+    margin-right: 0.5rem;
+    content: $pagination-arrow-previous;
+  }
+
+  .pagination-next a::after,
+  .pagination-next.disabled::after {
+    display: inline-block;
+    margin-left: 0.5rem;
+    content: $pagination-arrow-next;
+  }
+}

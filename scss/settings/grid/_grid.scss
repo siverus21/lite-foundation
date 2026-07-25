@@ -1,0 +1,33 @@
+// Grid settings — Sass defaults that feed CSS custom properties.
+// Override at runtime via --grid-* on :root, .grid-container, or .grid-x.
+
+$grid-row-width: $global-width;
+$grid-column-count: 12;
+$grid-column-gutter: (
+  small: 20px,
+  medium: 30px,
+);
+$grid-column-align-edge: true;
+$grid-column-alias: 'columns';
+$block-grid-max: 8;
+
+// XY / CSS Grid
+$xy-grid: true;
+$grid-container: $global-width;
+$grid-columns: 12;
+$grid-margin-gutters: (
+  "small": 20px,
+  "medium": 30px,
+);
+$grid-padding-gutters: $grid-margin-gutters;
+$grid-container-padding: $grid-padding-gutters;
+$grid-container-max: $global-width;
+$xy-block-grid-max: 8;
+
+// CSS Grid tokens (used in layout/_grid.scss)
+$grid-css-columns: $grid-columns;
+$grid-css-gap-small: map-get($grid-padding-gutters, small);
+$grid-css-gap-medium: map-get($grid-padding-gutters, medium);
+$grid-css-container-max: $grid-container-max;
+$grid-css-container-pad-small: map-get($grid-container-padding, small);
+$grid-css-container-pad-medium: map-get($grid-container-padding, medium);

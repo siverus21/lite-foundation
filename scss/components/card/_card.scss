@@ -1,0 +1,42 @@
+// Card (replaces Foundation card). Uses settings/_containers.scss.
+
+.card {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-bottom: $card-margin-bottom;
+  border: $card-border;
+  border-radius: $card-border-radius;
+  background: $card-background;
+  box-shadow: $card-shadow;
+  overflow: hidden;
+  color: $card-font-color;
+}
+
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+.card-divider {
+  display: flex;
+  flex: 0 1 auto;
+  padding: $card-padding;
+  background: $card-divider-background;
+}
+
+.card-divider > :last-child {
+  margin-bottom: 0;
+}
+
+.card-section {
+  flex: 1 0 auto;
+  padding: $card-padding;
+}
+
+.card-section > :last-child {
+  margin-bottom: 0;
+}
+
+.card-image {
+  min-height: 1px;
+}

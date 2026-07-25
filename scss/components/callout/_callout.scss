@@ -1,0 +1,37 @@
+// Callout (replaces Foundation callout). Uses settings/_containers.scss.
+
+.callout {
+  position: relative;
+  margin: $callout-margin;
+  padding: map-get($callout-sizes, default);
+  border: $callout-border;
+  border-radius: $callout-radius;
+  background-color: scale-color($callout-background, $lightness: $callout-background-fade);
+  color: color-pick-contrast(
+    scale-color($callout-background, $lightness: $callout-background-fade),
+    ($callout-font-color, $callout-font-color-alt)
+  );
+}
+
+.callout > :first-child {
+  margin-top: 0;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+@each $name, $color in $foundation-palette {
+  .callout.#{$name} {
+    $background: scale-color($color, $lightness: $callout-background-fade);
+
+    background-color: $background;
+    color: color-pick-contrast($background, ($callout-font-color, $callout-font-color-alt));
+  }
+}
+
+@each $size, $padding in map-remove($callout-sizes, default) {
+  .callout.#{$size} {
+    padding: $padding;
+  }
+}

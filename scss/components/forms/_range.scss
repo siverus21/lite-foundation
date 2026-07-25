@@ -1,0 +1,60 @@
+// Native range input (replaces Foundation range-input). Uses $slider-* settings.
+
+input[type='range'] {
+  $margin: ($slider-handle-height - $slider-height) * 0.5;
+
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: $margin;
+  margin-bottom: $margin;
+  appearance: none;
+  border: 0;
+  border-radius: $slider-radius;
+  line-height: 1;
+  cursor: pointer;
+}
+
+input[type='range']:focus {
+  outline: 0;
+}
+
+input[type='range'][disabled] {
+  opacity: $slider-opacity-disabled;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: $slider-height;
+  background: $slider-background;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  width: $slider-handle-width;
+  height: $slider-handle-height;
+  margin-top: -(($slider-handle-height - $slider-height) * 0.5);
+  border-radius: $slider-radius;
+  background: $slider-handle-background;
+  -webkit-appearance: none;
+}
+
+input[type='range']::-moz-range-track {
+  height: $slider-height;
+  background: $slider-background;
+  -moz-appearance: none;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: $slider-handle-width;
+  height: $slider-handle-height;
+  margin-top: -(($slider-handle-height - $slider-height) * 0.5);
+  border: 0;
+  border-radius: $slider-radius;
+  background: $slider-handle-background;
+  -moz-appearance: none;
+}
+
+output {
+  vertical-align: middle;
+  margin-left: 0.5em;
+  line-height: $slider-handle-height;
+}

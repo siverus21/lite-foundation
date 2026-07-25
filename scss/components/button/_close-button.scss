@@ -1,0 +1,28 @@
+// Close button — nested SCSS + CSS custom properties.
+
+.close-button {
+  position: absolute;
+  z-index: var(--lf-z-closebutton, #{$closebutton-z-index});
+  right: map-get($closebutton-offset-horizontal, $closebutton-default-size);
+  top: map-get($closebutton-offset-vertical, $closebutton-default-size);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lf-closebutton-color, #{$closebutton-color});
+  font-size: map-get($closebutton-size, $closebutton-default-size);
+  line-height: $closebutton-lineheight;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: var(--lf-closebutton-color-hover, #{$closebutton-color-hover});
+  }
+
+  @each $name, $size in $closebutton-size {
+    &.#{$name} {
+      right: map-get($closebutton-offset-horizontal, $name);
+      top: map-get($closebutton-offset-vertical, $name);
+      font-size: $size;
+    }
+  }
+}

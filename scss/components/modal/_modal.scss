@@ -1,0 +1,38 @@
+// Native <dialog> modal (replaces Foundation Reveal).
+
+.modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  border: 1px solid var(--lf-modal-border);
+  border-radius: 0;
+  padding: 1.5rem;
+  max-width: 32rem;
+  width: calc(100% - 2rem);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  box-shadow: var(--lf-shadow-modal);
+}
+
+.modal::backdrop {
+  background: var(--lf-modal-overlay, var(--lf-overlay));
+}
+
+.modal__title {
+  margin-top: 0;
+}
+
+.modal .close-button {
+  position: absolute;
+  right: 1rem;
+  top: 0.5rem;
+}
+
+// Lock page scroll while a modal is open (see js/modules/modal.js).
+body.is-modal-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+}

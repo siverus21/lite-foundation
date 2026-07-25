@@ -1,0 +1,10 @@
+// Design tokens: Sass settings in scss/settings/, CSS custom properties
+// emitted from settings/css-variables/ (--lf-*).
+//
+// In components / layout / base / utilities:
+//   color: var(--lf-color-primary);
+//   z-index: var(--lf-z-dropdown);
+//   background: var(--lf-overlay);
+//
+// Hardcoded hex / rgba / z-index literals trigger a bright build warning
+// (scripts/lint-tokens.js).

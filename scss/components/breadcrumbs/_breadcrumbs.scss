@@ -1,0 +1,45 @@
+// Breadcrumbs (replaces Foundation breadcrumbs). Uses settings/_navigation.scss.
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: $breadcrumbs-margin;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumbs li {
+  font-size: $breadcrumbs-item-font-size;
+  color: $breadcrumbs-item-color-current;
+  cursor: default;
+
+  @if $breadcrumbs-item-uppercase {
+    text-transform: uppercase;
+  }
+}
+
+@if $breadcrumbs-item-separator {
+  .breadcrumbs li:not(:last-child)::after {
+    margin: 0 $breadcrumbs-item-margin;
+    content: $breadcrumbs-item-separator-item;
+    color: $breadcrumbs-item-separator-color;
+  }
+} @else {
+  .breadcrumbs li:not(:last-child) {
+    margin-right: $breadcrumbs-item-margin;
+  }
+}
+
+.breadcrumbs a {
+  color: $breadcrumbs-item-color;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbs .disabled {
+  color: $breadcrumbs-item-color-disabled;
+  cursor: not-allowed;
+}

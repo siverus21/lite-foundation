@@ -1,0 +1,18 @@
+// Switch
+
+$switch-background: $medium-gray;
+$switch-background-focus: scale-color($switch-background, $lightness: -10%);
+$switch-background-active: $primary-color;
+$switch-background-active-focus: scale-color($switch-background-active, $lightness: -15%);
+$switch-height: 2rem;
+$switch-height-tiny: 1.5rem;
+$switch-height-small: 1.75rem;
+$switch-height-large: 2.5rem;
+$switch-radius: $global-radius;
+$switch-margin: $global-margin;
+$switch-paddle-background: $white;
+$switch-paddle-offset: 0.25rem;
+$switch-paddle-radius: $global-radius;
+$switch-paddle-transition: all 0.25s ease-out;
+$switch-opacity-disabled: 0.5;
+$switch-cursor-disabled: not-allowed;

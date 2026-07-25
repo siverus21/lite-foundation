@@ -1,0 +1,97 @@
+// Button group — nested SCSS + CSS custom properties.
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  flex-grow: 1;
+  margin-bottom: var(--lf-buttongroup-margin, #{$buttongroup-margin});
+
+  .button {
+    flex: 0 0 auto;
+    margin: 0 var(--lf-buttongroup-spacing, #{$buttongroup-spacing}) var(--lf-buttongroup-spacing, #{$buttongroup-spacing}) 0;
+    font-size: var(--lf-button-font-size, #{map-get($button-sizes, default)});
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  @each $size, $value in map-remove($button-sizes, default) {
+    &.#{$size} .button {
+      font-size: $value;
+    }
+  }
+
+  &.expanded .button {
+    flex: 1 1 0;
+  }
+
+  @each $name, $color in $button-palette {
+    &.#{$name} .button {
+      background-color: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}-contrast);
+
+      &:hover,
+      &:focus {
+        background-color: var(--lf-color-#{$name}-hover);
+      }
+    }
+  }
+
+  &.hollow .button {
+    border: var(--lf-button-hollow-border-width, #{$button-hollow-border-width}) solid var(--lf-button-bg, #{$button-background});
+    background-color: transparent;
+    color: var(--lf-button-bg, #{$button-background});
+  }
+
+  @each $name, $color in $button-palette {
+    &.hollow.#{$name} .button,
+    &.hollow .button.#{$name} {
+      border-color: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}, #{$color});
+    }
+  }
+
+  &.no-gaps {
+    .button {
+      margin-right: rem-calc(-$button-hollow-border-width);
+
+      + .button {
+        border-left-color: transparent;
+      }
+    }
+  }
+
+  &.stacked,
+  &.stacked-for-small,
+  &.stacked-for-medium {
+    flex-wrap: wrap;
+
+    .button {
+      flex: 0 0 100%;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &.stacked-for-small {
+    @include breakpoint(medium) {
+      .button {
+        flex: 0 0 auto;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &.stacked-for-medium {
+    @include breakpoint(large) {
+      .button {
+        flex: 0 0 auto;
+        margin-bottom: 0;
+      }
+    }
+  }
+}

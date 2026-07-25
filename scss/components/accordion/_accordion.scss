@@ -1,0 +1,78 @@
+// Native <details>/<summary> accordion (replaces Foundation Accordion).
+// Height is animated in px via JS; CSS only provides the transition + chevron.
+
+.accordion {
+  margin: 0;
+  list-style: none;
+  background: $accordion-background;
+}
+
+.accordion-item {
+  border-bottom: 1px solid $light-gray;
+}
+
+.accordion-item:last-child {
+  border-bottom: 0;
+}
+
+.accordion-title {
+  display: block;
+  position: relative;
+  padding: $accordion-item-padding;
+  padding-right: 2.5rem;
+  font-size: $accordion-title-font-size;
+  line-height: 1;
+  color: $accordion-item-color;
+  background: $accordion-background;
+  cursor: pointer;
+  list-style: none;
+}
+
+.accordion-title::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-title::marker {
+  content: '';
+}
+
+/* Chevron */
+.accordion-title::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid $accordion-item-color;
+  border-bottom: 2px solid $accordion-item-color;
+  transform: translateY(-65%) rotate(45deg);
+  transition: transform 0.35s ease;
+}
+
+.accordion-item.is-open > .accordion-title::after {
+  transform: translateY(-35%) rotate(225deg);
+}
+
+.accordion-title:hover,
+.accordion-title:focus {
+  background: $accordion-item-background-hover;
+  outline: none;
+}
+
+.accordion-content {
+  overflow: hidden;
+  height: 0;
+  transition: height 0.4s ease-in-out;
+  background: $accordion-content-background;
+  color: $accordion-content-color;
+  border-top: 0 solid $accordion-content-border;
+}
+
+.accordion-item.is-open > .accordion-content {
+  border-top-width: 1px;
+}
+
+.accordion-content-inner {
+  padding: $accordion-content-padding;
+}

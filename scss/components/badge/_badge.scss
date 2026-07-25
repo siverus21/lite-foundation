@@ -1,0 +1,20 @@
+// Badge (replaces Foundation badge). Uses settings/_feedback.scss.
+
+.badge {
+  display: inline-block;
+  min-width: $badge-minwidth;
+  padding: $badge-padding;
+  border-radius: 50%;
+  background: $badge-background;
+  color: $badge-color;
+  font-size: $badge-font-size;
+  text-align: center;
+}
+
+@each $name, $color in $badge-palette {
+  .badge.#{$name},
+  .#{$name}.badge {
+    background: $color;
+    color: color-pick-contrast($color, ($badge-color, $badge-color-alt));
+  }
+}

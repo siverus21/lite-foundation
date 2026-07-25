@@ -1,0 +1,160 @@
+// CSS custom properties generated from Sass settings.
+// Override at runtime via :root { --lf-color-primary: … } without rebuilding.
+// Components must use var(--lf-…) for colors, z-index, overlays, and shadows.
+
+:root {
+  // Palette
+  --lf-color-primary: #{$primary-color};
+  --lf-color-secondary: #{$secondary-color};
+  --lf-color-success: #{$success-color};
+  --lf-color-warning: #{$warning-color};
+  --lf-color-alert: #{$alert-color};
+
+  // Neutrals
+  --lf-color-white: #{$white};
+  --lf-color-black: #{$black};
+  --lf-color-light-gray: #{$light-gray};
+  --lf-color-medium-gray: #{$medium-gray};
+  --lf-color-dark-gray: #{$dark-gray};
+
+  // Body
+  --lf-body-bg: #{$body-background};
+  --lf-body-color: #{$body-font-color};
+  --lf-global-radius: #{$global-radius};
+  --lf-global-margin: #{$global-margin};
+  --lf-global-padding: #{$global-padding};
+
+  // Overlays / translucent blacks (prefer these over raw rgba())
+  --lf-overlay: #{rgba($black, 0.45)};
+  --lf-overlay-strong: #{rgba($black, 0.5)};
+  --lf-overlay-soft: #{rgba($black, 0.12)};
+  --lf-overlay-muted: #{rgba($black, 0.25)};
+
+  // Shadows
+  --lf-shadow-dropdown: 0 2px 8px #{rgba($black, 0.12)};
+  --lf-shadow-modal: 0 0 10px #{rgba($black, 0.25)};
+}
+
+// Z-index scale → --lf-z-*
+@each $name, $value in $z-index {
+  :root {
+    --lf-z-#{$name}: #{$value};
+  }
+}
+
+@each $name, $color in $foundation-palette {
+  :root {
+    --lf-color-#{$name}: #{$color};
+    --lf-color-#{$name}-contrast: #{color-pick-contrast($color, ($white, $black))};
+  }
+
+  @if variable-exists(button-background-hover-lightness) {
+    :root {
+      --lf-color-#{$name}-hover: #{scale-color($color, $lightness: $button-background-hover-lightness)};
+      --lf-color-#{$name}-hollow-hover: #{scale-color($color, $lightness: $button-hollow-hover-lightness)};
+    }
+  }
+}
+
+// Optional component tokens (only if their settings were imported)
+@if variable-exists(button-background) {
+  :root {
+    --lf-button-bg: #{$button-background};
+    --lf-button-bg-hover: #{scale-color($button-background, $lightness: $button-background-hover-lightness)};
+    --lf-button-color: #{$button-color};
+    --lf-button-color-alt: #{$button-color-alt};
+    --lf-button-radius: #{$button-radius};
+    --lf-button-padding: #{$button-padding};
+    --lf-button-font-size: #{map-get($button-sizes, default)};
+    --lf-button-hollow-border-width: #{$button-hollow-border-width};
+    --lf-button-opacity-disabled: #{$button-opacity-disabled};
+  }
+}
+
+@if variable-exists(closebutton-color) {
+  :root {
+    --lf-closebutton-color: #{$closebutton-color};
+    --lf-closebutton-color-hover: #{$closebutton-color-hover};
+  }
+}
+
+@if variable-exists(buttongroup-margin) {
+  :root {
+    --lf-buttongroup-margin: #{$buttongroup-margin};
+    --lf-buttongroup-spacing: #{$buttongroup-spacing};
+  }
+}
+
+@if variable-exists(titlebar-background) {
+  :root {
+    --lf-titlebar-bg: #{$titlebar-background};
+    --lf-titlebar-color: #{$titlebar-color};
+    --lf-titlebar-icon-color: #{$titlebar-icon-color};
+    --lf-titlebar-icon-color-hover: #{$titlebar-icon-color-hover};
+  }
+}
+
+@if variable-exists(topbar-background) {
+  :root {
+    --lf-topbar-bg: #{$topbar-background};
+  }
+}
+
+@if variable-exists(tab-background) {
+  :root {
+    --lf-tab-bg: #{$tab-background};
+    --lf-tab-color: #{$tab-color};
+    --lf-tab-bg-active: #{$tab-background-active};
+    --lf-tab-color-active: #{$tab-active-color};
+    --lf-tab-item-bg-hover: #{$tab-item-background-hover};
+    --lf-tab-content-bg: #{$tab-content-background};
+    --lf-tab-content-border: #{$tab-content-border};
+    --lf-tab-content-color: #{$tab-content-color};
+  }
+}
+
+@if variable-exists(menu-item-background-active) {
+  :root {
+    --lf-menu-item-bg-active: #{$menu-item-background-active};
+    --lf-menu-item-color-active: #{$menu-item-color-active};
+    --lf-menu-submenu-bg: #{$white};
+    --lf-menu-submenu-border: #{$medium-gray};
+  }
+}
+
+@if variable-exists(dropdown-background) {
+  :root {
+    --lf-dropdown-bg: #{$dropdown-background};
+    --lf-dropdown-border: #{$medium-gray};
+  }
+}
+
+@if variable-exists(tooltip-background-color) {
+  :root {
+    --lf-tooltip-bg: #{$tooltip-background-color};
+    --lf-tooltip-color: #{$tooltip-color};
+    --lf-tooltip-border: #{$dark-gray};
+  }
+}
+
+@if variable-exists(offcanvas-background) {
+  :root {
+    --lf-offcanvas-bg: #{$offcanvas-background};
+  }
+}
+
+@if variable-exists(reveal-overlay-background) {
+  :root {
+    --lf-modal-border: #{$medium-gray};
+    --lf-modal-overlay: #{$reveal-overlay-background};
+  }
+}
+
+@if variable-exists(slider-background) {
+  :root {
+    --lf-slider-bg: #{$slider-background};
+    --lf-slider-fill: #{$slider-fill-background};
+    --lf-slider-handle: #{$slider-handle-background};
+    --lf-slider-handle-hover: #{scale-color($slider-handle-background, $lightness: -15%)};
+  }
+}

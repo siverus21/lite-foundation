@@ -1,0 +1,90 @@
+// Global reset / base document styles (replaces Foundation global-styles).
+
+html {
+  box-sizing: border-box;
+  font-size: $global-font-size;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: $body-background;
+  font-family: $body-font-family;
+  font-weight: $global-weight-normal;
+  line-height: $global-lineheight;
+  color: $body-font-color;
+
+  @if $body-antialiased {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @if $body-safe-padding {
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+  }
+}
+
+img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+textarea {
+  height: auto;
+  min-height: 50px;
+  border-radius: $global-radius;
+}
+
+select {
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: $global-radius;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  border-radius: $global-radius;
+  background: transparent;
+  appearance: none;
+  line-height: 1;
+  cursor: $global-button-cursor;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+}
+
+pre {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.is-visible {
+  display: block !important;
+}
+
+.is-hidden {
+  display: none !important;
+}

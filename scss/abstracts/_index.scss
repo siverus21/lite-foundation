@@ -1,0 +1,5 @@
+// Abstracts entry (optional). Prefer explicit load order in app.scss:
+//   functions → settings → mixins
+@import 'tokens';
+@import 'functions';
+@import 'mixins';

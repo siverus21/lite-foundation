@@ -1,0 +1,180 @@
+// Button — nested SCSS + CSS custom properties from settings.
+
+.button {
+  display: inline-block;
+  vertical-align: middle;
+  margin: $button-margin;
+  padding: var(--lf-button-padding, #{$button-padding});
+  border: $button-border;
+  border-radius: var(--lf-button-radius, #{$button-radius});
+  font-family: $button-font-family;
+  font-size: var(--lf-button-font-size, #{map-get($button-sizes, default)});
+  @if $button-font-weight {
+    font-weight: $button-font-weight;
+  }
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  transition: $button-transition;
+  appearance: none;
+
+  // Solid (default)
+  &,
+  &.solid {
+    background-color: var(--lf-button-bg, #{$button-background});
+    color: var(--lf-button-color, #{$button-color});
+
+    &:hover,
+    &:focus {
+      background-color: var(--lf-button-bg-hover);
+      color: var(--lf-button-color, #{$button-color});
+    }
+
+    &.disabled,
+    &[disabled] {
+      background-color: var(--lf-button-bg, #{$button-background});
+      color: var(--lf-button-color, #{$button-color});
+    }
+  }
+
+  &.expanded {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  &.disabled,
+  &[disabled] {
+    opacity: var(--lf-button-opacity-disabled, #{$button-opacity-disabled});
+    cursor: not-allowed;
+  }
+
+  // Hollow
+  &.hollow {
+    border: var(--lf-button-hollow-border-width, #{$button-hollow-border-width}) solid var(--lf-button-bg, #{$button-background});
+    background-color: transparent;
+    color: var(--lf-button-bg, #{$button-background});
+
+    &:hover,
+    &:focus {
+      border-color: var(--lf-color-primary-hollow-hover, #{scale-color($button-background, $lightness: $button-hollow-hover-lightness)});
+      background-color: transparent;
+      color: var(--lf-color-primary-hollow-hover, #{scale-color($button-background, $lightness: $button-hollow-hover-lightness)});
+    }
+
+    &.disabled,
+    &[disabled] {
+      border-color: var(--lf-button-bg, #{$button-background});
+      background-color: transparent;
+      color: var(--lf-button-bg, #{$button-background});
+    }
+
+    &.dropdown::after {
+      border-top-color: var(--lf-button-bg, #{$button-background});
+    }
+  }
+
+  // Clear
+  &.clear {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--lf-button-bg, #{$button-background});
+
+    &:hover,
+    &:focus {
+      border-color: transparent;
+      background-color: transparent;
+      color: var(--lf-color-primary-hollow-hover, #{scale-color($button-background, $lightness: $button-hollow-hover-lightness)});
+    }
+
+    &.dropdown::after {
+      border-top-color: var(--lf-button-bg, #{$button-background});
+    }
+  }
+
+  &.dropdown::after {
+    content: '';
+    display: inline-block;
+    float: right;
+    position: relative;
+    top: 0.4em;
+    margin-left: 1em;
+    border: 0.4em solid transparent;
+    border-top-color: var(--lf-button-color, #{$button-color});
+    border-bottom-width: 0;
+  }
+
+  &.arrow-only::after {
+    top: -0.1em;
+    float: none;
+    margin-left: 0;
+  }
+
+  @each $size, $value in map-remove($button-sizes, default) {
+    &.#{$size} {
+      font-size: $value;
+    }
+  }
+
+  @each $name, $color in $button-palette {
+    &.#{$name} {
+      background-color: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($button-color, $button-color-alt))});
+
+      &:hover,
+      &:focus {
+        background-color: var(--lf-color-#{$name}-hover);
+        color: var(--lf-color-#{$name}-contrast);
+      }
+
+      &.disabled,
+      &[disabled] {
+        background-color: var(--lf-color-#{$name}, #{$color});
+        color: var(--lf-color-#{$name}-contrast);
+      }
+
+      &.hollow {
+        border-color: var(--lf-color-#{$name}, #{$color});
+        background-color: transparent;
+        color: var(--lf-color-#{$name}, #{$color});
+
+        &:hover,
+        &:focus {
+          border-color: var(--lf-color-#{$name}-hollow-hover);
+          color: var(--lf-color-#{$name}-hollow-hover);
+        }
+
+        &.disabled,
+        &[disabled] {
+          border-color: var(--lf-color-#{$name}, #{$color});
+          color: var(--lf-color-#{$name}, #{$color});
+        }
+
+        &.dropdown::after {
+          border-top-color: var(--lf-color-#{$name}, #{$color});
+        }
+      }
+
+      &.clear {
+        color: var(--lf-color-#{$name}, #{$color});
+
+        &:hover,
+        &:focus {
+          color: var(--lf-color-#{$name}-hollow-hover);
+        }
+
+        &.dropdown::after {
+          border-top-color: var(--lf-color-#{$name}, #{$color});
+        }
+      }
+    }
+  }
+}
+
+a.button {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
