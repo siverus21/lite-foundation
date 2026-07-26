@@ -42,6 +42,11 @@ Page-бандл собирается in-memory (`sass.compileString` / `virtual:
 - Lifecycle: `initModules` / `destroyModules` / `refreshModules` / `unmountModules`
 
 Ленивый mount: атрибут `data-lf-lazy` на корне компонента — init при появлении во viewport (`IntersectionObserver`).
+Не вешай его на корень, скрытый по умолчанию (`<dialog>`, `.offcanvas`, что-то внутри неактивной вкладки/аккордеона) —
+`IntersectionObserver` не сработает для `display: none`, поэтому `Module.mount()` в этом случае просто инициализирует сразу, без отсрочки.
+
+Escape для «закрывающихся» компонентов (`Offcanvas`, `Dropdown`, `MenuDropdown`) — через общий диспетчер
+[`js/core/global-events.js`](js/core/global-events.js) (`onEscape`), один `document`-листенер на всех, а не по одному на модуль.
 
 ## Feature flags
 
@@ -98,7 +103,7 @@ Vitest + `happy-dom`. Юнит-тесты лежат рядом по темам 
 
 ```text
 config/features.js      # флаги + builds
-js/core/                # Module, runtime, scroll-lock
+js/core/                # Module, runtime, scroll-lock, global-events
 js/modules/             # UI-классы
 js/load-build.js        # GENERATED: ?build=name → virtual entry (static switch)
 scss/abstracts|settings|core|components|utilities|vendors|critical/

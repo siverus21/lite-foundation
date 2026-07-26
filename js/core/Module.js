@@ -40,6 +40,15 @@ export class Module {
       return;
     }
 
+    // `IntersectionObserver` never fires for an element with no box (display:none —
+    // an unopened <dialog>/.offcanvas panel, or anything inside a hidden tab/
+    // accordion panel). Lazy-loading would then permanently skip setup, so fall
+    // back to eager init: it can't get any worse than not using data-lf-lazy at all.
+    if (el.getClientRects().length === 0) {
+      setup(el);
+      return;
+    }
+
     const io = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       io.disconnect();

@@ -76,6 +76,13 @@ unmountModules(panel, { removeRoot: true }); // JS + удалить сам эл�
           Ленивый init: добавь <code>data-lf-lazy</code> на корень компонента
           (например <code>&lt;ul data-tabs data-lf-lazy&gt;</code>) — модуль поднимется при приближении к viewport.
         </p>
+        <p class="docs-aside">
+          ⚠️ Не вешай <code>data-lf-lazy</code> на корень, который скрыт по умолчанию
+          (<code>&lt;dialog&gt;</code>, <code>.offcanvas</code>-панель, что-то внутри неактивной
+          вкладки/аккордеона) — <code>IntersectionObserver</code> не сработает для
+          <code>display: none</code> элемента, поэтому модуль всё равно поднимется сразу
+          (без ленивой отсрочки), но лучше просто не размечать такие корни лениво.
+        </p>
       </section>
 
       <section class="docs-section">

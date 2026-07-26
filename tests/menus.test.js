@@ -44,6 +44,20 @@ describe('MenuDropdown', () => {
     expect(menus._menus?.length ?? 0).toBe(0);
     menus.destroy();
   });
+
+  it('closes on Escape', () => {
+    const menus = new MenuDropdown(document);
+    const parent = document.querySelector('[data-menu="dropdown"] li:nth-child(2)');
+
+    parent.querySelector(':scope > a').click();
+    expect(parent.classList.contains('is-open')).toBe(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(parent.classList.contains('is-open')).toBe(false);
+    expect(parent.getAttribute('aria-expanded')).toBe('false');
+
+    menus.destroy();
+  });
 });
 
 describe('MenuAccordion', () => {

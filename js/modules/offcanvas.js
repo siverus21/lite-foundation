@@ -5,6 +5,7 @@
  */
 import { Module } from '../core/Module.js';
 import { lockScroll, unlockScroll } from '../core/scroll-lock.js';
+import { onEscape } from '../core/global-events.js';
 
 export class Offcanvas extends Module {
   constructor(root = document) {
@@ -63,9 +64,7 @@ export class Offcanvas extends Module {
       true,
     );
 
-    this.on(document, 'keydown', (event) => {
-      if (event.key === 'Escape') this.close();
-    });
+    onEscape(this.signal, () => this.close());
   }
 
   open(id, trigger = null) {

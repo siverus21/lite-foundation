@@ -47,8 +47,10 @@ npm run test:coverage # + отчёт покрытия (text + html в coverage/)
         <h2>Что покрыто</h2>
         <div class="docs-demo">
           <ul>
-            <li><code>js/core/</code> — <code>Module</code> (lazy mount + <code>data-lf-lazy</code>),
-              <code>runtime</code> (init/destroy/refresh/unmount), <code>scroll-lock</code></li>
+            <li><code>js/core/</code> — <code>Module</code> (lazy mount + <code>data-lf-lazy</code>,
+              включая fallback на элементах без бокса), <code>runtime</code>
+              (init/destroy/refresh/unmount), <code>scroll-lock</code>, <code>global-events</code>
+              (общий Escape-диспетчер)</li>
             <li><code>js/modules/*</code> — по файлу на модуль (modal, tabs, accordion, dropdown,
               offcanvas, menu-dropdown/accordion/drilldown, form-slider, …)</li>
             <li><code>js/boot.js</code> — dev vs prod путь, ожидание stylesheet

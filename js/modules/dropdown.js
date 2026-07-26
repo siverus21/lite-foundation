@@ -4,6 +4,7 @@
  * Close: outside click, Esc, second click on trigger
  */
 import { Module } from '../core/Module.js';
+import { onEscape } from '../core/global-events.js';
 
 export class Dropdown extends Module {
   constructor(root = document) {
@@ -43,9 +44,7 @@ export class Dropdown extends Module {
       true,
     );
 
-    this.on(document, 'keydown', (event) => {
-      if (event.key === 'Escape') this.closeAll();
-    });
+    onEscape(this.signal, () => this.closeAll());
   }
 
   #open(pane, trigger) {

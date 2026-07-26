@@ -50,4 +50,21 @@ describe('Module.mount data-lf-lazy', () => {
     mod.destroy();
     el.remove();
   });
+
+  it('runs setup eagerly when data-lf-lazy is set but the element has no box (display:none)', () => {
+    // Real-world case: data-lf-lazy on a <dialog>/.offcanvas root, or on anything
+    // inside a hidden tab/accordion panel — IntersectionObserver would never fire,
+    // so lazy-loading it would permanently skip setup.
+    const el = document.createElement('div');
+    el.setAttribute('data-lf-lazy', '');
+    el.getClientRects = () => [];
+    document.body.append(el);
+    const setup = vi.fn();
+    const mod = new Module(document);
+    mod.mount(el, setup);
+    expect(setup).toHaveBeenCalledWith(el);
+    expect(observe).not.toHaveBeenCalled();
+    mod.destroy();
+    el.remove();
+  });
 });

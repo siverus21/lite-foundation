@@ -3,6 +3,14 @@
  */
 import { Module } from '../core/Module.js';
 import { markSubmenus } from './menu-utils.js';
+import { onEscape } from '../core/global-events.js';
+
+function closeAllMenus() {
+  document.querySelectorAll('[data-menu="dropdown"] > li.is-open').forEach((li) => {
+    li.classList.remove('is-open');
+    li.setAttribute('aria-expanded', 'false');
+  });
+}
 
 export class MenuDropdown extends Module {
   constructor(root = document) {
@@ -34,10 +42,9 @@ export class MenuDropdown extends Module {
 
     this.on(document, 'click', (event) => {
       if (event.target.closest('[data-menu="dropdown"]')) return;
-      document.querySelectorAll('[data-menu="dropdown"] > li.is-open').forEach((li) => {
-        li.classList.remove('is-open');
-        li.setAttribute('aria-expanded', 'false');
-      });
+      closeAllMenus();
     });
+
+    onEscape(this.signal, closeAllMenus);
   }
 }
