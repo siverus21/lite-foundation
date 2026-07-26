@@ -1,184 +1,504 @@
 # lite-foundation
 
-Стартер UI в духе Foundation for Sites: свои SCSS/JS-модули, без пакета `foundation-sites`.
+Лёгкий UI-стартер в духе [Foundation for Sites](https://get.foundation/), без npm-пакета `foundation-sites`: свои SCSS-слои, JS-классы, feature-флаги и CSS-токены `--lf-*`.
+
+**Репозиторий:** [github.com/siverus21/lite-foundation](https://github.com/siverus21/lite-foundation)
+
+---
+
+## Навигация
+
+- [Стек](#стек)
+- [Быстрый старт](#быстрый-старт)
+- [Команды](#команды)
+- [Архитектура](#архитектура)
+  - [Общая схема](#общая-схема)
+  - [SCSS-слои](#scss-слои)
+  - [JavaScript](#javascript)
+  - [Сборка](#сборка)
+  - [Feature-флаги](#feature-флаги)
+  - [Named builds](#named-builds)
+  - [Library builds](#library-builds)
+- [Дизайн-токены](#дизайн-токены)
+  - [Цвета](#цвета)
+  - [Z-index](#z-index)
+  - [Lint токенов](#lint-токенов)
+- [Как добавлять код](#как-добавлять-код)
+  - [Новый SCSS-компонент](#новый-scss-компонент)
+  - [Новый JS-модуль](#новый-js-модуль)
+  - [Vendors](#vendors)
+  - [Выключить ненужное](#выключить-ненужное)
+  - [Критичные правки](#критичные-правки-scsscritical)
+- [Сторонние библиотеки](#сторонние-библиотеки)
+  - [Куда что класть](#куда-что-класть)
+  - [Пример: lightbox (GLightbox)](#пример-lightbox-glightbox)
+  - [Нюансы](#нюансы)
+- [Каталог компонентов](#каталог-компонентов)
+- [Структура репозитория](#структура-репозитория)
+- [Соглашения](#соглашения)
+- [Подключение в проект](#подключение-в-проект)
+
+---
 
 ## Стек
 
-- **Vite** — dev-сервер и сборка в `dist/`
-- **Sass** — слои `abstracts` / `settings` / `base` / `layout` / `components` / `utilities` / `critical`
-- **jQuery 3.7** — бандлится в `lib.js` (опционально)
-- **Swiper** — слайдер
-- **Animate.css** — модульные fade-анимации
+| Технология | Роль |
+|------------|------|
+| **Vite 6** | Dev-сервер (HMR); production — `scripts/build.js` (named builds) |
+| **Sass** | Многослойная архитектура → `dist/app.css`, `app-{name}.css`, `lib-{name}.css` |
+| **Cash** | Опционально, бандлится в JS (`window.$`) — лёгкая замена jQuery без ajax |
+| **Swiper 11** | Отдельный library-бандл `lib-swiper.css` / `lib-swiper.js` |
+| **Animate.css 4** | Fade-анимации (только CSS через vendors) |
 
-## Установка
+Требования: **Node.js 18+**, npm.
 
-Нужны [Node.js](https://nodejs.org/) 18+ и npm.
+---
+
+## Быстрый старт
 
 ```bash
+git clone https://github.com/siverus21/lite-foundation.git
+cd lite-foundation
 npm install
 npm start
 ```
 
-Kitchen-sink: `index.html` (HMR для SCSS/JS).
+Откроется kitchen-sink: [`index.html`](index.html) — все компоненты на одной странице, HMR для SCSS и JS.  
+Минимальный пример named build: [`about.html`](about.html) → `app-about.css` / `lib-about.js`.
 
-Production:
+Production-сборка:
 
 ```bash
 npm run build
 ```
 
-Результат:
+Артефакты (плоский `dist/`, по ключам в `builds`):
 
 ```text
 dist/
-  app.css
+  app.css          # full (kitchen-sink, без Swiper)
   lib.js
+  app-about.css    # builds.about
+  lib-about.js
+  lib-swiper.css   # builds.swiper (kind: library)
+  lib-swiper.js
+  *.map
 ```
 
-| Команда | Зачем |
-|---------|--------|
-| `npm start` / `npm run dev` | dev-сервер + HMR |
-| `npm run build` | production в `dist/` |
-| `npm run sync:features` | пересобрать индексы вручную |
-| `npm run lint:tokens` | проверка хардкода цветов / z-index |
-
-## Структура
-
-```text
-config/
-  features.js          # флаги включения компонентов / vendors / scripts
-scss/
-  abstracts/           # rem-calc, breakpoint, …
-  settings/            # токены (Sass) + css-variables → :root (--lf-*)
-  base / layout / components / utilities / vendors/
-  critical/            # срочные правки (без token-lint, с напоминанием)
-js/
-  lib.js               # entry
-  vendors.js           # GENERATED (jQuery → window.$)
-  modules/             # UI-классы + GENERATED index.js
-scripts/
-  sync-features.js     # генерация индексов из features.js
-  lint-tokens.js       # предупреждения по токенам + critical/
-dist/
-  app.css
-  lib.js
-```
-
-Сгенерированные файлы (`GENERATED` в шапке) руками не править:
-
-- `scss/{components,settings,vendors,layout,utilities,critical}/_index.scss`
-- `js/modules/index.js`, `js/vendors.js`
+В конце сборки — `token lint`, `✓ build ok` и размеры всех бандлов (raw + gzip).
 
 ---
 
-## Как пользоваться
+## Команды
+
+| Команда | Описание |
+|---------|----------|
+| `npm start` / `npm run dev` | Vite dev-сервер + HMR |
+| `npm run build` | Production: все named builds → `dist/app*.css` + `dist/lib*.js` |
+| `npm run sync:features` | Пересобрать индексы из `config/features.js` вручную |
+| `npm run lint:tokens` | Проверить хардкод цветов / z-index; напомнить про `critical/` |
+
+---
+
+## Архитектура
+
+### Общая схема
+
+```mermaid
+flowchart TB
+  subgraph config [Конфиг]
+    F[config/features.js]
+  end
+
+  subgraph gen [Генерация при start/build]
+    S[scripts/sync-features.js]
+    IDX[Индексы SCSS + js/builds/* + scss/builds/*]
+  end
+
+  subgraph styles [Стили]
+    APP[scss/app.scss + builds/*/app.scss]
+    SET[settings → токены]
+    COMP[components / layout / …]
+    CRIT[critical — hotfix]
+    CSS[dist/app.css + app-name.css]
+  end
+
+  subgraph scripts_js [Скрипты]
+    LIB[js/builds/*/entry.js]
+    VEND[vendors.js per build]
+    MOD[js/modules/*.js — классы]
+    JS[dist/lib.js + lib-name.js]
+  end
+
+  F --> S --> IDX
+  IDX --> APP
+  IDX --> LIB
+  SET --> APP
+  COMP --> APP
+  CRIT --> APP
+  APP --> CSS
+  VEND --> LIB
+  MOD --> LIB
+  LIB --> JS
+```
+
+**Идея:** один источник правды — [`config/features.js`](config/features.js) (`export default` + `builds`). Из него генерируются списки `@import` и JS-модулей. Выключенный флаг = код не попадает в соответствующий бандл.
+
+### SCSS-слои
+
+Порядок в [`scss/app.scss`](scss/app.scss) (сверху вниз):
+
+| # | Слой | Путь | Назначение |
+|---|------|------|------------|
+| 1 | Abstracts | `scss/abstracts/` | `rem-calc`, breakpoint-миксины, функции (без CSS-вывода) |
+| 2 | Settings | `scss/settings/` | Sass-переменные + эмит `:root { --lf-* }` |
+| 3 | Base | `scss/base/` | Reset, типографика |
+| 4 | Vendors | `scss/vendors/` | Swiper / Animate.css (по флагам) |
+| 5 | Layout | `scss/layout/` | Grid, containers; опционально title-bar / top-bar |
+| 6 | Components | `scss/components/` | UI-компоненты (по флагам `styles.*`) |
+| 7 | Utilities | `scss/utilities/` | Flex / visibility helpers |
+| 8 | Critical | `scss/critical/` | Срочные оверрайды (последними, без token-lint) |
+
+**Паттерн компонента:** папка = компонент.
+
+```text
+scss/settings/button/     → Sass-токены ($button-…)
+scss/components/button/   → CSS (.button, .button-group, …)
+```
+
+Каждая папка имеет `_index.scss`, который тянет partials. Корневые `_index.scss` слоёв **генерируются** — руками не править.
+
+### JavaScript
+
+| Файл | Роль |
+|------|------|
+| [`js/builds/{name}/entry.js`](js/builds/) | GENERATED entry: vendors → boot → `initModules()` |
+| [`js/boot.js`](js/boot.js) | Shared: в dev грузит Sass (HMR), в prod ждёт CSS |
+| [`js/lib.js`](js/lib.js) | Thin re-export `builds/full/entry.js` (BC) |
+| [`js/modules/*.js`](js/modules/) | UI-классы (`Modal`, `Tabs`, `Accordion`, …) |
+
+В **dev** entry импортирует Sass (HMR) и отключает `<link href="dist/…">`.  
+В **production** страница подключает собранный CSS, а бандл ждёт его загрузки перед инициализацией модулей.
+
+Контракт модуля:
+
+```js
+export class MyWidget {
+  constructor(root = document) {
+    // находит разметку, вешает обработчики
+  }
+}
+```
+
+### Сборка
+
+- **Dev:** [`vite.config.js`](vite.config.js) — HMR, `featuresPlugin` синхронизирует builds.
+- **Production:** [`scripts/build.js`](scripts/build.js) — для каждого ключа в `builds` собирает JS (Vite) и CSS (Dart Sass), затем lint + отчёт размеров.
+
+Почему не один multi-input Vite build: `inlineDynamicImports: true` несовместим с несколькими entry — бандлы идут последовательно.
+
+### Feature-флаги
+
+Файл: [`config/features.js`](config/features.js).
+
+#### Обязательный слой (`export const required`)
+
+Нельзя выключить. Всегда в **page**-сборках (`kind: 'page'`). Library-бандлы этот слой не тащат:
+
+| Ключ | Содержимое |
+|------|------------|
+| `abstracts` | `functions`, `mixins` |
+| `settings` | `global`, `breakpoints`, `grid`, `typography`, `z-index`, `css-variables` |
+| `base` | `reset`, `typography` |
+| `layout` | `containers`, `grid` |
+
+#### Опциональные флаги (`export default`)
+
+Пресет **full** (kitchen-sink → `app.css` / `lib.js`). Тяжёлые vendors лучше выносить в [library builds](#library-builds):
+
+```js
+export default {
+  vendors: {
+    cash: true,      // → window.$
+    swiper: false,   // отдельно: builds.swiper
+    animate: true,   // CSS only
+  },
+  layout: {
+    titleBar: true,
+    topBar: true,
+  },
+  utilities: true,
+  styles: { /* компоненты → CSS; slider: false → в lib-swiper */ },
+  scripts: { /* модули → JS; slider: false → в lib-swiper */ },
+};
+```
+
+#### Named builds
+
+Объект `builds` — отдельные бандлы. У записи может быть мета-поле `kind`:
+
+| `kind` | CSS | JS | Содержимое |
+|--------|-----|-----|------------|
+| `page` (по умолчанию) | `app-{name}.css` (`full` → `app.css`) | `lib-{name}.js` (`full` → `lib.js`) | Полная страница: required + флаги |
+| `library` | `lib-{name}.css` | `lib-{name}.js` | Addon: только vendors/styles/scripts, **без** base/layout/critical |
+
+| Ключ | kind | Артефакты | Назначение |
+|------|------|-----------|------------|
+| `full` | page | `app.css` / `lib.js` | Kitchen-sink (без Swiper) |
+| `about` | page | `app-about.css` / `lib-about.js` | Демо [`about.html`](about.html) |
+| `swiper` | library | `lib-swiper.css` / `lib-swiper.js` | Swiper addon |
+
+Sparse-конфиг (не `full`) стартует с «всё выкл», затем включает перечисленные флаги:
+
+```js
+export const builds = {
+  full: {},
+  about: {
+    vendors: { cash: true },
+    utilities: true,
+    styles: { button: true, callout: true, card: true },
+    scripts: {},
+  },
+  swiper: {
+    kind: 'library',
+    vendors: { swiper: true },
+    styles: { slider: true },
+    scripts: { slider: true },
+  },
+};
+```
+
+Генератор пишет:
+
+- `js/builds/{name}/{vendors,modules,entry}.js`
+- `scss/builds/{name}/app.scss`
+- shared indexes для full (`scss/*/_index.scss`)
+
+Генератор: [`scripts/sync-features.js`](scripts/sync-features.js).  
+Маппинги `STYLE_FOLDERS` / `STYLE_SETTINGS` / `SCRIPT_MODULES` — сюда же добавляются новые сущности.
+
+После правок `features.js` достаточно сохранить файл при `npm start` или выполнить `npm run build` / `npm run sync:features`.
+
+#### Library builds
+
+Нужны, когда тяжёлую зависимость (Swiper, lightbox, chart…) не стоит класть в `lib.js` каждой страницы.
+
+**Правила:**
+
+1. В `export default` (full) флаги этой библиотеки = `false`.
+2. В `builds` — отдельный ключ с `kind: 'library'`.
+3. Имена файлов всегда `lib-{ключ}.css` + `lib-{ключ}.js` (не `app-…`).
+4. CSS library — addon: только vendor-стили и связанные components. Reset, grid, токены не дублируются — их даёт page-бандл (`app.css`).
+5. На HTML подключай **page + library** вместе.
+
+Пример — новая библиотека `charts`:
+
+```js
+// в export default
+vendors: { /* … */, charts: false },
+styles: { /* … */, charts: false },
+scripts: { /* … */, charts: false },
+
+// в builds
+charts: {
+  kind: 'library',
+  vendors: { charts: true },
+  styles: { charts: true },
+  scripts: { charts: true },
+},
+```
+
+После `npm run build` → `dist/lib-charts.css`, `dist/lib-charts.js`.
+
+Подключение на странице (как kitchen-sink для Swiper):
+
+```html
+<link rel="stylesheet" href="dist/app.css">
+<link rel="stylesheet" href="dist/lib-swiper.css">
+<script type="module" src="dist/lib.js"></script>
+<script type="module" src="dist/lib-swiper.js"></script>
+```
+
+В **dev** вместо `dist/lib-*.js` указывай entry:
+
+```html
+<script type="module" src="/js/builds/full/entry.js"></script>
+<script type="module" src="/js/builds/swiper/entry.js"></script>
+```
+
+(или `/js/lib.js` как alias full).
+
+---
+
+## Дизайн-токены
+
+Два уровня:
+
+1. **Sass** (`scss/settings/…`) — исходные значения при сборке.
+2. **CSS custom properties** (`--lf-*` в `:root`) — то, чем пользуются компоненты; можно переопределить в рантайме без rebuild.
+
+Эмит: [`scss/settings/css-variables/_css-variables.scss`](scss/settings/css-variables/_css-variables.scss)  
+(компонентные токены — через `@if variable-exists(...)`, чтобы не ломать сборку при выключенных features).
 
 ### Цвета
 
-1. Палитра и нейтрали — `scss/settings/global/_global.scss`:
+Палитра и нейтрали — [`scss/settings/global/_global.scss`](scss/settings/global/_global.scss):
 
 ```scss
 $foundation-palette: (
   "primary": #1779ba,
   "secondary": #767676,
-  …
+  "success": #3adb76,
+  "warning": #ffae00,
+  "alert": #cc4b37,
 );
 $light-gray: #e6e6e6;
+$medium-gray: #cacaca;
+$dark-gray: #8a8a8a;
 $black: #0a0a0a;
 $white: #fefefe;
 ```
 
-2. Они эмитятся в `:root` как `--lf-color-primary`, `--lf-color-white`, …  
-   (`scss/settings/css-variables/_css-variables.scss`).
+В CSS появляются, например:
 
-3. **В компонентах** только через CSS-переменные:
+- `--lf-color-primary`, `--lf-color-primary-contrast`, `--lf-color-primary-hover`
+- `--lf-color-white`, `--lf-body-bg`, `--lf-overlay`, `--lf-shadow-modal`, …
+
+**В компонентах** только так:
 
 ```scss
-color: var(--lf-color-primary);
-background: var(--lf-overlay);
+.button {
+  background: var(--lf-button-bg);
+  color: var(--lf-button-color);
+}
 ```
 
-4. Без пересборки (runtime):
+Допустим Sass-fallback внутри `var()`:
+
+```scss
+color: var(--lf-closebutton-color, #{$closebutton-color});
+```
+
+Переопределение без пересборки:
 
 ```css
-:root { --lf-color-primary: #0a7; }
+:root {
+  --lf-color-primary: #0a7;
+}
 ```
-
-Хардкод `#hex` / `rgba()` / `z-index: 20` в `components` / `layout` / `base` / `utilities` → яркий `TOKEN WARNING` на сборке.
 
 ### Z-index
 
-Файл: `scss/settings/z-index/_z-index.scss`
+Шкала: [`scss/settings/z-index/_z-index.scss`](scss/settings/z-index/_z-index.scss)
 
 ```scss
 $z-index: (
+  behind: -1,
+  content: 1,
+  sticky: 2,
   dropdown: 20,
   tooltip: 30,
+  offcanvas-backdrop: 1001,
+  offcanvas: 1002,
   my-panel: 40, // новый уровень
 );
 ```
 
-В стилях:
+→ `--lf-z-dropdown`, `--lf-z-my-panel`, …
 
 ```scss
-z-index: var(--lf-z-my-panel);
+.dropdown-pane {
+  z-index: var(--lf-z-dropdown);
+}
 ```
+
+### Lint токенов
+
+Скрипт: [`scripts/lint-tokens.js`](scripts/lint-tokens.js)
+
+Сканирует: `scss/{components,layout,base,utilities}`  
+Ищет: `#hex`, `rgba()/rgb()/hsl()`, `z-index: 20`  
+**Не** сканирует: `settings/`, `abstracts/`, `vendors/`, `critical/`
+
+При нарушениях — яркий баннер `TOKEN WARNING` (сборка не падает; для fail: `npm run lint:tokens -- --strict`).
+
+Если в `scss/critical/` есть **непустые** partials — баннер `CRITICAL STYLES` со списком файлов.
+
+---
+
+## Как добавлять код
 
 ### Новый SCSS-компонент
 
 Пример: `alert-banner`.
 
-1. Settings: `scss/settings/alert-banner/_alert-banner.scss` + `_index.scss`
-2. Styles: `scss/components/alert-banner/_alert-banner.scss` + `_index.scss`  
-   Цвета / z-index только через `var(--lf-…)`.
-3. При необходимости добавь токены в `scss/settings/css-variables/_css-variables.scss`  
-   (блок `@if variable-exists(...)`).
-4. Зарегистрируй в [`scripts/sync-features.js`](scripts/sync-features.js):
-   - `STYLE_FOLDERS.alertBanner = 'alert-banner'`
-   - `STYLE_SETTINGS.alertBanner = ['alert-banner']`
-5. Включи в [`config/features.js`](config/features.js):
+1. **Settings**
+
+```text
+scss/settings/alert-banner/_alert-banner.scss
+scss/settings/alert-banner/_index.scss   → @import 'alert-banner';
+```
+
+2. **Styles** (только `var(--lf-…)`)
+
+```text
+scss/components/alert-banner/_alert-banner.scss
+scss/components/alert-banner/_index.scss
+```
+
+3. При необходимости — токены в `css-variables` (`@if variable-exists(...)`).
+
+4. Регистрация в [`scripts/sync-features.js`](scripts/sync-features.js):
 
 ```js
-styles: { alertBanner: true, /* … */ }
+STYLE_FOLDERS.alertBanner = 'alert-banner';
+STYLE_SETTINGS.alertBanner = ['alert-banner'];
+```
+
+5. Флаг в [`config/features.js`](config/features.js):
+
+```js
+styles: { alertBanner: true }
 ```
 
 ### Новый JS-модуль
 
-1. Класс в `js/modules/my-widget.js`:
+1. Класс:
 
 ```js
+// js/modules/my-widget.js
 export class MyWidget {
   constructor(root = document) {
-    // …
+    root.querySelectorAll('[data-my-widget]').forEach((el) => {
+      // …
+    });
   }
 }
 ```
 
-2. В `scripts/sync-features.js` → `SCRIPT_MODULES`:
+2. В `SCRIPT_MODULES`:
 
 ```js
 myWidget: { file: './my-widget.js', className: 'MyWidget' },
 ```
 
-3. В `config/features.js`:
+3. Флаг:
 
 ```js
-scripts: { myWidget: true, /* … */ }
+scripts: { myWidget: true }
 ```
 
-`initModules()` сам сделает `new MyWidget()`.
+`initModules()` вызовет `new MyWidget()`.
 
 ### Vendors
 
-В `config/features.js` → `vendors`:
+| Флаг | CSS | JS |
+|------|-----|----|
+| `vendors.cash` | — | в `lib.js`, `window.$` (cash-dom, без ajax) |
+| `vendors.swiper` | `scss/vendors/_swiper.scss` → `lib-swiper.css` | `scripts.slider` → `lib-swiper.js` (отдельный library build) |
+| `vendors.animate` | `scss/vendors/_animate.scss` | — |
 
-| Флаг | Что делает |
-|------|------------|
-| `jquery` | бандл в `lib.js`, `window.$` / `window.jQuery` |
-| `swiper` | CSS (+ JS, если включён `scripts.slider`) |
-| `animate` | CSS в `app.css` |
-
-Отдельные `<script>` из `node_modules` не нужны.
+Отдельные `<script src="node_modules/…">` не нужны.
 
 ### Выключить ненужное
 
@@ -188,45 +508,276 @@ scripts: { accordion: false },
 vendors: { swiper: false },
 ```
 
-Компонент не попадёт ни в `dist/app.css`, ни в `dist/lib.js`.
+Компонент не попадёт в соответствующий бандл → меньше вес.  
+Для отдельной страницы лучше завести ключ в `builds` (см. [Named builds](#named-builds)), а не только выключать флаги в `full`.
 
 ### Критичные правки (`scss/critical/`)
 
-Срочный hotfix, который нельзя сразу разложить по компонентам:
+Для срочного hotfix, который нельзя сразу разложить по компонентам:
 
-1. Добавь partial: `scss/critical/_hotfix-modal.scss` (пустой файл не считается и не импортируется)
-2. Он подключится **последним** (перебьёт обычные стили)
-3. **Не** проходит `lint:tokens` — можно временно писать литералы
-4. На `npm start` / `npm run build` будет баннер `CRITICAL STYLES` со списком **непустых** файлов — пока не перенесёшь правила в нормальный компонент + токены и не удалишь файл
+1. Создай `scss/critical/_hotfix-….scss` (**пустой файл игнорируется** — ни импорт, ни баннер).
+2. Partial подключается **последним** в `app.scss` (перебивает обычные стили).
+3. Token-lint **не** проверяет эту папку.
+4. Пока файл непустой — на `start`/`build` будет `CRITICAL STYLES`.
+
+Цель: как можно быстрее перенести правила в нормальный компонент + `--lf-*` и удалить hotfix.
 
 Подробнее: [`scss/critical/README.md`](scss/critical/README.md).
 
 ---
 
-## Features (флаги)
+## Сторонние библиотеки
 
-Один конфиг: [`config/features.js`](config/features.js).
+Сторонний пакет подключается так же, как Cash / Swiper: **npm → флаги в `features.js` → CSS в `vendors` и/или JS-модуль → бандл**. Отдельные `<script src="node_modules/…">` и CDN не нужны.
 
-**Обязательный слой** (`export const required`) всегда в сборке:
+### Куда что класть
 
-| Слой | Что тянется |
-|------|-------------|
-| abstracts | `functions`, `mixins` |
-| settings | `global`, `breakpoints`, `grid`, `typography`, `z-index`, `css-variables` |
-| base | `reset`, `typography` |
-| layout | `containers`, `grid` |
+| Что | Куда | Флаг |
+|-----|------|------|
+| CSS из npm | `scss/vendors/_name.scss` | `vendors.name` |
+| JS из npm + инициализация | `js/modules/name.js` (класс) | `scripts.name` |
+| Свои стили поверх либы | `scss/components/…` + `--lf-*` | `styles.name` |
+| Срочный костыль | `scss/critical/` | — (временно) |
 
-Опционально:
+Регистрация маппингов — в [`scripts/sync-features.js`](scripts/sync-features.js):
 
-```js
-export default {
-  vendors: { jquery: true, swiper: true, animate: true },
-  layout: { titleBar: true, topBar: true },
-  utilities: true,
-  styles: { button: true, accordion: false, /* … */ },
-  scripts: { accordion: false, tabs: true, /* … */ },
-};
+- CSS: дописать `generateVendorsIndex()` (`if (features.vendors?.name) …`)
+- JS: дописать `SCRIPT_MODULES.name = { file, className }`
+
+### Пример: lightbox (GLightbox)
+
+Лёгкий аналог Fancybox. Шаги одинаковы для PhotoSwipe, Tobii и т.п.
+
+#### 1. Установка
+
+```bash
+npm install glightbox
 ```
 
-При `npm start` / `npm run build` из конфига генерируются индексы SCSS/JS (см. структуру выше).  
-Ручная синхронизация: `npm run sync:features`.
+#### 2. Флаги в `config/features.js`
+
+```js
+vendors: {
+  cash: true,
+  swiper: true,
+  animate: true,
+  glightbox: true, // CSS либы
+},
+
+scripts: {
+  // …
+  glightbox: true, // JS-инициализация
+},
+```
+
+#### 3. CSS вендора
+
+`scss/vendors/_glightbox.scss`:
+
+```scss
+@use 'sass:meta';
+
+@include meta.load-css('../../node_modules/glightbox/dist/css/glightbox.css');
+```
+
+В `generateVendorsIndex()`:
+
+```js
+if (features.vendors?.glightbox) lines.push("@import 'glightbox';");
+```
+
+#### 4. JS-модуль
+
+`js/modules/glightbox.js`:
+
+```js
+import GLightbox from 'glightbox';
+
+export class GLightboxGallery {
+  constructor(root = document) {
+    if (!root.querySelector('.glightbox')) return;
+
+    this.instance = GLightbox({
+      selector: '.glightbox',
+    });
+  }
+}
+```
+
+В `SCRIPT_MODULES`:
+
+```js
+glightbox: { file: './glightbox.js', className: 'GLightboxGallery' },
+```
+
+Vite сам положит пакет в `dist/lib.js`.
+
+#### 5. Разметка
+
+```html
+<a href="img/big.jpg" class="glightbox" data-gallery="a">
+  <img src="img/thumb.jpg" alt="">
+</a>
+```
+
+#### 6. Сборка
+
+```bash
+npm start
+# или
+npm run build
+```
+
+Выключить и не тащить в бандл:
+
+```js
+vendors: { glightbox: false },
+scripts: { glightbox: false },
+```
+
+### Нюансы
+
+1. Пакет должен быть понятен Vite (обычный npm ESM/CJS).
+2. Не дублируй либу через CDN или отдельный `<script>` — только `lib.js` / `app.css`.
+3. Свои обёртки (кнопки, отступы) — через `components` + токены `--lf-*`, не хардкодом цветов/z-index.
+4. Тяжёлые зависимости лучше держать с `false` по умолчанию и включать только в нужных проектах.
+5. Если у либы CSS и JS неразрывно связаны — включай оба флага (`vendors` + `scripts`) синхронно.
+
+---
+
+## Каталог компонентов
+
+### Styles (`styles.*` → `app.css`)
+
+| Флаг | Папка | Заметки |
+|------|-------|---------|
+| `button` | `components/button` | button, button-group, close-button |
+| `forms` | `components/forms` | forms, switch, range, form-slider |
+| `menu` | `components/menu` | dropdown / accordion / drilldown menus |
+| `accordion` | `components/accordion` | `<details>` + анимация высоты |
+| `tabs` | `components/tabs` | a11y tabs |
+| `modal` | `components/modal` | native `<dialog>` |
+| `offcanvas` | `components/offcanvas` | drawer + backdrop |
+| `dropdown` | `components/dropdown` | dropdown-pane |
+| `tooltip` | `components/tooltip` | CSS tip (`data-tip`) |
+| `slider` | `components/slider` | Swiper kitchen-sink |
+| `sticky` | `components/sticky` | CSS sticky в grid |
+| `breadcrumbs` | `components/breadcrumbs` | |
+| `pagination` | `components/pagination` | |
+| `mediaObject` | `components/media-object` | |
+| `thumbnail` | `components/thumbnail` | |
+| `responsiveEmbed` | `components/responsive-embed` | |
+| `callout` | `components/callout` | |
+| `card` | `components/card` | |
+| `label` / `badge` | … | |
+| `progress` / `meter` | … | |
+| `table` | `components/table` | |
+
+### Scripts (`scripts.*` → `lib.js`)
+
+| Флаг | Класс | Файл |
+|------|-------|------|
+| `modal` | `Modal` | `js/modules/modal.js` |
+| `tabs` | `Tabs` | `js/modules/tabs.js` |
+| `accordion` | `Accordion` | `js/modules/accordion.js` |
+| `offcanvas` | `Offcanvas` | `js/modules/offcanvas.js` |
+| `dropdown` | `Dropdown` | `js/modules/dropdown.js` |
+| `tooltip` | `Tooltip` | `js/modules/tooltip.js` |
+| `menus` | `Menus` | `js/modules/menus.js` |
+| `slider` | `Slider` | `js/modules/slider.js` (Swiper) |
+| `formSlider` | `FormSlider` | `js/modules/form-slider.js` |
+| `animations` | `Animations` | `js/modules/animations.js` (demo Animate.css) |
+
+---
+
+## Структура репозитория
+
+```text
+lite-foundation/
+├── config/
+│   └── features.js              # флаги + required + builds
+├── js/
+│   ├── boot.js                  # shared boot (dev Sass / prod CSS wait)
+│   ├── lib.js                   # re-export full entry (BC)
+│   ├── builds/{name}/           # GENERATED entries per build
+│   └── modules/
+│       ├── modal.js
+│       ├── tabs.js
+│       └── …
+├── scss/
+│   ├── app.scss                 # full build layers
+│   ├── builds/{name}/app.scss   # GENERATED per-build entries
+│   ├── abstracts/
+│   ├── settings/                # токены по доменам
+│   ├── base/
+│   ├── vendors/
+│   ├── layout/
+│   ├── components/
+│   ├── utilities/
+│   └── critical/                # hotfix (см. README внутри)
+├── scripts/
+│   ├── build.js                 # production multi-build
+│   ├── sync-features.js         # генерация индексов / entries
+│   └── lint-tokens.js           # TOKEN / CRITICAL warnings
+├── index.html                   # kitchen-sink (full)
+├── about.html                   # demo named build
+├── vite.config.js               # dev server
+├── package.json
+└── dist/                        # gitignored — результат build
+```
+
+**GENERATED** (не редактировать вручную):
+
+- `scss/{components,settings,vendors,layout,utilities,critical}/_index.scss`
+- `scss/builds/*/app.scss`
+- `js/builds/*/{vendors,modules,entry}.js`
+- `js/modules/index.js`, `js/vendors.js`, `js/lib.js`
+
+---
+
+## Соглашения
+
+1. Цвета, z-index, оверлеи, тени в компонентах — только `var(--lf-…)`.
+2. Новые уровни стека — в `$z-index`, не литералами.
+3. JS-модули — ES-классы с `constructor(root = document)`.
+4. Включение в продукт — только через `features.js` + регистрация в `sync-features.js`.
+5. `critical/` — временный долг, не постоянный дизайн.
+6. `dist/` и `node_modules/` не коммитить.
+
+---
+
+## Подключение в проект
+
+После `npm run build`:
+
+```html
+<!-- full page -->
+<link rel="stylesheet" href="path/to/dist/app.css">
+<script type="module" src="path/to/dist/lib.js"></script>
+
+<!-- + library addon (например Swiper) -->
+<link rel="stylesheet" href="path/to/dist/lib-swiper.css">
+<script type="module" src="path/to/dist/lib-swiper.js"></script>
+
+<!-- named page build, e.g. about -->
+<link rel="stylesheet" href="path/to/dist/app-about.css">
+<script type="module" src="path/to/dist/lib-about.js"></script>
+```
+
+В dev — Vite + HTML как в репозитории (`/js/builds/{name}/entry.js`).
+
+Тема на лету:
+
+```css
+:root {
+  --lf-color-primary: #2563eb;
+  --lf-body-bg: #0b0f19;
+  --lf-body-color: #f8fafc;
+}
+```
+
+---
+
+## Лицензия
+
+MIT — см. [`package.json`](package.json).

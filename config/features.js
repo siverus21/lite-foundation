@@ -1,17 +1,18 @@
 /**
- * Feature flags — single source of truth for SCSS + JS includes.
- * Edit optional flags below, then restart Vite / run `npm run build`.
+ * Feature flags + named builds.
  *
- * `styles`     → component stylesheets (+ their settings)
- * `scripts`    → JS modules to bundle and init
- * `vendors`    → Swiper / Animate.css CSS + jQuery JS (bundled into lib.js)
- * `layout`     → optional chrome (title-bar / top-bar); core layout is required
- * `utilities`  → flex + visibility helpers
+ * `export default` — preset for the `full` page build (app.css / lib.js).
+ * `builds` — named bundles:
+ *   - page (default) → app-{name}.css + lib-{name}.js  (`full` → app.css / lib.js)
+ *   - library (`kind: 'library'`) → lib-{name}.css + lib-{name}.js
+ *     Addon only: no base/layout/critical. Load alongside a page bundle.
+ *
+ * Edit, then restart Vite / run `npm run build`.
  */
 
 /**
- * Always compiled. Not flags — cannot be turned off.
- * Wired in `scss/app.scss` and regenerated indexes (`scripts/sync-features.js`).
+ * Always compiled into page builds. Not flags — cannot be turned off.
+ * Library builds skip this layer (CSS is addon-only).
  */
 export const required = {
   abstracts: ['functions', 'mixins'],
@@ -20,15 +21,17 @@ export const required = {
   layout: ['containers', 'grid'],
 };
 
-/** Optional includes — set any value to `false` to drop from the build. */
+/** Keys in a `builds` entry that are not feature flags. */
+export const BUILD_META_KEYS = ['kind'];
+
+/** Full kitchen-sink page preset (also the `full` build). Swiper is a separate library build. */
 export default {
   vendors: {
-    jquery: true, // JS → lib.js (window.jQuery / window.$)
-    swiper: true, // CSS + JS (via scripts.slider)
-    animate: true, // CSS only
+    cash: true,
+    swiper: false,
+    animate: true,
   },
 
-  // Extra layout chrome (core containers + grid always load — see `required.layout`)
   layout: {
     titleBar: true,
     topBar: true,
@@ -38,7 +41,7 @@ export default {
 
   styles: {
     modal: true,
-    slider: true,
+    slider: false,
     sticky: true,
     tabs: true,
     accordion: true,
@@ -64,7 +67,7 @@ export default {
 
   scripts: {
     modal: true,
-    slider: true,
+    slider: false,
     formSlider: true,
     animations: true,
     tabs: true,
@@ -75,3 +78,78 @@ export default {
     menus: true,
   },
 };
+
+/**
+ * Named builds. Sparse configs (not `full`) start from “all off”, then apply listed flags.
+ * Meta: `kind: 'page' | 'library'` (default `page`).
+ */
+export const builds = {
+  full: {},
+
+  /** Minimal demo page — about.html → app-about.css + lib-about.js */
+  about: {
+    vendors: {
+      cash: true,
+      swiper: false,
+      animate: false,
+    },
+    layout: {
+      titleBar: false,
+      topBar: false,
+    },
+    utilities: true,
+    styles: {
+      button: true,
+      callout: true,
+      card: true,
+    },
+    scripts: {},
+  },
+
+  /**
+   * Vendor library addon — lib-swiper.css + lib-swiper.js
+   * Pair with a page bundle (e.g. app.css + lib.js) on pages that need a slider.
+   */
+  swiper: {
+    kind: 'library',
+    vendors: { swiper: true },
+    styles: { slider: true },
+    scripts: { slider: true },
+  },
+};
+
+/** Split meta (`kind`) from feature flags in a builds entry. */
+export function splitBuildConfig(raw = {}) {
+  const features = {};
+  let kind = 'page';
+  for (const [key, value] of Object.entries(raw)) {
+    if (key === 'kind') kind = value || 'page';
+    else features[key] = value;
+  }
+  return { kind, features };
+}
+
+export function getBuildKind(buildName) {
+  return splitBuildConfig(builds[buildName]).kind;
+}
+
+/** Output file basenames for a build key. */
+export function buildOutputNames(buildName) {
+  if (buildName === 'full') {
+    return { css: 'app.css', js: 'lib.js', cssMap: 'app.css.map', jsMap: 'lib.js.map' };
+  }
+  if (getBuildKind(buildName) === 'library') {
+    return {
+      css: `lib-${buildName}.css`,
+      js: `lib-${buildName}.js`,
+      cssMap: `lib-${buildName}.css.map`,
+      jsMap: `lib-${buildName}.js.map`,
+    };
+  }
+  return {
+    css: `app-${buildName}.css`,
+    js: `lib-${buildName}.js`,
+    cssMap: `app-${buildName}.css.map`,
+    jsMap: `lib-${buildName}.js.map`,
+  };
+}

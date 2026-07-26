@@ -1,12 +1,12 @@
-import { Modal } from './modal.js';
-import { FormSlider } from './form-slider.js';
-import { Animations } from './animations.js';
-import { Tabs } from './tabs.js';
-import { Accordion } from './accordion.js';
-import { Offcanvas } from './offcanvas.js';
-import { Dropdown } from './dropdown.js';
-import { Tooltip } from './tooltip.js';
-import { Menus } from './menus.js';
+import { Modal } from '../../modules/modal.js';
+import { FormSlider } from '../../modules/form-slider.js';
+import { Animations } from '../../modules/animations.js';
+import { Tabs } from '../../modules/tabs.js';
+import { Accordion } from '../../modules/accordion.js';
+import { Offcanvas } from '../../modules/offcanvas.js';
+import { Dropdown } from '../../modules/dropdown.js';
+import { Tooltip } from '../../modules/tooltip.js';
+import { Menus } from '../../modules/menus.js';
 
 /**
  * Register and run enabled UI modules (see config/features.js builds).

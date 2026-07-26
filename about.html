@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — lite-foundation</title>
+    <link rel="stylesheet" href="dist/app-about.css">
+  </head>
+  <body>
+    <div class="grid-container" style="padding-block: 2rem;">
+      <p><a href="index.html">← Kitchen sink</a></p>
+
+      <h1>About</h1>
+      <p class="callout primary">
+        Эта страница собирается отдельным бандлом:
+        <code>app-about.css</code> + <code>lib-about.js</code>
+        (см. <code>builds.about</code> в <code>config/features.js</code>).
+      </p>
+
+      <div class="grid-x grid-margin-x">
+        <div class="cell medium-6">
+          <div class="card">
+            <div class="card-section">
+              <h2>Минимальный набор</h2>
+              <p>
+                В about-сборке только grid/base, utilities, button, callout, card и Cash —
+                без Swiper, меню, модалок и остального kitchen-sink.
+              </p>
+              <p>
+                <a class="button primary" href="index.html">Открыть kitchen sink</a>
+                <button type="button" class="button secondary">Secondary</button>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="cell medium-6">
+          <div class="card">
+            <div class="card-section">
+              <h2>Зачем так</h2>
+              <p>
+                Главная и внутренние страницы могут тянуть разные CSS/JS,
+                чтобы не отдавать лишний вес.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/js/builds/about/entry.js"></script>
+  </body>
+</html>

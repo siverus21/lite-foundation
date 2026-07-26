@@ -1,12 +1,12 @@
 {
   "name": "lite-foundation",
   "version": "1.1.1",
-  "description": "Lightweight Foundation-compatible UI starter (Vite + Sass + jQuery + Swiper + Animate.css).",
+  "description": "Lightweight Foundation-compatible UI starter (Vite + Sass + Cash + Swiper + Animate.css).",
   "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/build.js",
     "sync:features": "node scripts/sync-features.js",
     "lint:tokens": "node scripts/lint-tokens.js"
   },
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
-    "jquery": "3.7.1",
+    "cash-dom": "^8.1.5",
     "swiper": "^11.2.10"
   },
   "devDependencies": {
