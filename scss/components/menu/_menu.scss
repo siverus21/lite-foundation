@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Base menu + dropdown / accordion / drilldown variants (replaces Foundation menus).
 
 .menu {
@@ -5,195 +6,203 @@
   flex-wrap: wrap;
   align-items: center;
   list-style: none;
-  margin: 0;
+  margin: $menu-margin;
   padding: 0;
-}
 
-.menu > li {
-  display: flex;
-  align-items: center;
-}
+  > li {
+    display: flex;
+    align-items: center;
+  }
 
-.menu a,
-.menu .button {
-  display: block;
-  padding: 0.7rem 1rem;
-  line-height: 1;
-  text-decoration: none;
-}
+  a,
+  .button {
+    display: block;
+    padding: $menu-items-padding;
+    line-height: 1;
+    text-decoration: none;
+  }
 
-.menu .is-active > a {
-  background: var(--lf-menu-item-bg-active);
-  color: var(--lf-menu-item-color-active);
-}
+  .is-active > a {
+    background: var(--lf-menu-item-bg-active);
+    color: var(--lf-menu-item-color-active);
+  }
 
-.menu.vertical {
-  flex-direction: column;
-  align-items: stretch;
-}
+  &.vertical {
+    flex-direction: column;
+    align-items: stretch;
 
-.menu.vertical > li {
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-}
+    > li {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+  }
 
-.menu.simple > li {
-  margin: 0;
-}
+  &.simple {
+    > li {
+      margin: 0;
 
-.menu.simple > li + li {
-  margin-inline-start: 1rem;
-}
+      + li {
+        margin-inline-start: $menu-simple-margin;
+      }
+    }
+  }
 
-.menu-text {
-  padding: 0.7rem 1rem;
-  font-weight: bold;
-  line-height: 1;
-  color: inherit;
+  &-text {
+    padding: $menu-items-padding;
+    font-weight: bold;
+    line-height: 1;
+    color: inherit;
+  }
 }
 
 /* Dropdown menu */
 .dropdown.menu {
   position: relative;
-}
 
-.dropdown.menu > li {
-  position: relative;
-}
+  > li {
+    position: relative;
 
-.dropdown.menu > li > .menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  inset-inline-start: 0;
-  z-index: var(--lf-z-dropdown);
-  min-width: 200px;
-  flex-direction: column;
-  align-items: stretch;
-  background: var(--lf-menu-submenu-bg);
-  border: 1px solid var(--lf-menu-submenu-border);
-}
+    > .menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      inset-inline-start: 0;
+      z-index: var(--lf-z-dropdown);
+      min-width: 200px;
+      flex-direction: column;
+      align-items: stretch;
+      background: var(--lf-menu-submenu-bg);
+      border: 1px solid var(--lf-menu-submenu-border);
 
-.dropdown.menu > li.is-open > .menu {
-  display: flex;
-}
+      > li {
+        width: 100%;
+      }
+    }
 
-.dropdown.menu > li > .menu > li {
-  width: 100%;
-}
+    &.is-open > .menu {
+      display: flex;
+    }
 
-.dropdown.menu > li.has-submenu > a::after {
-  @include lf-chevron(down, 4px, var(--lf-color-primary));
-  margin-inline-start: 0.5rem;
-  vertical-align: middle;
+    &.has-submenu > a::after {
+      @include lf-chevron(down, 4px, var(--lf-color-primary));
+      margin-inline-start: 0.5rem;
+      vertical-align: middle;
+    }
+  }
 }
 
 /* Accordion menu — smooth expand via grid 0fr/1fr on a wrapper panel */
-.accordion-menu .submenu-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s ease-in-out;
-}
+.accordion-menu {
+  .submenu-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease-in-out;
+  }
 
-.accordion-menu li.is-open > .submenu-panel {
-  grid-template-rows: 1fr;
-}
+  li.is-open > .submenu-panel {
+    grid-template-rows: 1fr;
+  }
 
-.accordion-menu .submenu-panel > .nested {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-height: 0;
-  margin-inline-start: 1rem;
-}
+  .submenu-panel > .nested {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    margin-inline-start: 1rem;
+  }
 
-.accordion-menu li.has-submenu > a {
-  position: relative;
-  padding-inline-end: 2rem;
-}
+  li.has-submenu {
+    > a {
+      position: relative;
+      padding-inline-end: 2rem;
 
-.accordion-menu li.has-submenu > a::after {
-  @include lf-chevron-angle(0.4rem, var(--lf-color-primary));
-  position: absolute;
-  top: 50%;
-  inset-inline-end: 1rem;
-  transform: translateY(-65%) rotate(45deg);
-  transition: transform 0.35s ease;
-}
+      &::after {
+        @include lf-chevron-angle(0.4rem, var(--lf-color-primary));
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 1rem;
+        transform: translateY(-65%) rotate(45deg);
+        transition: transform 0.35s ease;
+      }
+    }
 
-.accordion-menu li.has-submenu.is-open > a::after {
-  transform: translateY(-35%) rotate(225deg);
+    &.is-open > a::after {
+      transform: translateY(-35%) rotate(225deg);
+    }
+  }
 }
 
 /* Drilldown menu — Foundation-like slide panels */
 .is-drilldown {
   position: relative;
   overflow: hidden;
+
+  &.animate-height {
+    transition: height 0.35s ease;
+  }
+
+  li {
+    display: block;
+    width: 100%;
+  }
+
+  .drilldown {
+    width: 100%;
+    margin: 0;
+  }
 }
 
-.is-drilldown.animate-height {
-  transition: height 0.35s ease;
-}
+.drilldown {
+  .is-drilldown-submenu {
+    position: absolute;
+    top: 0;
+    // Physical left + translateX: slide animation is LTR-oriented.
+    left: 100%;
+    z-index: var(--lf-z-behind);
+    display: flex;
+    width: 100%;
+    margin: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--lf-menu-submenu-bg);
+    transition: transform 0.15s linear;
 
-.is-drilldown li {
-  display: block;
-  width: 100%;
-}
+    &.is-active {
+      z-index: var(--lf-z-content);
+      visibility: visible;
+      transform: translateX(-100%);
+    }
 
-.is-drilldown .drilldown {
-  width: 100%;
-  margin: 0;
-}
+    &.is-closing {
+      transform: translateX(100%);
+    }
+  }
 
-.drilldown .is-drilldown-submenu {
-  position: absolute;
-  top: 0;
-  // Physical left + translateX: slide animation is LTR-oriented.
-  left: 100%;
-  z-index: var(--lf-z-behind);
-  display: flex;
-  width: 100%;
-  margin: 0;
-  flex-direction: column;
-  align-items: stretch;
-  background: var(--lf-menu-submenu-bg);
-  transition: transform 0.15s linear;
-}
+  .invisible {
+    visibility: hidden;
+  }
 
-.drilldown .is-drilldown-submenu.is-active {
-  z-index: var(--lf-z-content);
-  visibility: visible;
-  transform: translateX(-100%);
-}
+  .js-drilldown-back > a {
+    font-weight: bold;
 
-.drilldown .is-drilldown-submenu.is-closing {
-  transform: translateX(100%);
-}
+    &::before {
+      @include lf-chevron(left, 6px, var(--lf-color-primary));
+      vertical-align: middle;
+      margin-inline-end: 0.75rem;
+    }
+  }
 
-.drilldown .invisible {
-  visibility: hidden;
-}
+  .is-drilldown-submenu-parent > a {
+    position: relative;
+    padding-inline-end: 2rem;
 
-.drilldown .js-drilldown-back > a {
-  font-weight: bold;
-}
-
-.drilldown .js-drilldown-back > a::before {
-  @include lf-chevron(left, 6px, var(--lf-color-primary));
-  vertical-align: middle;
-  margin-inline-end: 0.75rem;
-}
-
-.drilldown .is-drilldown-submenu-parent > a {
-  position: relative;
-  padding-inline-end: 2rem;
-}
-
-.drilldown .is-drilldown-submenu-parent > a::after {
-  @include lf-chevron(right, 6px, var(--lf-color-primary));
-  position: absolute;
-  top: 50%;
-  inset-inline-end: 1rem;
-  margin-top: -6px;
+    &::after {
+      @include lf-chevron(right, 6px, var(--lf-color-primary));
+      position: absolute;
+      top: 50%;
+      inset-inline-end: 1rem;
+      margin-top: -6px;
+    }
+  }
 }

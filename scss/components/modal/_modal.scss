@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Native <dialog> modal (replaces Foundation Reveal).
 
 .modal {
@@ -12,20 +13,20 @@
   max-height: calc(100vh - 2rem);
   overflow: auto;
   box-shadow: var(--lf-shadow-modal);
-}
 
-.modal::backdrop {
-  background: var(--lf-modal-overlay, var(--lf-overlay));
-}
+  &::backdrop {
+    background: var(--lf-modal-overlay, var(--lf-overlay));
+  }
 
-.modal__title {
-  margin-top: 0;
-}
+  &__title {
+    margin-top: 0;
+  }
 
-.modal .close-button {
-  position: absolute;
-  inset-inline-end: 1rem;
-  top: 0.5rem;
+  .close-button {
+    position: absolute;
+    inset-inline-end: 1rem;
+    top: 0.5rem;
+  }
 }
 
 // Only is-scroll-locked applies position:fixed (set by lockScroll after saving scrollY).

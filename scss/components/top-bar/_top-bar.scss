@@ -1,0 +1,69 @@
+@use '../../settings/vars' as *;
+// Top bar — nested SCSS; tokens from settings/top-bar.
+// Mobile-first: stacked by default, unstacks at $topbar-unstack-breakpoint.
+
+.top-bar {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: $topbar-padding;
+  padding: $topbar-padding;
+  background: var(--lf-topbar-bg, #{$topbar-background});
+
+  &,
+  ul {
+    background-color: var(--lf-topbar-bg, #{$topbar-submenu-background});
+  }
+
+  &-left,
+  &-right {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex: 1 1 100%;
+    justify-content: start;
+  }
+
+  &-right {
+    justify-content: start;
+  }
+
+  input {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .menu {
+    background: transparent;
+
+    .menu-text {
+      padding: $topbar-title-spacing;
+      font-weight: bold;
+      color: inherit;
+      line-height: 1;
+      cursor: default;
+    }
+  }
+
+  @include breakpoint($topbar-unstack-breakpoint) {
+    flex-direction: row;
+    align-items: center;
+
+    &-left,
+    &-right {
+      flex: 1 1 auto;
+    }
+
+    &-right {
+      justify-content: end;
+    }
+
+    input {
+      width: auto;
+      max-width: $topbar-input-width;
+    }
+  }
+}

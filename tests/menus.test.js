@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Menus } from '../js/modules/menus.js';
+import { MenuDropdown } from '../js/modules/menu-dropdown.js';
+import { MenuAccordion } from '../js/modules/menu-accordion.js';
+import { MenuDrilldown } from '../js/modules/menu-drilldown.js';
+import { Dropdown } from '../js/modules/dropdown.js';
 
-describe('Menus', () => {
+describe('MenuDropdown', () => {
   beforeEach(() => {
     document.body.innerHTML = `
       <ul class="dropdown menu" data-menu="dropdown">
@@ -10,22 +13,6 @@ describe('Menus', () => {
           <a href="#">Parent</a>
           <ul class="menu">
             <li><a href="#">Child</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="vertical menu accordion-menu" data-menu="accordion">
-        <li>
-          <a href="#">Acc parent</a>
-          <ul class="menu vertical nested">
-            <li><a href="#">Acc child</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="vertical menu drilldown" data-menu="drilldown" id="drill">
-        <li>
-          <a href="#">Drill parent</a>
-          <ul class="menu vertical nested">
-            <li><a href="#">Drill child</a></li>
           </ul>
         </li>
       </ul>
@@ -38,7 +25,7 @@ describe('Menus', () => {
   });
 
   it('marks submenu parents and toggles dropdown menu', () => {
-    const menus = new Menus(document);
+    const menus = new MenuDropdown(document);
     const parent = document.querySelector('[data-menu="dropdown"] li:nth-child(2)');
     expect(parent.classList.contains('has-submenu')).toBe(true);
 
@@ -51,8 +38,34 @@ describe('Menus', () => {
     menus.destroy();
   });
 
+  it('skips document listeners when no dropdown menus', () => {
+    document.body.innerHTML = '<p>empty</p>';
+    const menus = new MenuDropdown(document);
+    expect(menus._menus?.length ?? 0).toBe(0);
+    menus.destroy();
+  });
+});
+
+describe('MenuAccordion', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <ul class="vertical menu accordion-menu" data-menu="accordion">
+        <li>
+          <a href="#">Acc parent</a>
+          <ul class="menu vertical nested">
+            <li><a href="#">Acc child</a></li>
+          </ul>
+        </li>
+      </ul>
+    `;
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
   it('toggles accordion menu and wraps nested list in submenu-panel', () => {
-    const menus = new Menus(document);
+    const menus = new MenuAccordion(document);
     const parent = document.querySelector('[data-menu="accordion"] li.has-submenu');
     expect(parent.querySelector(':scope > .submenu-panel')).toBeTruthy();
 
@@ -62,9 +75,28 @@ describe('Menus', () => {
     expect(parent.classList.contains('is-open')).toBe(false);
     menus.destroy();
   });
+});
+
+describe('MenuDrilldown', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <ul class="vertical menu drilldown" data-menu="drilldown" id="drill">
+        <li>
+          <a href="#">Drill parent</a>
+          <ul class="menu vertical nested">
+            <li><a href="#">Drill child</a></li>
+          </ul>
+        </li>
+      </ul>
+    `;
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
 
   it('wraps drilldown in is-drilldown and adds back link', () => {
-    const menus = new Menus(document);
+    const menus = new MenuDrilldown(document);
     const menu = document.getElementById('drill');
     expect(menu.parentElement.classList.contains('is-drilldown')).toBe(true);
     expect(menu.querySelector('.js-drilldown-back')).toBeTruthy();
@@ -73,7 +105,7 @@ describe('Menus', () => {
   });
 
   it('opens drilldown submenu on parent click', () => {
-    const menus = new Menus(document);
+    const menus = new MenuDrilldown(document);
     const menu = document.getElementById('drill');
     const parent = menu.querySelector('li.has-submenu');
     const submenu = parent.querySelector('.is-drilldown-submenu');
@@ -83,5 +115,18 @@ describe('Menus', () => {
     expect(submenu.getAttribute('aria-hidden')).toBe('false');
     expect(parent.getAttribute('aria-expanded')).toBe('true');
     menus.destroy();
+  });
+});
+
+describe('Dropdown early-return', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('does nothing when no dropdown markup', () => {
+    document.body.innerHTML = '<p>no panes</p>';
+    const dropdown = new Dropdown(document);
+    expect(dropdown._lastFocus).toBeNull();
+    dropdown.destroy();
   });
 });

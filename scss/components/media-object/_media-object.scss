@@ -1,49 +1,50 @@
+@use '../../settings/vars' as *;
 // Media object (replaces Foundation media-object). Uses settings/_containers.scss.
 
 .media-object {
   display: flex;
   flex-wrap: nowrap;
   margin-bottom: $mediaobject-margin-bottom;
-}
 
-.media-object img {
-  max-width: none;
-}
-
-.media-object.stack-for-small {
-  @include breakpoint(small only) {
-    flex-wrap: wrap;
+  img {
+    max-width: none;
   }
-}
 
-.media-object-section {
-  flex: 0 1 auto;
-}
+  &.stack-for-small {
+    @include breakpoint(small only) {
+      flex-wrap: wrap;
+    }
 
-.media-object-section:first-child {
-  padding-inline-end: $mediaobject-section-padding;
-}
+    > &-section {
+      @include breakpoint(small only) {
+        flex-basis: 100%;
+        max-width: 100%;
+        padding: 0 0 $mediaobject-section-padding;
 
-.media-object-section:last-child:not(:nth-child(2)) {
-  padding-inline-start: $mediaobject-section-padding;
-}
+        img {
+          width: $mediaobject-image-width-stacked;
+        }
+      }
+    }
+  }
 
-.media-object-section > :last-child {
-  margin-bottom: 0;
-}
+  &-section {
+    flex: 0 1 auto;
 
-.media-object-section.main-section {
-  flex: 1 1 0;
-}
+    &:first-child {
+      padding-inline-end: $mediaobject-section-padding;
+    }
 
-.media-object.stack-for-small > .media-object-section {
-  @include breakpoint(small only) {
-    flex-basis: 100%;
-    max-width: 100%;
-    padding: 0 0 $mediaobject-section-padding;
+    &:last-child:not(:nth-child(2)) {
+      padding-inline-start: $mediaobject-section-padding;
+    }
 
-    img {
-      width: $mediaobject-image-width-stacked;
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    &.main-section {
+      flex: 1 1 0;
     }
   }
 }

@@ -1,5 +1,5 @@
-@import 'forms';
-@import 'switch';
-@import 'choice';
-@import 'range';
-@import 'form-slider';
+@forward 'forms';
+@forward 'switch';
+@forward 'choice';
+@forward 'range';
+@forward 'form-slider';

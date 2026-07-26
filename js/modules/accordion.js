@@ -7,7 +7,7 @@ export class Accordion extends Module {
   constructor(root = document) {
     super(root);
     this._groups = [];
-    root.querySelectorAll('[data-accordion]').forEach((el) => {
+    this.mountAll('[data-accordion]', (el) => {
       this._groups.push(new AccordionGroup(el, this));
     });
   }

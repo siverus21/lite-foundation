@@ -1,11 +1,13 @@
+@use '../foundation' as *;
+@use 'sass:map';
 // 6. Abide
 // --------
 
 $abide-inputs: true;
 $abide-labels: true;
-$input-background-invalid: get-color(alert);
-$form-label-color-invalid: get-color(alert);
-$input-error-color: get-color(alert);
+$input-background-invalid: map.get($foundation-palette, alert);
+$form-label-color-invalid: map.get($foundation-palette, alert);
+$input-error-color: map.get($foundation-palette, alert);
 $input-error-font-size: rem-calc(12);
 $input-error-font-weight: $global-weight-bold;
 

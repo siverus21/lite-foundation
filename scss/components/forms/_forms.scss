@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Forms (replaces Foundation forms). Uses settings/_forms.scss.
 
 $input-height: ($input-font-size * unitless-calc($input-line-height))
@@ -24,51 +25,78 @@ textarea {
   line-height: $input-line-height;
   color: var(--lf-input-color, #{$input-color});
   transition: $input-transition;
-}
 
-#{text-inputs()}:focus,
-textarea:focus {
-  outline: none;
-  border: 1px solid var(--lf-input-border-focus, #{$dark-gray});
-  background-color: var(--lf-input-bg-focus, #{$input-background-focus});
-  box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
+  &:focus {
+    outline: none;
+    border: 1px solid var(--lf-input-border-focus, #{$dark-gray});
+    background-color: var(--lf-input-bg-focus, #{$input-background-focus});
+    box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
+  }
 }
 
 textarea {
   max-width: 100%;
+
+  &[rows] {
+    height: auto;
+  }
 }
 
-textarea[rows] {
-  height: auto;
+input,
+textarea {
+  &:disabled,
+  &[readonly] {
+    background-color: var(--lf-input-bg-disabled, #{$input-background-disabled});
+    cursor: $input-cursor-disabled;
+  }
 }
 
-input:disabled,
-input[readonly],
-textarea:disabled,
-textarea[readonly] {
-  background-color: var(--lf-input-bg-disabled, #{$input-background-disabled});
-  cursor: $input-cursor-disabled;
-}
+input {
+  &[type='submit'],
+  &[type='button'] {
+    appearance: none;
+    border-radius: $form-button-radius;
+  }
 
-[type='submit'],
-[type='button'] {
-  appearance: none;
-  border-radius: $form-button-radius;
-}
+  &[type='search'] {
+    box-sizing: border-box;
+  }
 
-input[type='search'] {
-  box-sizing: border-box;
-}
+  @if not $input-number-spinners {
+    &[type='number'] {
+      -moz-appearance: textfield;
 
-@if not $input-number-spinners {
-  [type='number'] {
-    -moz-appearance: textfield;
-
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      margin: 0;
-      -webkit-appearance: none;
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        margin: 0;
+        -webkit-appearance: none;
+      }
     }
+  }
+
+  &[type='file'],
+  &[type='checkbox'],
+  &[type='radio'] {
+    margin: 0;
+  }
+
+  &[type='checkbox'],
+  &[type='radio'] {
+    + label {
+      display: inline-block;
+      vertical-align: baseline;
+      margin-inline-start: $form-spacing * 0.5;
+      margin-inline-end: $form-spacing;
+      margin-bottom: 0;
+
+      &[for] {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &[type='file'] {
+    width: 100%;
   }
 }
 
@@ -84,12 +112,17 @@ label {
   font-weight: $form-label-font-weight;
   line-height: $form-label-line-height;
   color: var(--lf-form-label-color, #{$form-label-color});
-}
 
-label.middle {
-  margin: 0 0 $form-spacing;
-  padding: ($form-spacing * 0.5 + rem-calc(get-border-value($input-border, width))) 0;
-  line-height: $global-lineheight;
+  &.middle {
+    margin: 0 0 $form-spacing;
+    padding: ($form-spacing * 0.5 + rem-calc(get-border-value($input-border, width))) 0;
+    line-height: $global-lineheight;
+  }
+
+  > [type='checkbox'],
+  > [type='radio'] {
+    margin-inline-end: $form-spacing * 0.5;
+  }
 }
 
 /* Help text */
@@ -98,36 +131,6 @@ label.middle {
   font-size: $helptext-font-size;
   font-style: $helptext-font-style;
   color: var(--lf-helptext-color, #{$helptext-color});
-}
-
-/* Checkbox / radio / file */
-[type='file'],
-[type='checkbox'],
-[type='radio'] {
-  margin: 0;
-}
-
-[type='checkbox'] + label,
-[type='radio'] + label {
-  display: inline-block;
-  vertical-align: baseline;
-  margin-inline-start: $form-spacing * 0.5;
-  margin-inline-end: $form-spacing;
-  margin-bottom: 0;
-}
-
-[type='checkbox'] + label[for],
-[type='radio'] + label[for] {
-  cursor: pointer;
-}
-
-label > [type='checkbox'],
-label > [type='radio'] {
-  margin-inline-end: $form-spacing * 0.5;
-}
-
-[type='file'] {
-  width: 100%;
 }
 
 /* Select */
@@ -158,32 +161,32 @@ select {
     // Data-URI SVG fill is baked at compile time (cannot use CSS vars).
     @include background-triangle($select-triangle-color);
   }
-}
 
-select:focus {
-  outline: none;
-  border: 1px solid var(--lf-input-border-focus, #{$dark-gray});
-  background-color: var(--lf-input-bg-focus, #{$input-background-focus});
-  box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
-}
+  &:focus {
+    outline: none;
+    border: 1px solid var(--lf-input-border-focus, #{$dark-gray});
+    background-color: var(--lf-input-bg-focus, #{$input-background-focus});
+    box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
+  }
 
-select:disabled {
-  background-color: var(--lf-input-bg-disabled, #{$input-background-disabled});
-  cursor: $input-cursor-disabled;
-}
+  &:disabled {
+    background-color: var(--lf-input-bg-disabled, #{$input-background-disabled});
+    cursor: $input-cursor-disabled;
+  }
 
-select::-ms-expand {
-  display: none;
-}
+  &::-ms-expand {
+    display: none;
+  }
 
-select[multiple] {
-  height: auto;
-  background-image: none;
-}
+  &[multiple] {
+    height: auto;
+    background-image: none;
+  }
 
-select:not([multiple]) {
-  padding-top: 0;
-  padding-bottom: 0;
+  &:not([multiple]) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 /* Fieldset */
@@ -202,11 +205,11 @@ legend {
   margin: $fieldset-margin;
   padding: $fieldset-padding;
   border: 1px solid var(--lf-fieldset-border, #{$medium-gray});
-}
 
-.fieldset legend {
-  margin: 0 0 0 rem-calc(-3);
-  padding: $legend-padding;
+  legend {
+    margin: 0 0 0 rem-calc(-3);
+    padding: $legend-padding;
+  }
 }
 
 /* Input group */
@@ -215,20 +218,20 @@ legend {
   align-items: stretch;
   width: 100%;
   margin-bottom: $form-spacing;
-}
 
-.input-group > :first-child {
-  border-start-start-radius: $input-radius;
-  border-end-start-radius: $input-radius;
-  border-start-end-radius: 0;
-  border-end-end-radius: 0;
-}
+  > :first-child {
+    border-start-start-radius: $input-radius;
+    border-end-start-radius: $input-radius;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
 
-.input-group > :last-child {
-  border-start-start-radius: 0;
-  border-end-start-radius: 0;
-  border-start-end-radius: $input-radius;
-  border-end-end-radius: $input-radius;
+  > :last-child {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    border-start-end-radius: $input-radius;
+    border-end-end-radius: $input-radius;
+  }
 }
 
 .input-group-label {
@@ -242,14 +245,14 @@ legend {
   color: var(--lf-input-prefix-color, #{$input-prefix-color});
   text-align: center;
   white-space: nowrap;
-}
 
-.input-group-label:first-child {
-  border-inline-end: 0;
-}
+  &:first-child {
+    border-inline-end: 0;
+  }
 
-.input-group-label:last-child {
-  border-inline-start: 0;
+  &:last-child {
+    border-inline-start: 0;
+  }
 }
 
 .input-group-field {
@@ -267,19 +270,19 @@ legend {
   padding: 0;
   text-align: center;
   white-space: nowrap;
-}
 
-.input-group-button a,
-.input-group-button input,
-.input-group-button button,
-.input-group-button label {
-  align-self: stretch;
-  height: auto;
-  margin: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  font-size: $input-font-size;
-  white-space: nowrap;
+  a,
+  input,
+  button,
+  label {
+    align-self: stretch;
+    height: auto;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: $input-font-size;
+    white-space: nowrap;
+  }
 }
 
 /* Abide / error */
@@ -287,10 +290,10 @@ legend {
   .is-invalid-input:not(:focus) {
     border-color: var(--lf-input-bg-invalid, #{$input-background-invalid});
     background-color: var(--lf-input-bg-invalid-soft, #{mix($input-background-invalid, $white, 10%)});
-  }
 
-  .is-invalid-input:not(:focus)::placeholder {
-    color: var(--lf-input-bg-invalid, #{$input-background-invalid});
+    &::placeholder {
+      color: var(--lf-input-bg-invalid, #{$input-background-invalid});
+    }
   }
 }
 
@@ -307,8 +310,8 @@ legend {
   font-size: $input-error-font-size;
   font-weight: $input-error-font-weight;
   color: var(--lf-input-error-color, #{$input-error-color});
-}
 
-.form-error.is-visible {
-  display: block;
+  &.is-visible {
+    display: block;
+  }
 }

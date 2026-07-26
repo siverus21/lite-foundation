@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Lightweight off-canvas drawer (replaces Foundation Off-canvas).
 
 .offcanvas {
@@ -7,7 +8,7 @@
   bottom: 0;
   inset-inline-start: 0;
   z-index: var(--lf-z-offcanvas);
-  width: 250px;
+  width: map-get($offcanvas-sizes, small);
   max-width: 85vw;
   padding: 1rem;
   padding-top: 2.5rem;
@@ -17,21 +18,21 @@
   transition: transform 0.3s ease;
   overflow-y: auto;
   pointer-events: none;
-}
 
-.offcanvas.is-open {
-  display: block;
-  pointer-events: auto;
-}
+  &.is-open {
+    display: block;
+    pointer-events: auto;
 
-.offcanvas.is-open.is-visible {
-  transform: translateX(0);
-}
+    &.is-visible {
+      transform: translateX(0);
+    }
+  }
 
-.offcanvas .close-button {
-  position: absolute;
-  inset-inline-end: 0.75rem;
-  top: 0.35rem;
+  .close-button {
+    position: absolute;
+    inset-inline-end: 0.75rem;
+    top: 0.35rem;
+  }
 }
 
 .offcanvas-backdrop {
@@ -43,12 +44,12 @@
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-}
 
-.offcanvas-backdrop.is-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
 }
 
 body.is-offcanvas-open {

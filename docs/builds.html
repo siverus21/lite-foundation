@@ -35,7 +35,7 @@
         <div class="docs-note">
           <strong>Page (<code>kind: 'page'</code>, по умолчанию)</strong>
           <ul>
-            <li>Полная страница: reset, tokens, layout, components, utilities, critical</li>
+            <li>Полная страница: reset, tokens, core, components, utilities, critical</li>
             <li>Имена: <code>app.css</code> / <code>lib.js</code> для <code>full</code>; иначе <code>app-{name}.css</code> / <code>lib-{name}.js</code></li>
             <li>Когда: шаблон сайта, отдельный лендинг с урезанным набором</li>
           </ul>
@@ -43,7 +43,7 @@
         <div class="docs-note">
           <strong>Library (<code>kind: 'library'</code>)</strong>
           <ul>
-            <li>Только addon: vendor + связанные components, без base/layout/critical</li>
+            <li>Только addon: vendor + связанные components, без core/critical</li>
             <li>Имена: <code>lib-{name}.css</code> / <code>lib-{name}.js</code></li>
             <li>Когда: Swiper, редкий виджет — грузить только на страницах, где нужен</li>
           </ul>
@@ -125,7 +125,7 @@ export const builds = {
       </section>
     </main>
 
-    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="/js/load-build.js?build=full"></script>
     <script type="module" src="assets/docs.js"></script>
   </body>
 </html>

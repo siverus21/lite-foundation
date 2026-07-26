@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Thumbnail (replaces Foundation thumbnail). Uses settings/_feedback.scss.
 
 .thumbnail {
@@ -12,9 +13,9 @@
 
 a.thumbnail {
   transition: $thumbnail-transition;
-}
 
-a.thumbnail:hover,
-a.thumbnail:focus {
-  box-shadow: $thumbnail-shadow-hover;
+  &:hover,
+  &:focus {
+    box-shadow: $thumbnail-shadow-hover;
+  }
 }

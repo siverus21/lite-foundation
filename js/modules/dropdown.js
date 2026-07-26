@@ -9,6 +9,11 @@ export class Dropdown extends Module {
   constructor(root = document) {
     super(root);
     this._lastFocus = null;
+
+    const hasMarkup =
+      root.querySelector('[data-dropdown-open]') || root.querySelector('.dropdown-pane');
+    if (!hasMarkup) return;
+
     this.#bind();
   }
 

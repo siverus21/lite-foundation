@@ -1,60 +1,61 @@
+@use '../../settings/vars' as *;
 // Lightweight tabs (replaces Foundation Tabs).
 
 .tabs {
-  margin: 0;
+  margin: $tab-margin;
   list-style: none;
   display: flex;
   flex-wrap: wrap;
   border-bottom: 1px solid var(--lf-tab-content-border);
   background: var(--lf-tab-bg);
-}
 
-.tabs-title {
-  margin: 0;
-}
+  &-title {
+    margin: 0;
 
-.tabs-title > [role='tab'],
-.tabs-title > a {
-  display: block;
-  padding: 1.25rem 1.5rem;
-  font-size: 0.75rem;
-  line-height: 1;
-  color: var(--lf-tab-color);
-  background: var(--lf-tab-bg);
-  text-decoration: none;
-  border: 0;
-  cursor: pointer;
-  font-family: inherit;
-}
+    > [role='tab'],
+    > a {
+      display: block;
+      padding: $tab-item-padding;
+      font-size: $tab-item-font-size;
+      line-height: 1;
+      color: var(--lf-tab-color);
+      background: var(--lf-tab-bg);
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
 
-.tabs-title > [role='tab']:hover,
-.tabs-title > [role='tab']:focus,
-.tabs-title > a:hover,
-.tabs-title > a:focus {
-  background: var(--lf-tab-item-bg-hover);
-  color: var(--lf-tab-color);
-  outline: none;
-}
+      &:hover,
+      &:focus {
+        background: var(--lf-tab-item-bg-hover);
+        color: var(--lf-tab-color);
+        outline: none;
+      }
+    }
 
-.tabs-title.is-active > [role='tab'],
-.tabs-title.is-active > a {
-  background: var(--lf-tab-bg-active);
-  color: var(--lf-tab-color-active);
-}
+    &.is-active {
+      > [role='tab'],
+      > a {
+        background: var(--lf-tab-bg-active);
+        color: var(--lf-tab-color-active);
+      }
+    }
+  }
 
-.tabs-content {
-  background: var(--lf-tab-content-bg);
-  border: 1px solid var(--lf-tab-content-border);
-  border-top: 0;
-  color: var(--lf-tab-content-color);
-  transition: all 0.5s ease;
-}
+  &-content {
+    background: var(--lf-tab-content-bg);
+    border: 1px solid var(--lf-tab-content-border);
+    border-top: 0;
+    color: var(--lf-tab-content-color);
+    transition: all 0.5s ease;
+  }
 
-.tabs-panel {
-  display: none;
-  padding: 1rem;
-}
+  &-panel {
+    display: none;
+    padding: $tab-content-padding;
 
-.tabs-panel.is-active {
-  display: block;
+    &.is-active {
+      display: block;
+    }
+  }
 }

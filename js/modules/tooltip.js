@@ -7,7 +7,7 @@ import { Module } from '../core/Module.js';
 export class Tooltip extends Module {
   constructor(root = document) {
     super(root);
-    root.querySelectorAll('.has-tip[data-tip]').forEach((el) => {
+    this.mountAll('.has-tip[data-tip]', (el) => {
       if (!el.hasAttribute('tabindex')) {
         el.setAttribute('tabindex', '0');
       }

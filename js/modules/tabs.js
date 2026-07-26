@@ -7,7 +7,7 @@ export class Tabs extends Module {
   constructor(root = document) {
     super(root);
     this._groups = [];
-    root.querySelectorAll('[data-tabs]').forEach((tablist) => {
+    this.mountAll('[data-tabs]', (tablist) => {
       this._groups.push(new TabsGroup(tablist, this));
     });
   }

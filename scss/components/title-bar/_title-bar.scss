@@ -1,0 +1,59 @@
+@use '../../settings/vars' as *;
+// Title bar — nested SCSS; tokens from settings/title-bar.
+
+.title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $titlebar-padding;
+  background: var(--lf-titlebar-bg, #{$titlebar-background});
+  color: var(--lf-titlebar-color, #{$titlebar-color});
+
+  &-left,
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: $titlebar-icon-spacing;
+  }
+
+  &-title {
+    display: inline-block;
+    font-weight: $titlebar-text-font-weight;
+    vertical-align: middle;
+  }
+
+  .menu-icon {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 16px;
+    padding: 0;
+    margin: 0 $titlebar-icon-spacing;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    vertical-align: middle;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      top: 0;
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--lf-titlebar-icon-color, #{$titlebar-icon-color});
+      box-shadow:
+        0 7px 0 var(--lf-titlebar-icon-color, #{$titlebar-icon-color}),
+        0 14px 0 var(--lf-titlebar-icon-color, #{$titlebar-icon-color});
+    }
+
+    &:hover::after,
+    &:focus::after {
+      background: var(--lf-titlebar-icon-color-hover, #{$titlebar-icon-color-hover});
+      box-shadow:
+        0 7px 0 var(--lf-titlebar-icon-color-hover, #{$titlebar-icon-color-hover}),
+        0 14px 0 var(--lf-titlebar-icon-color-hover, #{$titlebar-icon-color-hover});
+    }
+  }
+}

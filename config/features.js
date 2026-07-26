@@ -13,16 +13,15 @@
 /**
  * Always compiled into page builds. Not flags — cannot be turned off.
  * Library builds skip this layer (CSS is addon-only).
+ * Keys are `scss/core/` cascade layers; values are partial names in that folder.
  */
 export const required = {
-  abstracts: ['functions', 'mixins'],
-  settings: ['global', 'breakpoints', 'grid', 'typography', 'z-index', 'css-variables'],
-  base: ['reset', 'typography'],
-  layout: ['containers', 'grid'],
+  core: {
+    'lf-reset': ['reset'],
+    'lf-base': ['typography'],
+    'lf-layout': ['containers', 'grid'],
+  },
 };
-
-/** Keys in a `builds` entry that are not feature flags. */
-export const BUILD_META_KEYS = ['kind'];
 
 /** Full kitchen-sink page preset (also the `full` build). Swiper is a separate library build. */
 export default {
@@ -75,7 +74,9 @@ export default {
     offcanvas: true,
     dropdown: true,
     tooltip: true,
-    menus: true,
+    menuDropdown: true,
+    menuAccordion: true,
+    menuDrilldown: true,
     dismiss: true,
   },
 };

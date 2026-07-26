@@ -1,7 +1,7 @@
 /**
  * Lint SCSS for hardcoded colors / z-index that must use CSS variables.
  *
- * Scans: scss/{components,layout,base,utilities}
+ * Scans: scss/{components,core,utilities}
  * Skips: scss/critical/ (emergency overrides) — only notifies that files exist
  *
  * Allows: var(--lf-…), and Sass fallbacks inside var(--lf-x, #{$sass-var})
@@ -16,7 +16,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 const __filename = fileURLToPath(import.meta.url);
 const root = path.resolve(path.dirname(__filename), '..');
 
-const SCAN_DIRS = ['scss/components', 'scss/layout', 'scss/base', 'scss/utilities'];
+const SCAN_DIRS = ['scss/components', 'scss/core', 'scss/utilities'];
 const CRITICAL_DIR = 'scss/critical';
 
 const HEX = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;

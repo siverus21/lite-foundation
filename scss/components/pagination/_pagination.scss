@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Pagination (replaces Foundation pagination). Uses settings/_navigation.scss.
 
 .pagination {
@@ -7,88 +8,91 @@
   margin: 0 0 $pagination-margin-bottom;
   padding: 0;
   list-style: none;
-}
 
-.pagination li {
-  margin-right: $pagination-item-spacing;
-  border-radius: $pagination-radius;
-  font-size: $pagination-font-size;
+  li {
+    margin-right: $pagination-item-spacing;
+    border-radius: $pagination-radius;
+    font-size: $pagination-font-size;
 
-  @if $pagination-mobile-items {
-    display: inline-block;
-  } @else {
-    display: none;
-
-    &:first-child,
-    &:last-child {
+    @if $pagination-mobile-items {
       display: inline-block;
-    }
+    } @else {
+      display: none;
 
-    @if $pagination-mobile-current-item {
-      &.current {
+      &:first-child,
+      &:last-child {
+        display: inline-block;
+      }
+
+      @if $pagination-mobile-current-item {
+        &.current {
+          display: inline-block;
+        }
+      }
+
+      @include breakpoint(medium) {
         display: inline-block;
       }
     }
+  }
 
-    @include breakpoint(medium) {
-      display: inline-block;
+  a,
+  button {
+    display: block;
+    padding: $pagination-item-padding;
+    border: 0;
+    border-radius: $pagination-radius;
+    background: transparent;
+    color: var(--lf-pagination-item-color, #{$pagination-item-color});
+    cursor: pointer;
+    font: inherit;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--lf-pagination-item-bg-hover, #{$pagination-item-background-hover});
     }
   }
-}
 
-.pagination a,
-.pagination button {
-  display: block;
-  padding: $pagination-item-padding;
-  border: 0;
-  border-radius: $pagination-radius;
-  background: transparent;
-  color: var(--lf-pagination-item-color, #{$pagination-item-color});
-  cursor: pointer;
-  font: inherit;
-  text-decoration: none;
-}
+  .current {
+    padding: $pagination-item-padding;
+    background: var(--lf-pagination-item-bg-current, #{$pagination-item-background-current});
+    color: var(--lf-pagination-item-color-current, #{$pagination-item-color-current});
+    cursor: default;
+  }
 
-.pagination a:hover,
-.pagination button:hover {
-  background: var(--lf-pagination-item-bg-hover, #{$pagination-item-background-hover});
-}
+  .disabled {
+    padding: $pagination-item-padding;
+    color: var(--lf-pagination-item-color-disabled, #{$pagination-item-color-disabled});
+    cursor: not-allowed;
 
-.pagination .current {
-  padding: $pagination-item-padding;
-  background: var(--lf-pagination-item-bg-current, #{$pagination-item-background-current});
-  color: var(--lf-pagination-item-color-current, #{$pagination-item-color-current});
-  cursor: default;
-}
+    &:hover {
+      background: transparent;
+    }
+  }
 
-.pagination .disabled {
-  padding: $pagination-item-padding;
-  color: var(--lf-pagination-item-color-disabled, #{$pagination-item-color-disabled});
-  cursor: not-allowed;
-}
-
-.pagination .disabled:hover {
-  background: transparent;
-}
-
-.pagination .ellipsis::after {
-  padding: $pagination-item-padding;
-  content: '\2026';
-  color: var(--lf-pagination-ellipsis-color, #{$pagination-ellipsis-color});
+  .ellipsis::after {
+    padding: $pagination-item-padding;
+    content: '\2026';
+    color: var(--lf-pagination-ellipsis-color, #{$pagination-ellipsis-color});
+  }
 }
 
 @if $pagination-arrows {
-  .pagination-previous a::before,
-  .pagination-previous.disabled::before {
-    display: inline-block;
-    margin-right: 0.5rem;
-    content: $pagination-arrow-previous;
+  .pagination-previous {
+    a::before,
+    &.disabled::before {
+      display: inline-block;
+      margin-right: 0.5rem;
+      content: $pagination-arrow-previous;
+    }
   }
 
-  .pagination-next a::after,
-  .pagination-next.disabled::after {
-    display: inline-block;
-    margin-left: 0.5rem;
-    content: $pagination-arrow-next;
+  .pagination-next {
+    a::after,
+    &.disabled::after {
+      display: inline-block;
+      margin-left: 0.5rem;
+      content: $pagination-arrow-next;
+    }
   }
 }

@@ -1,15 +1,10 @@
+@use '../vars' as *;
+
 // CSS custom properties generated from Sass settings.
 // Override at runtime via :root { --lf-color-primary: … } without rebuilding.
 // Components must use var(--lf-…) for colors, z-index, overlays, and shadows.
 
 :root {
-  // Palette
-  --lf-color-primary: #{$primary-color};
-  --lf-color-secondary: #{$secondary-color};
-  --lf-color-success: #{$success-color};
-  --lf-color-warning: #{$warning-color};
-  --lf-color-alert: #{$alert-color};
-
   // Neutrals
   --lf-color-white: #{$white};
   --lf-color-black: #{$black};
@@ -39,7 +34,7 @@
     --lf-z-#{$name}: #{$value};
   }
 
-  // Palette variants (contrast / hover / hollow-hover)
+  // Palette + variants (contrast / hover / hollow-hover)
   @each $name, $color in $foundation-palette {
     --lf-color-#{$name}: #{$color};
     --lf-color-#{$name}-contrast: #{color-pick-contrast($color, ($white, $black))};

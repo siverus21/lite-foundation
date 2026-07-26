@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mkdirSync, writeFileSync, readdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import defaultFeatures, {
   required,
   builds,
@@ -11,11 +11,20 @@ import defaultFeatures, {
 
 const __filename = fileURLToPath(import.meta.url);
 
+/** Vite / tooling id: `import 'virtual:lf-scss/full'` → generated Sass string. */
+export const VIRTUAL_SCSS_PREFIX = 'virtual:lf-scss/';
+/** `import 'virtual:lf-entry/full'` → boot + modules for that build. */
+export const VIRTUAL_ENTRY_PREFIX = 'virtual:lf-entry/';
+export const VIRTUAL_MODULES_PREFIX = 'virtual:lf-modules/';
+export const VIRTUAL_VENDORS_PREFIX = 'virtual:lf-vendors/';
+
 /** Map style feature → scss/components folder name */
 export const STYLE_FOLDERS = {
   modal: 'modal',
   slider: 'slider',
   sticky: 'sticky',
+  titleBar: 'title-bar',
+  topBar: 'top-bar',
   tabs: 'tabs',
   accordion: 'accordion',
   offcanvas: 'offcanvas',
@@ -38,43 +47,7 @@ export const STYLE_FOLDERS = {
   forms: 'forms',
 };
 
-/** Extra settings folders pulled in with a style feature */
-const STYLE_SETTINGS = {
-  modal: ['modal'],
-  slider: [],
-  sticky: [],
-  tabs: ['tabs'],
-  accordion: ['accordion'],
-  offcanvas: ['offcanvas'],
-  dropdown: ['dropdown'],
-  tooltip: ['tooltip'],
-  menu: ['menu', 'accordion-menu', 'drilldown', 'dropdown-menu'],
-  breadcrumbs: ['breadcrumbs'],
-  pagination: ['pagination'],
-  mediaObject: ['media-object'],
-  thumbnail: ['thumbnail'],
-  responsiveEmbed: ['responsive-embed'],
-  callout: ['callout'],
-  card: ['card'],
-  label: ['label'],
-  badge: ['badge'],
-  progress: ['progress'],
-  meter: ['meter'],
-  table: ['table'],
-  button: ['button'],
-  forms: ['forms'],
-};
-
-const SETTINGS_PREFERRED = [
-  'forms',
-  'button',
-  'menu',
-  'accordion-menu',
-  'drilldown',
-  'dropdown-menu',
-];
-
-/** Map script feature → { className, file relative to js/builds/{name}/ } */
+/** Map script feature → { className, file } (file rewritten to /js/modules/... for virtual entries) */
 export const SCRIPT_MODULES = {
   modal: { file: '../../modules/modal.js', className: 'Modal' },
   slider: { file: '../../modules/slider.js', className: 'Slider' },
@@ -85,12 +58,23 @@ export const SCRIPT_MODULES = {
   offcanvas: { file: '../../modules/offcanvas.js', className: 'Offcanvas' },
   dropdown: { file: '../../modules/dropdown.js', className: 'Dropdown' },
   tooltip: { file: '../../modules/tooltip.js', className: 'Tooltip' },
-  menus: { file: '../../modules/menus.js', className: 'Menus' },
+  menuDropdown: { file: '../../modules/menu-dropdown.js', className: 'MenuDropdown' },
+  menuAccordion: { file: '../../modules/menu-accordion.js', className: 'MenuAccordion' },
+  menuDrilldown: { file: '../../modules/menu-drilldown.js', className: 'MenuDrilldown' },
   dismiss: { file: '../../modules/dismiss.js', className: 'Dismiss' },
 };
 
 function enabledEntries(map = {}) {
   return Object.entries(map).filter(([, on]) => on);
+}
+
+/** Known `vendors.*` flags — kept as a set (not a file-lookup map) since each has bespoke wiring below. */
+export const KNOWN_VENDORS = new Set(['cash', 'swiper', 'animate']);
+
+function assertKnownVendor(key) {
+  if (!KNOWN_VENDORS.has(key)) {
+    throw new Error(`Unknown vendor flag "${key}" — no entry in KNOWN_VENDORS (scripts/sync-features.js)`);
+  }
 }
 
 function deepMerge(base, override = {}) {
@@ -116,7 +100,6 @@ function deepMerge(base, override = {}) {
 export function emptyFeatures() {
   return {
     vendors: { cash: false, swiper: false, animate: false },
-    layout: { titleBar: false, topBar: false },
     utilities: false,
     styles: Object.fromEntries(Object.keys(STYLE_FOLDERS).map((k) => [k, false])),
     scripts: Object.fromEntries(Object.keys(SCRIPT_MODULES).map((k) => [k, false])),
@@ -135,107 +118,27 @@ export function listBuildNames() {
   return Object.keys(builds);
 }
 
-/** Collect optional settings folders for enabled style/layout/utilities flags. */
-export function collectSettings(features) {
-  const settings = new Set();
-  for (const [key, on] of enabledEntries(features.styles)) {
-    if (!on) continue;
-    for (const folder of STYLE_SETTINGS[key] || []) settings.add(folder);
-  }
-  if (features.layout?.titleBar) settings.add('title-bar');
-  if (features.layout?.topBar) settings.add('top-bar');
-  if (features.utilities) settings.add('utilities');
-  return settings;
+/** Stylesheet load line for scss/critical partials (only remaining on-disk GENERATED index). */
+function scssImport(rel, indent = '') {
+  return `${indent}@import '${rel}';`;
 }
 
-export function orderSettings(settings) {
-  return [
-    ...SETTINGS_PREFERRED.filter((s) => settings.has(s)),
-    ...[...settings].filter((s) => !SETTINGS_PREFERRED.includes(s)).sort(),
-  ];
-}
-
-function generateSettingsIndex(features) {
-  const lines = [
-    '// GENERATED — do not edit by hand.',
-    '// Project settings. Load order matters.',
-  ];
-
-  const core = required.settings.filter((s) => s !== 'css-variables');
-  for (const folder of core) {
-    lines.push(`@import '${folder}';`);
-  }
-
-  for (const folder of orderSettings(collectSettings(features))) {
-    lines.push(`@import '${folder}';`);
-  }
-
-  if (required.settings.includes('css-variables')) {
-    lines.push("@import 'css-variables';");
-  }
-
-  lines.push('');
-  return lines.join('\n');
-}
-
-function generateComponentsIndex(features) {
-  const lines = ['// GENERATED — do not edit by hand.'];
-  for (const [key, on] of enabledEntries(features.styles)) {
-    const folder = STYLE_FOLDERS[key];
-    if (on && folder) lines.push(`@import '${folder}';`);
-  }
-  lines.push('');
-  return lines.join('\n');
-}
-
-function generateVendorsIndex(features) {
-  const lines = ['// GENERATED — do not edit by hand.'];
-  if (features.vendors?.swiper) lines.push("@import 'swiper';");
-  if (features.vendors?.animate) lines.push("@import 'animate';");
-  lines.push('');
-  return lines.join('\n');
-}
-
-function generateLayoutIndex(features) {
-  const lines = [
-    '// GENERATED — do not edit by hand.',
-    '// Required core (see config/features.js → required.layout)',
-  ];
-  for (const folder of required.layout) {
-    lines.push(`@import '${folder}';`);
-  }
-  if (features.layout?.titleBar) lines.push("@import 'title-bar';");
-  if (features.layout?.topBar) lines.push("@import 'top-bar';");
-  lines.push('');
-  return lines.join('\n');
-}
-
-function generateUtilitiesIndex(features) {
-  const lines = ['// GENERATED — do not edit by hand.'];
-  if (features.utilities) {
-    lines.push("@import 'flex';");
-    lines.push("@import 'visibility';");
-  }
-  lines.push('');
-  return lines.join('\n');
-}
-
-function generateModulesIndex(features, { moduleImportPrefix = './' } = {}) {
-  const runtimeImport =
-    moduleImportPrefix === './'
-      ? "import { createModuleRuntime } from '../core/runtime.js';"
-      : "import { createModuleRuntime } from '../../core/runtime.js';";
-
-  const imports = [runtimeImport];
+/**
+ * Virtual JS entries only — imports are always root-absolute (`/js/...`).
+ * Throws on an unknown flag instead of silently dropping it — a typo'd/renamed
+ * key here used to disable a whole module's behavior with no build-time signal.
+ */
+export function generateModulesIndex(features) {
+  const imports = ["import { createModuleRuntime } from '/js/core/runtime.js';"];
   const classes = [];
 
   for (const [key, on] of enabledEntries(features.scripts)) {
+    if (!on) continue;
     const mod = SCRIPT_MODULES[key];
-    if (!on || !mod) continue;
-    const file =
-      moduleImportPrefix === './'
-        ? mod.file.replace('../../modules/', './')
-        : mod.file;
+    if (!mod) {
+      throw new Error(`Unknown script flag "${key}" — no entry in SCRIPT_MODULES (scripts/sync-features.js)`);
+    }
+    const file = mod.file.replace('../../modules/', '/js/modules/');
     imports.push(`import { ${mod.className} } from '${file}';`);
     classes.push(`    ${mod.className},`);
   }
@@ -257,14 +160,18 @@ export const unmountModules = runtime.unmount;
 `;
 }
 
-function generateVendorsJs(features) {
+/** Throws on an unknown `vendors.*` flag — same guard as styles/scripts above. */
+export function generateVendorsJs(features) {
   const lines = ['// GENERATED — do not edit by hand.'];
-  if (features.vendors?.cash) {
-    lines.push("import $ from 'cash-dom';");
-    lines.push('window.$ = $;');
+  for (const [key] of enabledEntries(features.vendors)) {
+    assertKnownVendor(key);
+    if (key === 'cash') {
+      lines.push("import $ from 'cash-dom';");
+      lines.push('window.$ = $;');
+    }
   }
   lines.push('');
-  return `${lines.join('\n')}\n`;
+  return lines.join('\n');
 }
 
 function generateCriticalIndex() {
@@ -285,223 +192,307 @@ function generateCriticalIndex() {
   return [
     '// GENERATED — partials in scss/critical/ (not token-linted).',
     '// Move these into components/settings when you can.',
-    ...partials.map((name) => `@import '${name}';`),
+    ...partials.map((name) => scssImport(name)),
     '',
   ].join('\n');
 }
 
+/** `@include meta.load-css('rel');` — shared by page + library build sources. */
+function loadCss(rel, indent = '  ') {
+  return `${indent}@include meta.load-css('${rel}');`;
+}
+
 /**
- * Page build: layered CSS with @layer for cascade control.
- * Paths relative to scss/builds/{name}/app.scss.
+ * Enabled vendor CSS loads (shared by page + library build sources).
+ * Throws on an unknown `vendors.*` flag — same guard as styles/scripts below.
  */
-function generateBuildAppScss(features, { kind = 'page' } = {}) {
+function vendorLoads(features) {
+  const loads = [];
+  for (const [key] of enabledEntries(features.vendors)) {
+    assertKnownVendor(key);
+    if (key === 'swiper') loads.push(loadCss('vendors/swiper'));
+    if (key === 'animate') loads.push(loadCss('vendors/animate'));
+  }
+  return loads;
+}
+
+/**
+ * Enabled component CSS loads, in `styles.*` flag order (shared by page + library build sources).
+ * Throws on an unknown flag instead of silently dropping it — a typo'd/renamed
+ * key here used to disable a whole component's CSS with no build-time signal.
+ */
+function componentLoads(features) {
+  const loads = [];
+  for (const [key, on] of enabledEntries(features.styles)) {
+    if (!on) continue;
+    const folder = STYLE_FOLDERS[key];
+    if (!folder) {
+      throw new Error(`Unknown style flag "${key}" — no entry in STYLE_FOLDERS (scripts/sync-features.js)`);
+    }
+    loads.push(loadCss(`components/${folder}`));
+  }
+  return loads;
+}
+
+/**
+ * Full Sass source for a named build (no files under scss/builds/).
+ * `@use` + `meta.load-css` — partials pull members via `@use 'settings/vars'`.
+ */
+export function generateBuildScssSource(features, { kind = 'page' } = {}) {
   if (kind === 'library') {
     return generateLibraryAppScss(features);
   }
 
-  const p = (rel) => `@import '../../${rel}';`;
-  const lines = [
-    "@charset 'utf-8';",
-    '// GENERATED build entry — do not edit by hand.',
-    '',
-    '// Cascade layers (critical wins over utilities/components).',
-    '@layer lf-reset, lf-base, lf-vendors, lf-layout, lf-components, lf-utilities, lf-critical;',
-    '',
-    p('abstracts/functions'),
+  const core = required.core || {};
+  const layerOrder = [
+    'lf-reset',
+    'lf-base',
+    'lf-vendors',
+    'lf-layout',
+    'lf-components',
+    'lf-utilities',
+    'lf-critical',
   ];
 
-  const core = required.settings.filter((s) => s !== 'css-variables');
-  for (const folder of core) {
-    lines.push(p(`settings/${folder}`));
-  }
-  for (const folder of orderSettings(collectSettings(features))) {
-    lines.push(p(`settings/${folder}`));
-  }
-  lines.push(p('settings/css-variables'));
-  lines.push(p('abstracts/mixins'));
+  const lines = [
+    "@charset 'utf-8';",
+    '// GENERATED build entry — @use + meta.load-css.',
+    '',
+    "@use 'sass:meta';",
+    "@use 'settings/vars' as *;",
+    "@use 'settings/css-variables';",
+    '',
+    '// Cascade layers (critical wins over utilities/components).',
+    `@layer ${layerOrder.join(', ')};`,
+    '',
+  ];
 
-  lines.push('');
-  // One name per @layer block — `@layer a, b { ... }` is invalid CSS.
-  lines.push('@layer lf-base {');
-  lines.push(`  ${p('base')}`);
-  lines.push('}');
+  const resetPartials = core['lf-reset'] || [];
+  if (resetPartials.length) {
+    lines.push('@layer lf-reset {');
+    for (const name of resetPartials) lines.push(loadCss(`core/${name}`));
+    lines.push('}', '');
+  }
 
-  const vendorImports = [];
-  if (features.vendors?.swiper) vendorImports.push(p('vendors/swiper'));
-  if (features.vendors?.animate) vendorImports.push(p('vendors/animate'));
-  if (vendorImports.length) {
-    lines.push('');
-    lines.push('@layer lf-vendors {');
-    for (const line of vendorImports) lines.push(`  ${line}`);
+  const basePartials = core['lf-base'] || [];
+  if (basePartials.length) {
+    lines.push('@layer lf-base {');
+    for (const name of basePartials) lines.push(loadCss(`core/${name}`));
     lines.push('}');
   }
 
-  lines.push('');
-  lines.push('@layer lf-layout {');
-  lines.push(`  ${p('layout/containers')}`);
-  lines.push(`  ${p('layout/grid')}`);
-  if (features.layout?.titleBar) lines.push(`  ${p('layout/title-bar')}`);
-  if (features.layout?.topBar) lines.push(`  ${p('layout/top-bar')}`);
+  const vendors = vendorLoads(features);
+  if (vendors.length) {
+    lines.push('', '@layer lf-vendors {', ...vendors, '}');
+  }
+
+  const layoutPartials = core['lf-layout'] || [];
+  lines.push('', '@layer lf-layout {');
+  for (const name of layoutPartials) lines.push(loadCss(`core/${name}`));
   lines.push('}');
 
-  const componentImports = [];
-  for (const [key, on] of enabledEntries(features.styles)) {
-    const folder = STYLE_FOLDERS[key];
-    if (on && folder) componentImports.push(p(`components/${folder}`));
-  }
-  if (componentImports.length) {
-    lines.push('');
-    lines.push('@layer lf-components {');
-    for (const line of componentImports) lines.push(`  ${line}`);
-    lines.push('}');
+  const components = componentLoads(features);
+  if (components.length) {
+    lines.push('', '@layer lf-components {', ...components, '}');
   }
 
   if (features.utilities) {
-    lines.push('');
-    lines.push('@layer lf-utilities {');
-    lines.push(`  ${p('utilities/flex')}`);
-    lines.push(`  ${p('utilities/visibility')}`);
-    lines.push('}');
+    lines.push(
+      '',
+      '@layer lf-utilities {',
+      loadCss('utilities/flex'),
+      loadCss('utilities/visibility'),
+      '}',
+    );
   }
 
-  lines.push('');
-  lines.push('@layer lf-critical {');
-  lines.push(`  ${p('critical')}`);
-  lines.push('}');
-  lines.push('');
+  lines.push('', '@layer lf-critical {', loadCss('critical'), '}', '');
   return lines.join('\n');
 }
 
-/** Addon library CSS — pair with a page bundle; no base/layout/critical. */
+/** Addon library CSS — pair with a page bundle; no core/critical. */
 function generateLibraryAppScss(features) {
   const lines = [
     "@charset 'utf-8';",
     '// GENERATED library build — addon CSS (load alongside a page app-*.css).',
     '',
+    "@use 'sass:meta';",
+    "@use 'settings/vars' as *;",
+    '',
     '@layer lf-vendors, lf-components;',
     '',
   ];
 
-  const settings = collectSettings({
-    ...features,
-    utilities: false,
-    layout: { titleBar: false, topBar: false },
-  });
-  // library: only STYLE_SETTINGS, not utilities/layout bars
-  const styleSettings = new Set();
-  for (const [key, on] of enabledEntries(features.styles)) {
-    if (!on) continue;
-    for (const folder of STYLE_SETTINGS[key] || []) styleSettings.add(folder);
-  }
-
-  if (styleSettings.size > 0) {
-    lines.push("@import '../../abstracts/functions';");
-    lines.push("@import '../../settings/global';");
-    for (const folder of [...styleSettings].sort()) {
-      lines.push(`@import '../../settings/${folder}';`);
-    }
-    lines.push("@import '../../abstracts/mixins';");
-  }
-
-  const vendors = [];
-  if (features.vendors?.swiper) vendors.push("@import '../../vendors/swiper';");
-  if (features.vendors?.animate) vendors.push("@import '../../vendors/animate';");
+  const vendors = vendorLoads(features);
   if (vendors.length) {
-    lines.push('@layer lf-vendors {');
-    for (const v of vendors) lines.push(`  ${v}`);
-    lines.push('}');
+    lines.push('@layer lf-vendors {', ...vendors, '}');
   }
 
-  const comps = [];
-  for (const [key, on] of enabledEntries(features.styles)) {
-    const folder = STYLE_FOLDERS[key];
-    if (on && folder) comps.push(`@import '../../components/${folder}';`);
-  }
-  if (comps.length) {
-    lines.push('@layer lf-components {');
-    for (const c of comps) lines.push(`  ${c}`);
-    lines.push('}');
+  const components = componentLoads(features);
+  if (components.length) {
+    lines.push('@layer lf-components {', ...components, '}');
   }
 
   lines.push('');
   return lines.join('\n');
 }
 
+/** Resolve Sass source for a build key in `builds`. */
+export function buildScssSource(buildName) {
+  const features = resolveBuild(buildName);
+  const kind = getBuildKind(buildName);
+  return generateBuildScssSource(features, { kind });
+}
+
 function generateBuildEntry(buildName) {
   const { css } = buildOutputNames(buildName);
-  const scssPath = `../../../scss/builds/${buildName}/app.scss`;
 
-  return `import './vendors.js';
-import { initModules } from './modules.js';
-import { boot } from '../../boot.js';
+  return `import '${VIRTUAL_VENDORS_PREFIX}${buildName}';
+import { initModules } from '${VIRTUAL_MODULES_PREFIX}${buildName}';
+import { boot } from '/js/boot.js';
 
 boot({
   initModules,
   cssHrefEndsWith: '${css}',
   loadDevScss: import.meta.env.DEV
     ? async () => {
-        await import('${scssPath}');
+        await import('${VIRTUAL_SCSS_PREFIX}${buildName}');
       }
     : undefined,
 });
 `;
 }
 
+/**
+ * Skip the write when content is unchanged. `scss/critical/` is watched by
+ * configureServer() to re-sync on change — an unconditional write would touch
+ * the file's mtime every sync, re-trigger that watcher, and loop forever.
+ */
 function writeFile(root, rel, content) {
   const file = path.join(root, rel);
+  try {
+    if (readFileSync(file, 'utf8') === content) return;
+  } catch {
+    // file doesn't exist yet — fall through and create it
+  }
   mkdirSync(path.dirname(file), { recursive: true });
   writeFileSync(file, content);
 }
 
-/** Sync shared indexes (docs / legacy tooling; full build features). */
-export function syncFeatures(features = resolveBuild('full')) {
-  const root = path.resolve('.');
-  const writes = [
-    ['scss/settings/_index.scss', generateSettingsIndex(features)],
-    ['scss/components/_index.scss', generateComponentsIndex(features)],
-    ['scss/vendors/_index.scss', generateVendorsIndex(features)],
-    ['scss/layout/_index.scss', generateLayoutIndex(features)],
-    ['scss/utilities/_index.scss', generateUtilitiesIndex(features)],
-    ['scss/critical/_index.scss', generateCriticalIndex()],
-    ['js/modules/index.js', generateModulesIndex(features, { moduleImportPrefix: './' })],
-    ['js/vendors.js', generateVendorsJs(features)],
-  ];
-
-  for (const [rel, content] of writes) {
-    writeFile(root, rel, content);
-  }
-}
-
-/** Generate per-build JS entries + Sass entries for every key in `builds`. */
-export function syncAllBuilds() {
-  const root = path.resolve('.');
-  syncFeatures(resolveBuild('full'));
-
-  for (const name of listBuildNames()) {
-    const features = resolveBuild(name);
-    const kind = getBuildKind(name);
-
-    writeFile(root, `js/builds/${name}/vendors.js`, generateVendorsJs(features));
-    writeFile(
-      root,
-      `js/builds/${name}/modules.js`,
-      generateModulesIndex(features, { moduleImportPrefix: '../../modules/' }),
-    );
-    writeFile(root, `js/builds/${name}/entry.js`, generateBuildEntry(name));
-    writeFile(root, `scss/builds/${name}/app.scss`, generateBuildAppScss(features, { kind }));
-  }
+/**
+ * Dev/prod HTML entry: /js/load-build.js?build=full
+ *
+ * MUST use a static string literal per `import()` call — Vite's import-analysis
+ * can't resolve `import(\`virtual:lf-entry/${build}\`)` (a template literal), so
+ * the browser is left to fetch the literal string `virtual:lf-entry/full` as a
+ * URL, which fails (`virtual:` isn't a registered protocol scheme). A `switch`
+ * over the known build names keeps every `import()` argument statically analyzable.
+ */
+function generateLoadBuildJs() {
+  const names = listBuildNames();
+  return [
+    '// GENERATED — do not edit by hand.',
+    '// Dev/prod HTML entry: /js/load-build.js?build=full',
+    "const build = new URL(import.meta.url).searchParams.get('build') || 'full';",
+    '',
+    'switch (build) {',
+    ...names.map((name) => `  case '${name}': await import('${VIRTUAL_ENTRY_PREFIX}${name}'); break;`),
+    '  default:',
+    "    throw new Error(`Unknown build \"${build}\"`);",
+    '}',
+    '',
+  ].join('\n');
 }
 
 /**
- * Vite plugin: regenerate build entries when features.js changes.
- * Sync on serve always; on build only when not orchestrated by scripts/build.js.
+ * Sync the on-disk GENERATED files: scss/critical/_index.scss (real partials,
+ * not virtual) and js/load-build.js (needs static per-build `import()` calls).
+ * Everything else (settings, core, components, utilities, vendors, JS modules)
+ * is resolved directly by name (`meta.load-css('core/reset')`, `settings/vars`,
+ * `virtual:lf-modules/{build}`) — no aggregator index files needed.
  */
-export function featuresPlugin({ syncOnBuild = false } = {}) {
+export function syncFeatures() {
+  const root = path.resolve('.');
+  writeFile(root, 'scss/critical/_index.scss', generateCriticalIndex());
+  writeFile(root, 'js/load-build.js', generateLoadBuildJs());
+}
+
+/** Sync indexes only — JS/CSS entries are virtual (no js/builds or scss/builds). */
+export function syncAllBuilds() {
+  const root = path.resolve('.');
+  syncFeatures();
+  rmSync(path.join(root, 'scss/builds'), { recursive: true, force: true });
+  rmSync(path.join(root, 'js/builds'), { recursive: true, force: true });
+}
+
+function resolveVirtualBuildId(id, prefix) {
+  if (!id.startsWith(prefix) && !id.startsWith(`/${prefix}`)) return null;
+  const raw = id.startsWith('/') ? id.slice(1) : id;
+  if (!raw.startsWith(prefix)) return null;
+  return raw.slice(prefix.length).replace(/\.(js|scss)$/, '');
+}
+
+/**
+ * Vite plugin: virtual CSS/JS build entries + sync indexes when features.js changes.
+ * `syncOnBuild: false` — skip the buildStart() sync (caller already synced once,
+ * e.g. scripts/build.js runs 3 parallel per-name Vite builds off one `syncAllBuilds()`).
+ */
+export function featuresPlugin({ syncOnBuild = true } = {}) {
   return {
     name: 'lf-features',
-    apply: syncOnBuild ? undefined : 'serve',
+    // runs on serve + build (virtual modules)
+    resolveId(id) {
+      const scssName = resolveVirtualBuildId(id, VIRTUAL_SCSS_PREFIX);
+      if (scssName) return `\0${VIRTUAL_SCSS_PREFIX}${scssName}.scss`;
+
+      const entryName = resolveVirtualBuildId(id, VIRTUAL_ENTRY_PREFIX);
+      if (entryName) return `\0${VIRTUAL_ENTRY_PREFIX}${entryName}`;
+
+      const modulesName = resolveVirtualBuildId(id, VIRTUAL_MODULES_PREFIX);
+      if (modulesName) return `\0${VIRTUAL_MODULES_PREFIX}${modulesName}`;
+
+      const vendorsName = resolveVirtualBuildId(id, VIRTUAL_VENDORS_PREFIX);
+      if (vendorsName) return `\0${VIRTUAL_VENDORS_PREFIX}${vendorsName}`;
+
+      return null;
+    },
+    load(id) {
+      if (id.startsWith(`\0${VIRTUAL_SCSS_PREFIX}`) && id.endsWith('.scss')) {
+        const name = id.slice(`\0${VIRTUAL_SCSS_PREFIX}`.length, -'.scss'.length);
+        if (!listBuildNames().includes(name)) {
+          throw new Error(`Unknown build "${name}" for ${VIRTUAL_SCSS_PREFIX}`);
+        }
+        return buildScssSource(name);
+      }
+
+      if (id.startsWith(`\0${VIRTUAL_ENTRY_PREFIX}`)) {
+        const name = id.slice(`\0${VIRTUAL_ENTRY_PREFIX}`.length);
+        if (!listBuildNames().includes(name)) {
+          throw new Error(`Unknown build "${name}" for ${VIRTUAL_ENTRY_PREFIX}`);
+        }
+        return generateBuildEntry(name);
+      }
+
+      if (id.startsWith(`\0${VIRTUAL_MODULES_PREFIX}`)) {
+        const name = id.slice(`\0${VIRTUAL_MODULES_PREFIX}`.length);
+        if (!listBuildNames().includes(name)) {
+          throw new Error(`Unknown build "${name}" for ${VIRTUAL_MODULES_PREFIX}`);
+        }
+        return generateModulesIndex(resolveBuild(name));
+      }
+
+      if (id.startsWith(`\0${VIRTUAL_VENDORS_PREFIX}`)) {
+        const name = id.slice(`\0${VIRTUAL_VENDORS_PREFIX}`.length);
+        if (!listBuildNames().includes(name)) {
+          throw new Error(`Unknown build "${name}" for ${VIRTUAL_VENDORS_PREFIX}`);
+        }
+        return generateVendorsJs(resolveBuild(name));
+      }
+
+      return null;
+    },
     buildStart() {
-      syncAllBuilds();
+      if (syncOnBuild) syncAllBuilds();
       this.addWatchFile(path.resolve('config/features.js'));
     },
     configureServer(server) {

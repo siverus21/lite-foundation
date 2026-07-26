@@ -10,7 +10,7 @@ export class Slider extends Module {
     super(root);
     this.instances = [];
 
-    root.querySelectorAll('.swiper.ks-swiper, [data-swiper]').forEach((el) => {
+    this.mountAll('.swiper.ks-swiper, [data-swiper]', (el) => {
       if (el.dataset.lfSwiperInit === '1') return;
       el.dataset.lfSwiperInit = '1';
       this.instances.push(

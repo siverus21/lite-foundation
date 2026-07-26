@@ -1,0 +1,8 @@
+// Core theme members (no component settings, no CSS emit).
+@forward '../abstracts/functions';
+@forward 'core/global';
+@forward 'core/breakpoints';
+@forward 'core/grid';
+@forward 'core/typography';
+@forward 'core/z-index';
+@forward '../abstracts/mixins';

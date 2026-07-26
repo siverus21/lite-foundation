@@ -7,7 +7,8 @@ export class FormSlider extends Module {
   constructor(root = document) {
     super(root);
     this._controls = [];
-    root.querySelectorAll('[data-slider]').forEach((el) => {
+    if (!root.querySelector('[data-slider]')) return;
+    this.mountAll('[data-slider]', (el) => {
       this._controls.push(new FormSliderControl(el, this));
     });
   }

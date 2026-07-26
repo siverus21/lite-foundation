@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Native <details>/<summary> accordion (replaces Foundation Accordion).
 // Height is animated in px via JS; CSS only provides the transition + chevron.
 
@@ -5,87 +6,89 @@
   margin: 0;
   list-style: none;
   background: var(--lf-accordion-bg, #{$accordion-background});
-}
 
-.accordion-item {
-  border-bottom: 1px solid var(--lf-accordion-border, #{$light-gray});
-}
+  &-item {
+    border-bottom: 1px solid var(--lf-accordion-border, #{$light-gray});
 
-.accordion-item:last-child {
-  border-bottom: 0;
-}
+    &:last-child {
+      border-bottom: 0;
+    }
 
-.accordion-title {
-  display: block;
-  position: relative;
-  padding: $accordion-item-padding;
-  padding-inline-end: 2.5rem;
-  font-size: $accordion-title-font-size;
-  line-height: 1;
-  color: var(--lf-accordion-item-color, #{$accordion-item-color});
-  background: var(--lf-accordion-bg, #{$accordion-background});
-  cursor: pointer;
-  list-style: none;
-}
+    &.is-open {
+      > .accordion-title::after {
+        transform: translateY(-35%) rotate(225deg);
+      }
 
-.accordion-title::-webkit-details-marker {
-  display: none;
-}
+      > .accordion-content {
+        border-top-width: 1px;
+      }
+    }
+  }
 
-.accordion-title::marker {
-  content: '';
-}
+  &-title {
+    display: block;
+    position: relative;
+    padding: $accordion-item-padding;
+    padding-inline-end: 2.5rem;
+    font-size: $accordion-title-font-size;
+    line-height: 1;
+    color: var(--lf-accordion-item-color, #{$accordion-item-color});
+    background: var(--lf-accordion-bg, #{$accordion-background});
+    cursor: pointer;
+    list-style: none;
 
-/* Chevron */
-.accordion-title::after {
-  @include lf-chevron-angle(
-    0.5rem,
-    var(--lf-accordion-item-color, #{$accordion-item-color})
-  );
-  position: absolute;
-  top: 50%;
-  inset-inline-end: 1rem;
-  transform: translateY(-65%) rotate(45deg);
-  transition: transform 0.35s ease;
-}
+    &::-webkit-details-marker {
+      display: none;
+    }
 
-.accordion-item.is-open > .accordion-title::after {
-  transform: translateY(-35%) rotate(225deg);
-}
+    &::marker {
+      content: '';
+    }
 
-.accordion-title:hover,
-.accordion-title:focus {
-  background: var(--lf-accordion-item-bg-hover, #{$accordion-item-background-hover});
-  outline: none;
-}
+    /* Chevron */
+    &::after {
+      @include lf-chevron-angle(
+        0.5rem,
+        var(--lf-accordion-item-color, #{$accordion-item-color})
+      );
+      position: absolute;
+      top: 50%;
+      inset-inline-end: 1rem;
+      transform: translateY(-65%) rotate(45deg);
+      transition: transform 0.35s ease;
+    }
 
-.accordion-content {
-  overflow: hidden;
-  transition: height 0.4s ease-in-out;
-  background: var(--lf-accordion-content-bg, #{$accordion-content-background});
-  color: var(--lf-accordion-content-color, #{$accordion-content-color});
-  border-top: 0 solid var(--lf-accordion-content-border, #{$light-gray});
-}
+    &:hover,
+    &:focus {
+      background: var(--lf-accordion-item-bg-hover, #{$accordion-item-background-hover});
+      outline: none;
+    }
+  }
 
-/* JS-enhanced: collapsed panels are height:0; open height set inline. */
-.accordion[data-lf-enhanced] .accordion-item:not(.is-open) > .accordion-content {
-  height: 0;
-}
+  &-content {
+    overflow: hidden;
+    transition: height 0.4s ease-in-out;
+    background: var(--lf-accordion-content-bg, #{$accordion-content-background});
+    color: var(--lf-accordion-content-color, #{$accordion-content-color});
+    border-top: 0 solid var(--lf-accordion-content-border, #{$light-gray});
+  }
 
-/* Native fallback (before init / after destroyModules). */
-.accordion:not([data-lf-enhanced]) .accordion-item:not([open]) > .accordion-content {
-  display: none;
-}
+  /* JS-enhanced: collapsed panels are height:0; open height set inline. */
+  &[data-lf-enhanced] &-item:not(.is-open) > &-content {
+    height: 0;
+  }
 
-.accordion:not([data-lf-enhanced]) .accordion-item[open] > .accordion-content {
-  height: auto;
-}
+  /* Native fallback (before init / after destroyModules). */
+  &:not([data-lf-enhanced]) &-item:not([open]) > &-content {
+    display: none;
+  }
 
-.accordion-item.is-open > .accordion-content,
-.accordion:not([data-lf-enhanced]) .accordion-item[open] > .accordion-content {
-  border-top-width: 1px;
-}
+  &:not([data-lf-enhanced]) &-item[open] > &-content {
+    height: auto;
+    border-top-width: 1px;
+  }
 
-.accordion-content-inner {
-  padding: $accordion-content-padding;
+  &-content-inner {
+    padding: $accordion-content-padding;
+  }
 }

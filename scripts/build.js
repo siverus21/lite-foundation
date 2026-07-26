@@ -15,10 +15,11 @@ import {
 import { gzipSync } from 'node:zlib';
 import { build } from 'vite';
 import * as sass from 'sass';
-import { syncAllBuilds, listBuildNames } from './sync-features.js';
+import { syncAllBuilds, listBuildNames, buildScssSource, featuresPlugin, VIRTUAL_ENTRY_PREFIX } from './sync-features.js';
 import { buildOutputNames } from '../config/features.js';
 import { dartSassCompileOptions } from '../config/sass-options.js';
 import { lintTokens } from './lint-tokens.js';
+import { pathToFileURL } from 'node:url';
 
 const root = path.resolve('.');
 const distDir = path.join(root, 'dist');
@@ -37,15 +38,16 @@ function formatKb(bytes) {
 
 function compileCss(buildName) {
   const { css, cssMap } = buildOutputNames(buildName);
-  const entry = path.join(root, `scss/builds/${buildName}/app.scss`);
-  const result = sass.compile(entry, dartSassCompileOptions());
+  const result = sass.compileString(buildScssSource(buildName), {
+    ...dartSassCompileOptions(),
+    url: pathToFileURL(path.join(root, `virtual/lf-scss/${buildName}.scss`)),
+  });
   writeFileSync(path.join(distDir, css), `${result.css}\n/*# sourceMappingURL=${cssMap} */\n`);
   writeFileSync(path.join(distDir, cssMap), JSON.stringify(result.sourceMap));
 }
 
 async function buildJs(buildName) {
   const { js } = buildOutputNames(buildName);
-  const entry = path.join(root, `js/builds/${buildName}/entry.js`);
   const outDir = path.join(root, `.tmp-dist-${buildName}`);
 
   rmSync(outDir, { recursive: true, force: true });
@@ -55,6 +57,8 @@ async function buildJs(buildName) {
     root,
     publicDir: false,
     logLevel: 'warn',
+    // main() already ran syncAllBuilds() once — skip the redundant per-build resync.
+    plugins: [featuresPlugin({ syncOnBuild: false })],
     build: {
       outDir,
       emptyOutDir: true,
@@ -62,7 +66,7 @@ async function buildJs(buildName) {
       reportCompressedSize: false,
       cssCodeSplit: false,
       rollupOptions: {
-        input: entry,
+        input: `${VIRTUAL_ENTRY_PREFIX}${buildName}`,
         output: {
           entryFileNames: js,
           assetFileNames: '[name][extname]',
@@ -115,6 +119,14 @@ function cleanupDist(keep) {
 
 async function main() {
   syncAllBuilds();
+
+  // Fail fast: don't spend time building if a component has hardcoded colors/z-index.
+  const { ok: tokensOk } = lintTokens({ strict: true });
+  if (!tokensOk) {
+    console.error('\nBuild aborted — fix the token warnings above (or move the rule into scss/critical/).\n');
+    process.exit(1);
+  }
+
   const names = listBuildNames();
   console.log(`Building: ${names.join(', ')}`);
 
@@ -132,7 +144,6 @@ async function main() {
   }
   cleanupDist(keep);
 
-  lintTokens();
   reportSummary(names);
 }
 

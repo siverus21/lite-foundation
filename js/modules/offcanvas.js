@@ -27,7 +27,7 @@ export class Offcanvas extends Module {
   }
 
   #mountPanels() {
-    this.root.querySelectorAll('.offcanvas').forEach((panel) => {
+    this.mountAll('.offcanvas', (panel) => {
       if (!panel.hasAttribute('aria-modal')) panel.setAttribute('aria-modal', 'true');
       if (!panel.hasAttribute('role')) panel.setAttribute('role', 'dialog');
       if (panel.parentElement !== document.body) {

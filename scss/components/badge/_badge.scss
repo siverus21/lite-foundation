@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Badge (replaces Foundation badge). Uses settings/_feedback.scss.
 
 .badge {
@@ -9,12 +10,12 @@
   color: var(--lf-badge-color, #{$badge-color});
   font-size: $badge-font-size;
   text-align: center;
-}
 
-@each $name, $color in $badge-palette {
-  .badge.#{$name},
-  .#{$name}.badge {
-    background: var(--lf-color-#{$name}, #{$color});
-    color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($badge-color, $badge-color-alt))});
+  @each $name, $color in $badge-palette {
+    &.#{$name},
+    .#{$name}#{&} {
+      background: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($badge-color, $badge-color-alt))});
+    }
   }
 }

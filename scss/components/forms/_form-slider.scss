@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Foundation JS slider styles ([data-slider]). Behavior: js/modules/form-slider.js
 // Swiper carousel styles: _slider.scss
 
@@ -10,72 +11,72 @@
   cursor: pointer;
   user-select: none;
   touch-action: none;
-}
 
-.slider-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: inline-block;
-  max-width: 100%;
-  height: $slider-height;
-  background-color: var(--lf-slider-fill, #{$slider-fill-background});
-  transition: $slider-transition;
-}
+  &-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    max-width: 100%;
+    height: $slider-height;
+    background-color: var(--lf-slider-fill, #{$slider-fill-background});
+    transition: $slider-transition;
 
-.slider-fill.is-dragging {
-  transition: all 0s linear;
-}
+    &.is-dragging {
+      transition: all 0s linear;
+    }
+  }
 
-.slider-handle {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  z-index: var(--lf-z-content);
-  display: inline-block;
-  width: $slider-handle-width;
-  height: $slider-handle-height;
-  border-radius: $slider-radius;
-  background-color: var(--lf-slider-handle, #{$slider-handle-background});
-  transform: translate(-50%, -50%);
-  cursor: grab;
-  transition: $slider-transition;
-  touch-action: manipulation;
-}
+  &-handle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: var(--lf-z-content);
+    display: inline-block;
+    width: $slider-handle-width;
+    height: $slider-handle-height;
+    border-radius: $slider-radius;
+    background-color: var(--lf-slider-handle, #{$slider-handle-background});
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    transition: $slider-transition;
+    touch-action: manipulation;
 
-.slider-handle:hover {
-  background-color: var(--lf-slider-handle-hover);
-}
+    &:hover {
+      background-color: var(--lf-slider-handle-hover);
+    }
 
-.slider-handle.is-dragging {
-  cursor: grabbing;
-  transition: all 0s linear;
-}
+    &.is-dragging {
+      cursor: grabbing;
+      transition: all 0s linear;
+    }
+  }
 
-.slider.disabled,
-.slider[disabled] {
-  opacity: $slider-opacity-disabled;
-  cursor: not-allowed;
-}
+  &.disabled,
+  &[disabled] {
+    opacity: $slider-opacity-disabled;
+    cursor: not-allowed;
+  }
 
-.slider.vertical {
-  display: inline-block;
-  width: $slider-width-vertical;
-  height: 12.5rem;
-  margin: 0 1.25rem;
-  transform: scale(1, -1);
-}
+  &.vertical {
+    display: inline-block;
+    width: $slider-width-vertical;
+    height: 12.5rem;
+    margin: 0 1.25rem;
+    transform: scale(1, -1);
 
-.slider.vertical .slider-fill {
-  top: 0;
-  width: $slider-width-vertical;
-  max-height: 100%;
-}
+    .slider-fill {
+      top: 0;
+      width: $slider-width-vertical;
+      max-height: 100%;
+    }
 
-.slider.vertical .slider-handle {
-  top: 0;
-  left: 50%;
-  width: $slider-handle-height;
-  height: $slider-handle-width;
-  transform: translateX(-50%);
+    .slider-handle {
+      top: 0;
+      left: 50%;
+      width: $slider-handle-height;
+      height: $slider-handle-width;
+      transform: translateX(-50%);
+    }
+  }
 }

@@ -1,34 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import {
-  collectSettings,
-  orderSettings,
-  emptyFeatures,
-  resolveBuild,
-} from '../scripts/sync-features.js';
+import { resolveBuild } from '../scripts/sync-features.js';
 import { buildOutputNames, splitBuildConfig, getBuildKind } from '../config/features.js';
 
 describe('sync-features helpers', () => {
-  it('collectSettings pulls style + layout + utilities folders', () => {
-    const features = emptyFeatures();
-    features.styles.button = true;
-    features.styles.menu = true;
-    features.layout.titleBar = true;
-    features.utilities = true;
-
-    const set = collectSettings(features);
-    expect(set.has('button')).toBe(true);
-    expect(set.has('menu')).toBe(true);
-    expect(set.has('accordion-menu')).toBe(true);
-    expect(set.has('title-bar')).toBe(true);
-    expect(set.has('utilities')).toBe(true);
-  });
-
-  it('orderSettings puts preferred folders first', () => {
-    const ordered = orderSettings(new Set(['card', 'button', 'forms', 'zzz']));
-    expect(ordered.slice(0, 2)).toEqual(['forms', 'button']);
-    expect(ordered.at(-1)).toBe('zzz');
-  });
-
   it('splitBuildConfig strips kind meta from feature flags', () => {
     const { kind, features } = splitBuildConfig({
       kind: 'library',

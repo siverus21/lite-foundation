@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Card (replaces Foundation card). Uses settings/_containers.scss.
 
 .card {
@@ -11,32 +12,32 @@
   box-shadow: var(--lf-card-shadow, #{$card-shadow});
   overflow: hidden;
   color: var(--lf-card-color, #{$card-font-color});
-}
 
-.card > :last-child {
-  margin-bottom: 0;
-}
+  > :last-child {
+    margin-bottom: 0;
+  }
 
-.card-divider {
-  display: flex;
-  flex: 0 1 auto;
-  padding: $card-padding;
-  background: var(--lf-card-divider-bg, #{$card-divider-background});
-}
+  &-divider {
+    display: flex;
+    flex: 0 1 auto;
+    padding: $card-padding;
+    background: var(--lf-card-divider-bg, #{$card-divider-background});
 
-.card-divider > :last-child {
-  margin-bottom: 0;
-}
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
 
-.card-section {
-  flex: 1 0 auto;
-  padding: $card-padding;
-}
+  &-section {
+    flex: 1 0 auto;
+    padding: $card-padding;
 
-.card-section > :last-child {
-  margin-bottom: 0;
-}
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
 
-.card-image {
-  min-height: 1px;
+  &-image {
+    min-height: 1px;
+  }
 }

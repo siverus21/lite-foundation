@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Meter (replaces Foundation meter). Uses settings/_feedback.scss.
 
 meter {
@@ -10,46 +11,46 @@ meter {
   background: var(--lf-meter-bg, #{$meter-background});
   -moz-appearance: none;
   appearance: none;
-}
 
-meter::-webkit-meter-bar {
-  border: 0;
-  border-radius: $meter-radius;
-  background: var(--lf-meter-bg, #{$meter-background});
-}
+  &::-webkit-meter-bar {
+    border: 0;
+    border-radius: $meter-radius;
+    background: var(--lf-meter-bg, #{$meter-background});
+  }
 
-meter::-webkit-meter-inner-element {
-  border-radius: $meter-radius;
-}
+  &::-webkit-meter-inner-element {
+    border-radius: $meter-radius;
+  }
 
-meter::-webkit-meter-optimum-value {
-  border-radius: $meter-radius;
-  background: var(--lf-meter-fill-good, #{$meter-fill-good});
-}
+  &::-webkit-meter-optimum-value {
+    border-radius: $meter-radius;
+    background: var(--lf-meter-fill-good, #{$meter-fill-good});
+  }
 
-meter::-webkit-meter-suboptimum-value {
-  border-radius: $meter-radius;
-  background: var(--lf-meter-fill-medium, #{$meter-fill-medium});
-}
+  &::-webkit-meter-suboptimum-value {
+    border-radius: $meter-radius;
+    background: var(--lf-meter-fill-medium, #{$meter-fill-medium});
+  }
 
-meter::-webkit-meter-even-less-good-value {
-  border-radius: $meter-radius;
-  background: var(--lf-meter-fill-bad, #{$meter-fill-bad});
-}
+  &::-webkit-meter-even-less-good-value {
+    border-radius: $meter-radius;
+    background: var(--lf-meter-fill-bad, #{$meter-fill-bad});
+  }
 
-meter::-moz-meter-bar {
-  border-radius: $meter-radius;
-  background: var(--lf-color-primary, #{$primary-color});
-}
+  &::-moz-meter-bar {
+    border-radius: $meter-radius;
+    background: var(--lf-color-primary, #{$primary-color});
+  }
 
-meter:-moz-meter-optimum::-moz-meter-bar {
-  background: var(--lf-meter-fill-good, #{$meter-fill-good});
-}
+  &:-moz-meter-optimum::-moz-meter-bar {
+    background: var(--lf-meter-fill-good, #{$meter-fill-good});
+  }
 
-meter:-moz-meter-sub-optimum::-moz-meter-bar {
-  background: var(--lf-meter-fill-medium, #{$meter-fill-medium});
-}
+  &:-moz-meter-sub-optimum::-moz-meter-bar {
+    background: var(--lf-meter-fill-medium, #{$meter-fill-medium});
+  }
 
-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
-  background: var(--lf-meter-fill-bad, #{$meter-fill-bad});
+  &:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+    background: var(--lf-meter-fill-bad, #{$meter-fill-bad});
+  }
 }

@@ -52,7 +52,7 @@
   destroyModules,
   refreshModules,
   unmountModules,
-} from '/js/builds/full/modules.js';
+} from 'virtual:lf-modules/full';
 // production: from 'dist/lib.js' (re-export) or свой entry
 
 initModules(document);              // boot делает это сам
@@ -70,6 +70,10 @@ unmountModules(panel, { removeRoot: true }); // JS + удалить сам эл�
         <p class="docs-aside">
           <code>unmountModules(document)</code> / <code>body</code> / <code>html</code> только делает
           destroy — страницу не очищает.
+        </p>
+        <p class="docs-aside">
+          Ленивый init: добавь <code>data-lf-lazy</code> на корень компонента
+          (например <code>&lt;ul data-tabs data-lf-lazy&gt;</code>) — модуль поднимется при приближении к viewport.
         </p>
       </section>
 
@@ -137,9 +141,9 @@ unmountModules(panel, { removeRoot: true });</code></pre></div>
       </section>
     </main>
 
-    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="/js/load-build.js?build=full"></script>
     <script type="module">
-      import { refreshModules, destroyModules, unmountModules } from '/js/builds/full/modules.js';
+      import { refreshModules, destroyModules, unmountModules } from 'virtual:lf-modules/full';
 
       const mount = document.getElementById('docs-mount');
       const status = document.getElementById('docs-lifecycle-status');

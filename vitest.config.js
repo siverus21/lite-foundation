@@ -25,7 +25,6 @@ export default defineConfig({
         'config/features.js',
         'scripts/sync-features.js',
       ],
-      exclude: ['js/builds/**', 'js/modules/index.js', 'js/vendors.js'],
     },
   },
 });

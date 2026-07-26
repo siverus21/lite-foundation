@@ -15,7 +15,7 @@ export class Modal extends Module {
   }
 
   #mountDialogs() {
-    this.root.querySelectorAll('dialog.modal').forEach((dialog) => {
+    this.mountAll('dialog.modal', (dialog) => {
       if (dialog.parentElement !== document.body) {
         document.body.appendChild(dialog);
       }

@@ -8,20 +8,9 @@
 
 $global-font-size: 100% !default;
 $global-color-pick-contrast-tolerance: 0 !default;
-$contrast-warnings: false !default;
-$unit-warnings: false !default;
 $white: #fefefe !default;
 $black: #0a0a0a !default;
 
-// --- Math ---
-
-@function divide($dividend, $divisor) {
-  @return math.div($dividend, $divisor);
-}
-
-@function pow($base, $exponent) {
-  @return math.pow($base, $exponent);
-}
 
 @function strip-unit($num) {
   @return math.div($num, $num * 0 + 1);
@@ -35,11 +24,8 @@ $black: #0a0a0a !default;
 
 // --- Units ---
 
-@function -zf-to-rem($value, $base: null) {
+@function zf-to-rem($value, $base: null) {
   @if meta.type-of($value) != 'number' {
-    @if $unit-warnings {
-      @warn meta.inspect($value) + ' was passed to rem-calc(), which is not a number.';
-    }
     @return $value;
   }
 
@@ -75,17 +61,17 @@ $black: #0a0a0a !default;
   }
 
   @if $count == 1 {
-    @return -zf-to-rem($values, $base);
+    @return zf-to-rem($values, $base);
   }
 
   @for $i from 1 through $count {
-    $rem-values: list.append($rem-values, -zf-to-rem(list.nth($values, $i), $base));
+    $rem-values: list.append($rem-values, zf-to-rem(list.nth($values, $i), $base));
   }
 
   @return $rem-values;
 }
 
-@function -zf-bp-to-em($value) {
+@function zf-bp-to-em($value) {
   @if math.unit($value) == 'px' or math.is-unitless($value) {
     $value: rem-calc($value, $base: 16px);
   }
@@ -238,7 +224,7 @@ $black: #0a0a0a !default;
   @return $return;
 }
 
-@function -zf-map-next($map, $key) {
+@function zf-map-next($map, $key) {
   $values: map.keys($map);
   $i: 0;
 
@@ -253,9 +239,6 @@ $black: #0a0a0a !default;
   @return map.get($map, list.nth($values, $i));
 }
 
-@function -zf-bool($val) {
-  @return $val != false and $val != null and $val != none;
-}
 
 // --- Color ---
 
@@ -269,7 +252,7 @@ $black: #0a0a0a !default;
   @for $i from 1 through 3 {
     $rgb: list.nth($rgba, $i);
     $rgb: math.div($rgb, 255);
-    $rgb: if($rgb < 0.03928, math.div($rgb, 12.92), pow(math.div($rgb + 0.055, 1.055), 2.4));
+    $rgb: if($rgb < 0.03928, math.div($rgb, 12.92), math.pow(math.div($rgb + 0.055, 1.055), 2.4));
     $rgba2: list.append($rgba2, $rgb);
   }
 
@@ -301,10 +284,6 @@ $black: #0a0a0a !default;
     }
   }
 
-  @if ($contrast-warnings and $contrast < 3) {
-    @warn 'Contrast ratio of #{$best} on #{$base} is pretty bad, just #{$contrast}';
-  }
-
   @return $best;
 }
 
@@ -324,37 +303,4 @@ $black: #0a0a0a !default;
   @return scale-color($color, $lightness: $scale);
 }
 
-@function get-color($key) {
-  @if map.has-key($foundation-palette, $key) {
-    @return map.get($foundation-palette, $key);
-  }
-  @error 'get-color(): `#{$key}` is not in $foundation-palette';
-}
 
-@mixin add-foundation-colors() {
-  @if map.has-key($foundation-palette, primary) {
-    $primary-color: map.get($foundation-palette, primary) !global;
-  } @else {
-    $primary-color: #1779ba !global;
-  }
-  @if map.has-key($foundation-palette, secondary) {
-    $secondary-color: map.get($foundation-palette, secondary) !global;
-  } @else {
-    $secondary-color: #767676 !global;
-  }
-  @if map.has-key($foundation-palette, success) {
-    $success-color: map.get($foundation-palette, success) !global;
-  } @else {
-    $success-color: #3adb76 !global;
-  }
-  @if map.has-key($foundation-palette, warning) {
-    $warning-color: map.get($foundation-palette, warning) !global;
-  } @else {
-    $warning-color: #ffae00 !global;
-  }
-  @if map.has-key($foundation-palette, alert) {
-    $alert-color: map.get($foundation-palette, alert) !global;
-  } @else {
-    $alert-color: #cc4b37 !global;
-  }
-}

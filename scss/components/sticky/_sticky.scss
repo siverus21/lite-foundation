@@ -1,10 +1,13 @@
+@use '../../settings/vars' as *;
 // CSS sticky within a layout column / section.
 // Sticky must be on the grid item with align-self:start so it can travel
 // while the row (taller sibling column) scrolls.
+//
+// Markup: .grid-x > .cell > .sticky-box — sticky is on the cell via :has().
 
 .grid-x > .cell:has(> .sticky-box) {
-    position: sticky;
-    top: var(--sticky-offset, 5rem);
-    align-self: start;
-    z-index: var(--lf-z-sticky);
+  position: sticky;
+  top: var(--sticky-offset, 5rem);
+  align-self: start;
+  z-index: var(--lf-z-sticky);
 }

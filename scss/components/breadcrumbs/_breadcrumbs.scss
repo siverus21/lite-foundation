@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Breadcrumbs (replaces Foundation breadcrumbs). Uses settings/_navigation.scss.
 
 .breadcrumbs {
@@ -7,39 +8,39 @@
   margin: $breadcrumbs-margin;
   padding: 0;
   list-style: none;
-}
 
-.breadcrumbs li {
-  font-size: $breadcrumbs-item-font-size;
-  color: var(--lf-breadcrumbs-item-color-current, #{$breadcrumbs-item-color-current});
-  cursor: default;
+  li {
+    font-size: $breadcrumbs-item-font-size;
+    color: var(--lf-breadcrumbs-item-color-current, #{$breadcrumbs-item-color-current});
+    cursor: default;
 
-  @if $breadcrumbs-item-uppercase {
-    text-transform: uppercase;
+    @if $breadcrumbs-item-uppercase {
+      text-transform: uppercase;
+    }
+
+    @if $breadcrumbs-item-separator {
+      &:not(:last-child)::after {
+        margin: 0 $breadcrumbs-item-margin;
+        content: $breadcrumbs-item-separator-item;
+        color: var(--lf-breadcrumbs-separator-color, #{$breadcrumbs-item-separator-color});
+      }
+    } @else {
+      &:not(:last-child) {
+        margin-right: $breadcrumbs-item-margin;
+      }
+    }
   }
-}
 
-@if $breadcrumbs-item-separator {
-  .breadcrumbs li:not(:last-child)::after {
-    margin: 0 $breadcrumbs-item-margin;
-    content: $breadcrumbs-item-separator-item;
-    color: var(--lf-breadcrumbs-separator-color, #{$breadcrumbs-item-separator-color});
+  a {
+    color: var(--lf-breadcrumbs-item-color, #{$breadcrumbs-item-color});
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
-} @else {
-  .breadcrumbs li:not(:last-child) {
-    margin-right: $breadcrumbs-item-margin;
+
+  .disabled {
+    color: var(--lf-breadcrumbs-item-color-disabled, #{$breadcrumbs-item-color-disabled});
+    cursor: not-allowed;
   }
-}
-
-.breadcrumbs a {
-  color: var(--lf-breadcrumbs-item-color, #{$breadcrumbs-item-color});
-}
-
-.breadcrumbs a:hover {
-  text-decoration: underline;
-}
-
-.breadcrumbs .disabled {
-  color: var(--lf-breadcrumbs-item-color-disabled, #{$breadcrumbs-item-color-disabled});
-  cursor: not-allowed;
 }

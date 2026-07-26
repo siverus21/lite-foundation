@@ -20,11 +20,13 @@
       <h1>Menus</h1>
       <p class="docs-lead">
         Навигационные списки с вложенностью. Тип задаётся
-        <code>data-menu="dropdown|accordion|drilldown"</code> — один модуль, три паттерна.
+        <code>data-menu="dropdown|accordion|drilldown"</code> — отдельные JS-флаги на каждый паттерн.
       </p>
       <div class="docs-flags">
         <span class="docs-flag">styles.menu</span>
-        <span class="docs-flag">scripts.menus</span>
+        <span class="docs-flag">scripts.menuDropdown</span>
+        <span class="docs-flag">scripts.menuAccordion</span>
+        <span class="docs-flag">scripts.menuDrilldown</span>
       </div>
 
       <section class="docs-section">
@@ -92,8 +94,56 @@
   &lt;/li&gt;
 &lt;/ul&gt;</code></pre></div>
       </section>
+
+      <section class="docs-section">
+        <h2>Drilldown menu</h2>
+        <p>
+          Нужен флаг <code>scripts.menuDrilldown</code>. JS оборачивает список в
+          <code>.is-drilldown</code>, помечает уровни и вставляет пункт
+          <code>.js-drilldown-back</code> («Back») в каждое вложенное меню.
+        </p>
+        <div class="docs-demo" style="max-width: 16rem;">
+          <ul class="vertical menu drilldown" data-menu="drilldown">
+            <li>
+              <a href="#">Item 1</a>
+              <ul class="menu vertical nested">
+                <li><a href="#">Item 1A</a></li>
+                <li>
+                  <a href="#">Item 1B</a>
+                  <ul class="menu vertical nested">
+                    <li><a href="#">Item 1B i</a></li>
+                    <li><a href="#">Item 1B ii</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><a href="#">Item 2</a></li>
+          </ul>
+        </div>
+        <div class="docs-code"><pre><code>&lt;ul class="vertical menu drilldown" data-menu="drilldown"&gt;
+  &lt;li&gt;
+    &lt;a href="#"&gt;Item 1&lt;/a&gt;
+    &lt;ul class="menu vertical nested"&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Item 1A&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;
+        &lt;a href="#"&gt;Item 1B&lt;/a&gt;
+        &lt;ul class="menu vertical nested"&gt;
+          &lt;li&gt;&lt;a href="#"&gt;Item 1B i&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href="#"&gt;Item 1B ii&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href="#"&gt;Item 2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre></div>
+        <div class="docs-aside">
+          Фиксируй ширину контейнера (например <code>max-width: 16rem</code>) —
+          высота панели считается от ширины wrapper. Клик по родителю с подменю
+          сдвигает уровень влево; «Back» возвращает.
+        </div>
+      </section>
     </main>
-    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="/js/load-build.js?build=full"></script>
     <script type="module" src="assets/docs.js"></script>
   </body>
 </html>

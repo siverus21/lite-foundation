@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Callout (replaces Foundation callout). Uses settings/_containers.scss.
 
 .callout {
@@ -14,30 +15,30 @@
       ($callout-font-color, $callout-font-color-alt)
     )}
   );
-}
 
-.callout > :first-child {
-  margin-top: 0;
-}
-
-.callout > :last-child {
-  margin-bottom: 0;
-}
-
-@each $name, $color in $foundation-palette {
-  $background: scale-color($color, $lightness: $callout-background-fade);
-
-  .callout.#{$name} {
-    background-color: var(--lf-callout-#{$name}-bg, #{$background});
-    color: var(
-      --lf-callout-#{$name}-color,
-      #{color-pick-contrast($background, ($callout-font-color, $callout-font-color-alt))}
-    );
+  > :first-child {
+    margin-top: 0;
   }
-}
 
-@each $size, $padding in map-remove($callout-sizes, default) {
-  .callout.#{$size} {
-    padding: $padding;
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  @each $name, $color in $foundation-palette {
+    $background: scale-color($color, $lightness: $callout-background-fade);
+
+    &.#{$name} {
+      background-color: var(--lf-callout-#{$name}-bg, #{$background});
+      color: var(
+        --lf-callout-#{$name}-color,
+        #{color-pick-contrast($background, ($callout-font-color, $callout-font-color-alt))}
+      );
+    }
+  }
+
+  @each $size, $padding in map-remove($callout-sizes, default) {
+    &.#{$size} {
+      padding: $padding;
+    }
   }
 }

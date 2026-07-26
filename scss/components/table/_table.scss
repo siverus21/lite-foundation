@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Table (replaces Foundation table). Uses settings/_feedback.scss.
 
 table {
@@ -5,151 +6,163 @@ table {
   margin-bottom: $global-margin;
   border-collapse: collapse;
   border-radius: $global-radius;
-}
 
-table thead,
-table tbody,
-table tfoot {
-  border: 1px solid var(--lf-table-border, #{smart-scale($table-background, $table-color-scale)});
-  background-color: var(--lf-table-bg, #{$table-background});
-}
-
-table caption {
-  padding: $table-padding;
-  font-weight: $global-weight-bold;
-}
-
-table thead {
-  background: var(--lf-table-head-bg, #{$table-head-background});
-  color: var(--lf-table-head-color, #{$table-head-font-color});
-}
-
-table tfoot {
-  background: var(--lf-table-foot-bg, #{$table-foot-background});
-  color: var(--lf-table-foot-color, #{$table-foot-font-color});
-}
-
-table thead tr,
-table tfoot tr {
-  background: transparent;
-}
-
-table thead th,
-table thead td,
-table tfoot th,
-table tfoot td {
-  padding: $table-padding;
-  font-weight: $global-weight-bold;
-  text-align: left;
-}
-
-table tbody th,
-table tbody td {
-  padding: $table-padding;
-}
-
-@if $table-is-striped {
-  @if $table-stripe == even {
-    table tbody tr:nth-child(even) {
-      border-bottom: 0;
-      background-color: var(--lf-table-striped-bg, #{$table-striped-background});
-    }
-  } @else if $table-stripe == odd {
-    table tbody tr:nth-child(odd) {
-      background-color: var(--lf-table-striped-bg, #{$table-striped-background});
-    }
-  }
-
-  table.unstriped tbody tr {
-    border-bottom: 1px solid var(--lf-table-border, #{smart-scale($table-background, $table-color-scale)});
-    background-color: var(--lf-table-bg, #{$table-background});
-  }
-} @else {
-  table tbody tr {
-    border-bottom: 1px solid var(--lf-table-border, #{smart-scale($table-background, $table-color-scale)});
+  thead,
+  tbody,
+  tfoot {
+    border: 1px solid var(--lf-table-border, #{smart-scale($table-background, $table-color-scale)});
     background-color: var(--lf-table-bg, #{$table-background});
   }
 
-  @if $table-stripe == even {
-    table.striped tbody tr:nth-child(even) {
-      border-bottom: 0;
-      background-color: var(--lf-table-striped-bg, #{$table-striped-background});
+  caption {
+    padding: $table-padding;
+    font-weight: $global-weight-bold;
+  }
+
+  thead {
+    background: var(--lf-table-head-bg, #{$table-head-background});
+    color: var(--lf-table-head-color, #{$table-head-font-color});
+
+    tr {
+      background: transparent;
     }
-  } @else if $table-stripe == odd {
-    table.striped tbody tr:nth-child(odd) {
-      background-color: var(--lf-table-striped-bg, #{$table-striped-background});
+
+    th,
+    td {
+      padding: $table-padding;
+      font-weight: $global-weight-bold;
+      text-align: left;
     }
   }
-}
 
-table.scroll {
-  display: block;
-  width: 100%;
-  overflow-x: auto;
+  tfoot {
+    background: var(--lf-table-foot-bg, #{$table-foot-background});
+    color: var(--lf-table-foot-color, #{$table-foot-font-color});
+
+    tr {
+      background: transparent;
+    }
+
+    th,
+    td {
+      padding: $table-padding;
+      font-weight: $global-weight-bold;
+      text-align: left;
+    }
+  }
+
+  tbody {
+    th,
+    td {
+      padding: $table-padding;
+    }
+  }
+
+  @if $table-is-striped {
+    @if $table-stripe == even {
+      tbody tr:nth-child(even) {
+        border-bottom: 0;
+        background-color: var(--lf-table-striped-bg, #{$table-striped-background});
+      }
+    } @else if $table-stripe == odd {
+      tbody tr:nth-child(odd) {
+        background-color: var(--lf-table-striped-bg, #{$table-striped-background});
+      }
+    }
+
+    &.unstriped tbody tr {
+      border-bottom: 1px solid var(--lf-table-border, #{smart-scale($table-background, $table-color-scale)});
+      background-color: var(--lf-table-bg, #{$table-background});
+    }
+  } @else {
+    tbody tr {
+      border-bottom: 1px solid var(--lf-table-border, #{smart-scale($table-background, $table-color-scale)});
+      background-color: var(--lf-table-bg, #{$table-background});
+    }
+
+    @if $table-stripe == even {
+      &.striped tbody tr:nth-child(even) {
+        border-bottom: 0;
+        background-color: var(--lf-table-striped-bg, #{$table-striped-background});
+      }
+    } @else if $table-stripe == odd {
+      &.striped tbody tr:nth-child(odd) {
+        background-color: var(--lf-table-striped-bg, #{$table-striped-background});
+      }
+    }
+  }
+
+  &.scroll {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  &.hover {
+    thead tr:hover {
+      background-color: var(--lf-table-head-row-hover, #{$table-head-row-hover});
+    }
+
+    tfoot tr:hover {
+      background-color: var(--lf-table-foot-row-hover, #{$table-foot-row-hover});
+    }
+
+    tbody tr:hover {
+      background-color: var(--lf-table-row-hover, #{$table-row-hover});
+    }
+
+    @if $table-is-striped {
+      @if $table-stripe == even {
+        &:not(.unstriped) tbody tr:nth-of-type(even):hover {
+          background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
+        }
+      } @else if $table-stripe == odd {
+        &:not(.unstriped) tbody tr:nth-of-type(odd):hover {
+          background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
+        }
+      }
+    } @else {
+      @if $table-stripe == even {
+        &.striped tbody tr:nth-of-type(even):hover {
+          background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
+        }
+      } @else if $table-stripe == odd {
+        &.striped tbody tr:nth-of-type(odd):hover {
+          background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
+        }
+      }
+    }
+  }
+
+  &.stack {
+    @include breakpoint($table-stack-breakpoint down) {
+      @if $show-header-for-stacked {
+        thead th {
+          display: block;
+        }
+      } @else {
+        thead {
+          display: none;
+        }
+      }
+
+      tfoot {
+        display: none;
+      }
+
+      tr,
+      th,
+      td {
+        display: block;
+      }
+
+      td {
+        border-top: 0;
+      }
+    }
+  }
 }
 
 .table-scroll {
   overflow-x: auto;
-}
-
-table.hover thead tr:hover {
-  background-color: var(--lf-table-head-row-hover, #{$table-head-row-hover});
-}
-
-table.hover tfoot tr:hover {
-  background-color: var(--lf-table-foot-row-hover, #{$table-foot-row-hover});
-}
-
-table.hover tbody tr:hover {
-  background-color: var(--lf-table-row-hover, #{$table-row-hover});
-}
-
-@if $table-is-striped {
-  @if $table-stripe == even {
-    table.hover:not(.unstriped) tbody tr:nth-of-type(even):hover {
-      background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
-    }
-  } @else if $table-stripe == odd {
-    table.hover:not(.unstriped) tbody tr:nth-of-type(odd):hover {
-      background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
-    }
-  }
-} @else {
-  @if $table-stripe == even {
-    table.hover.striped tbody tr:nth-of-type(even):hover {
-      background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
-    }
-  } @else if $table-stripe == odd {
-    table.hover.striped tbody tr:nth-of-type(odd):hover {
-      background-color: var(--lf-table-row-stripe-hover, #{$table-row-stripe-hover});
-    }
-  }
-}
-
-table.stack {
-  @include breakpoint($table-stack-breakpoint down) {
-    @if $show-header-for-stacked {
-      thead th {
-        display: block;
-      }
-    } @else {
-      thead {
-        display: none;
-      }
-    }
-
-    tfoot {
-      display: none;
-    }
-
-    tr,
-    th,
-    td {
-      display: block;
-    }
-
-    td {
-      border-top: 0;
-    }
-  }
 }

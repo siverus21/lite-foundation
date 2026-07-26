@@ -1,5 +1,5 @@
 /**
- * Shared boot for named builds (js/builds/{name}/entry.js).
+ * Shared boot for named builds (via virtual:lf-entry / js/load-build.js).
  *
  * Dev: keep dist/*.css render-blocking for first paint; optionally import Sass
  * for HMR only — never disable the link (that caused FOUC / missing borders).

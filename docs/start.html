@@ -26,14 +26,15 @@
       <h1>Быстрый старт</h1>
       <p class="docs-lead">
         Поднять локально, собрать <code>dist/</code> и подключить бандлы на своей странице.
-        Без Vite-сервера абсолютные пути <code>/js/builds/…</code> не заработают — открывай через
+        Без Vite-сервера абсолютные пути <code>/js/load-build.js</code> не заработают — открывай через
         <code>npm run start</code>.
       </p>
 
       <section class="docs-section">
         <h2>Установка</h2>
-        <p>Нужны Node.js 18+ и npm. GENERATED-файлы (<code>js/builds/</code>, <code>scss/builds/</code>)
-          появляются при старте / sync / prebuild.</p>
+        <p>Нужны Node.js 18+ и npm. Индексы SCSS появляются при старте / sync / build.
+          CSS/JS entry — virtual (<code>virtual:lf-scss/…</code>, <code>virtual:lf-entry/…</code>) через
+          <code>/js/load-build.js?build=…</code>.</p>
         <div class="docs-code"><pre><code>git clone https://github.com/siverus21/lite-foundation.git
 cd lite-foundation
 npm install
@@ -74,7 +75,7 @@ npm run start</code></pre></div>
           импортирует Sass только для HMR и <strong>не</strong> отключает dist-link.
         </p>
         <div class="docs-code"><pre><code>&lt;link rel="stylesheet" href="dist/app.css"&gt;
-&lt;script type="module" src="/js/builds/full/entry.js"&gt;&lt;/script&gt;</code></pre></div>
+&lt;script type="module" src="/js/load-build.js?build=full"&gt;&lt;/script&gt;</code></pre></div>
         <p class="docs-aside">
           После правок SCSS в DEV сработает HMR; для production снова
           <code>npm run build</code>, чтобы обновить <code>dist/</code>.
@@ -104,7 +105,7 @@ npm run start</code></pre></div>
       </section>
     </main>
 
-    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="/js/load-build.js?build=full"></script>
     <script type="module" src="assets/docs.js"></script>
   </body>
 </html>

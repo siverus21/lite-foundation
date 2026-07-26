@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Label (replaces Foundation label). Uses settings/_feedback.scss.
 
 .label {
@@ -10,12 +11,12 @@
   line-height: 1;
   white-space: nowrap;
   cursor: default;
-}
 
-@each $name, $color in $label-palette {
-  .label.#{$name},
-  .#{$name}.label {
-    background: var(--lf-color-#{$name}, #{$color});
-    color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($label-color, $label-color-alt))});
+  @each $name, $color in $label-palette {
+    &.#{$name},
+    .#{$name}#{&} {
+      background: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($label-color, $label-color-alt))});
+    }
   }
 }

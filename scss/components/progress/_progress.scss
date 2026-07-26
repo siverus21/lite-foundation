@@ -1,3 +1,4 @@
+@use '../../settings/vars' as *;
 // Progress bar (replaces Foundation progress-bar). Uses settings/_feedback.scss.
 
 .progress {
@@ -8,33 +9,33 @@
   border-radius: $progress-radius;
   background-color: var(--lf-progress-bg, #{$progress-background});
   overflow: hidden;
-}
 
-.progress-meter {
-  position: relative;
-  grid-column: 1;
-  min-width: 0;
-  height: 100%;
-  border-radius: $progress-radius;
-  background-color: var(--lf-progress-meter, #{$progress-meter-background});
-}
+  &-meter {
+    position: relative;
+    grid-column: 1;
+    min-width: 0;
+    height: 100%;
+    border-radius: $progress-radius;
+    background-color: var(--lf-progress-meter, #{$progress-meter-background});
+  }
 
-.progress-meter-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  border-radius: $progress-radius;
-  color: var(--lf-color-white, #{$white});
-  font-size: 0.75rem;
-  font-weight: bold;
-  white-space: nowrap;
-}
+  &-meter-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    border-radius: $progress-radius;
+    color: var(--lf-color-white, #{$white});
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+  }
 
-@each $name, $color in $foundation-palette {
-  .progress.#{$name} .progress-meter {
-    background-color: var(--lf-color-#{$name}, #{$color});
+  @each $name, $color in $foundation-palette {
+    &.#{$name} .progress-meter {
+      background-color: var(--lf-color-#{$name}, #{$color});
+    }
   }
 }
 
@@ -48,33 +49,33 @@ progress {
   border-radius: $progress-radius;
   background: var(--lf-progress-bg, #{$progress-background});
   appearance: none;
-}
 
-progress::-webkit-progress-bar {
-  border-radius: $progress-radius;
-  background: var(--lf-progress-bg, #{$progress-background});
-}
-
-progress::-webkit-progress-value {
-  border-radius: $progress-radius;
-  background: var(--lf-progress-meter, #{$progress-meter-background});
-}
-
-progress::-moz-progress-bar {
-  border-radius: $progress-radius;
-  background: var(--lf-progress-meter, #{$progress-meter-background});
-}
-
-@each $name, $color in $foundation-palette {
-  progress.#{$name} {
-    color: var(--lf-color-#{$name}, #{$color});
+  &::-webkit-progress-bar {
+    border-radius: $progress-radius;
+    background: var(--lf-progress-bg, #{$progress-background});
   }
 
-  progress.#{$name}::-webkit-progress-value {
-    background: var(--lf-color-#{$name}, #{$color});
+  &::-webkit-progress-value {
+    border-radius: $progress-radius;
+    background: var(--lf-progress-meter, #{$progress-meter-background});
   }
 
-  progress.#{$name}::-moz-progress-bar {
-    background: var(--lf-color-#{$name}, #{$color});
+  &::-moz-progress-bar {
+    border-radius: $progress-radius;
+    background: var(--lf-progress-meter, #{$progress-meter-background});
+  }
+
+  @each $name, $color in $foundation-palette {
+    &.#{$name} {
+      color: var(--lf-color-#{$name}, #{$color});
+    }
+
+    &.#{$name}::-webkit-progress-value {
+      background: var(--lf-color-#{$name}, #{$color});
+    }
+
+    &.#{$name}::-moz-progress-bar {
+      background: var(--lf-color-#{$name}, #{$color});
+    }
   }
 }

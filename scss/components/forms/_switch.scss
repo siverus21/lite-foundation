@@ -1,102 +1,5 @@
+@use '../../settings/vars' as *;
 // Switch (replaces Foundation switch). Uses settings/_feedback.scss.
-
-.switch {
-  position: relative;
-  height: $switch-height;
-  margin-bottom: $switch-margin;
-  outline: 0;
-  font-size: rem-calc(14);
-  font-weight: bold;
-  color: var(--lf-color-white, #{$white});
-  user-select: none;
-}
-
-.switch-input {
-  position: absolute;
-  margin-bottom: 0;
-  opacity: 0;
-}
-
-.switch-paddle {
-  $switch-width: $switch-height * 2;
-  $paddle-size: $switch-height - ($switch-paddle-offset * 2);
-  $paddle-active: $switch-width - $paddle-size - $switch-paddle-offset;
-
-  position: relative;
-  display: block;
-  width: $switch-width;
-  height: $switch-height;
-  margin: 0;
-  border-radius: $switch-radius;
-  background: var(--lf-switch-bg, #{$switch-background});
-  font-weight: inherit;
-  color: inherit;
-  cursor: pointer;
-  transition: $switch-paddle-transition;
-}
-
-.switch-input + .switch-paddle {
-  margin: 0;
-}
-
-.switch-paddle::after {
-  content: '';
-  position: absolute;
-  top: $switch-paddle-offset;
-  inset-inline-start: $switch-paddle-offset;
-  display: block;
-  width: $switch-height - ($switch-paddle-offset * 2);
-  height: $switch-height - ($switch-paddle-offset * 2);
-  border-radius: $switch-paddle-radius;
-  background: var(--lf-switch-paddle-bg, #{$switch-paddle-background});
-  transition: $switch-paddle-transition;
-  transform: translate3d(0, 0, 0);
-}
-
-.switch-input:checked ~ .switch-paddle {
-  background: var(--lf-switch-bg-active, #{$switch-background-active});
-}
-
-.switch-input:checked ~ .switch-paddle::after {
-  inset-inline-start: ($switch-height * 2) - ($switch-height - ($switch-paddle-offset * 2)) - $switch-paddle-offset;
-}
-
-.switch-input:focus-visible ~ .switch-paddle {
-  background: var(--lf-switch-bg-focus, #{$switch-background-focus});
-}
-
-.switch-input:checked:focus-visible ~ .switch-paddle {
-  background: var(--lf-switch-bg-active-focus, #{$switch-background-active-focus});
-}
-
-.switch-input:disabled ~ .switch-paddle {
-  cursor: $switch-cursor-disabled;
-  opacity: $switch-opacity-disabled;
-}
-
-.switch-active,
-.switch-inactive {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.switch-active {
-  inset-inline-start: 8%;
-  display: none;
-}
-
-.switch-input:checked + label > .switch-active {
-  display: block;
-}
-
-.switch-inactive {
-  inset-inline-end: 15%;
-}
-
-.switch-input:checked + label > .switch-inactive {
-  display: none;
-}
 
 @mixin -lf-switch-size($font-size, $height, $offset: $switch-paddle-offset) {
   $width: $height * 2;
@@ -123,14 +26,114 @@
   }
 }
 
-.switch.tiny {
-  @include -lf-switch-size(rem-calc(10), $switch-height-tiny);
+.switch {
+  position: relative;
+  height: $switch-height;
+  margin-bottom: $switch-margin;
+  outline: 0;
+  font-size: rem-calc(14);
+  font-weight: bold;
+  color: var(--lf-color-white, #{$white});
+  user-select: none;
+
+  &.tiny {
+    @include -lf-switch-size(rem-calc(10), $switch-height-tiny);
+  }
+
+  &.small {
+    @include -lf-switch-size(rem-calc(12), $switch-height-small);
+  }
+
+  &.large {
+    @include -lf-switch-size(rem-calc(16), $switch-height-large);
+  }
 }
 
-.switch.small {
-  @include -lf-switch-size(rem-calc(12), $switch-height-small);
+.switch-input {
+  position: absolute;
+  margin-bottom: 0;
+  opacity: 0;
+
+  + .switch-paddle {
+    margin: 0;
+  }
+
+  &:checked {
+    ~ .switch-paddle {
+      background: var(--lf-switch-bg-active, #{$switch-background-active});
+
+      &::after {
+        inset-inline-start: ($switch-height * 2) - ($switch-height - ($switch-paddle-offset * 2)) - $switch-paddle-offset;
+      }
+    }
+
+    + label > .switch-active {
+      display: block;
+    }
+
+    + label > .switch-inactive {
+      display: none;
+    }
+
+    &:focus-visible ~ .switch-paddle {
+      background: var(--lf-switch-bg-active-focus, #{$switch-background-active-focus});
+    }
+  }
+
+  &:focus-visible ~ .switch-paddle {
+    background: var(--lf-switch-bg-focus, #{$switch-background-focus});
+  }
+
+  &:disabled ~ .switch-paddle {
+    cursor: $switch-cursor-disabled;
+    opacity: $switch-opacity-disabled;
+  }
 }
 
-.switch.large {
-  @include -lf-switch-size(rem-calc(16), $switch-height-large);
+.switch-paddle {
+  $switch-width: $switch-height * 2;
+  $paddle-size: $switch-height - ($switch-paddle-offset * 2);
+  $paddle-active: $switch-width - $paddle-size - $switch-paddle-offset;
+
+  position: relative;
+  display: block;
+  width: $switch-width;
+  height: $switch-height;
+  margin: 0;
+  border-radius: $switch-radius;
+  background: var(--lf-switch-bg, #{$switch-background});
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: $switch-paddle-transition;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: $switch-paddle-offset;
+    inset-inline-start: $switch-paddle-offset;
+    display: block;
+    width: $switch-height - ($switch-paddle-offset * 2);
+    height: $switch-height - ($switch-paddle-offset * 2);
+    border-radius: $switch-paddle-radius;
+    background: var(--lf-switch-paddle-bg, #{$switch-paddle-background});
+    transition: $switch-paddle-transition;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.switch-active,
+.switch-inactive {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.switch-active {
+  inset-inline-start: 8%;
+  display: none;
+}
+
+.switch-inactive {
+  inset-inline-end: 15%;
 }
