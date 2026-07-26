@@ -16,7 +16,8 @@ npm run build          # → dist/
 | `npm run start` | Vite + HMR |
 | `npm run build` | CSS/JS бандлы из `config/features.js` |
 | `npm run sync:features` | Пересобрать GENERATED-индексы |
-| `npm test` | Vitest |
+| `npm test` | Vitest (юнит + `feature-flags-consistency`) |
+| `npm run test:coverage` | Vitest + отчёт покрытия (`coverage/`, в gitignore) |
 
 ## Архитектура
 
@@ -77,10 +78,20 @@ export const builds = {
 
 Lint: `npm run lint:tokens` (dev-сервер — предупреждение; `npm run build` — строгий, падает при нарушениях).
 
+## Тесты
+
+Vitest + `happy-dom`. Юнит-тесты лежат рядом по темам (`js/core/*`, `js/modules/*`, `js/boot.js`),
+плюс `tests/feature-flags-consistency.test.js`: проверяет, что каждый включённый флаг
+`styles`/`scripts`/`vendors` в `config/features.js` резолвится в `STYLE_FOLDERS` / `SCRIPT_MODULES` /
+`KNOWN_VENDORS` (`scripts/sync-features.js`). Опечатка/переименование ключа без второй половины
+раньше молча выкидывала CSS/JS компонента из бандла без единой ошибки — теперь генераторы
+(`componentLoads`, `generateModulesIndex`, `vendorLoads`) бросают исключение на неизвестном флаге,
+и тест ловит это же на уровне конфигурации. Подробнее — [`docs/testing.html`](docs/testing.html).
+
 ## Документация
 
 - Kitchen sink: [`index.html`](index.html)
-- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `lifecycle`, компоненты)
+- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `lifecycle`, `testing`, компоненты)
 - Demo: [`about.html`](about.html)
 
 ## Структура

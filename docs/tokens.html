@@ -45,6 +45,7 @@
           <a href="builds.html">Builds</a>
           <a href="tokens.html">Токены</a>
           <a href="lifecycle.html">JS API</a>
+          <a href="testing.html">Тесты</a>
           <a href="../index.html">Kitchen sink</a>
         </div>
       </div>
@@ -81,14 +82,14 @@
         <div class="docs-note">
           <strong>1. Sass (постоянная тема проекта)</strong>
           <ul>
-            <li>Правишь палитру и body в <code>scss/settings/global/_global.scss</code>
+            <li>Правишь палитру и body в <code>scss/settings/core/global/_global.scss</code>
               (<code>$foundation-palette</code>, <code>$body-background</code>, <code>$body-font-color</code></li>
             <li>Компонентные токены — в своих settings, например
               <code>scss/settings/button/</code>, <code>title-bar/</code>, <code>modal/</code></li>
             <li>После правок: <code>npm run build</code> (в DEV HMR подхватит Sass сам)</li>
           </ul>
         </div>
-        <div class="docs-code"><pre><code>// scss/settings/global/_global.scss
+        <div class="docs-code"><pre><code>// scss/settings/core/global/_global.scss
 $foundation-palette: (
   "primary": #0ea5e9,
   "secondary": #64748b,

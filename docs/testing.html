@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тесты — lite-foundation docs</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+          <a href="start.html">Старт</a>
+          <a href="builds.html">Builds</a>
+          <a href="tokens.html">Токены</a>
+          <a href="lifecycle.html">JS API</a>
+          <a href="testing.html">Тесты</a>
+          <a href="../index.html">Kitchen sink</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="docs-main grid-container">
+      <p class="docs-kicker">Quality</p>
+      <h1>Тесты</h1>
+      <p class="docs-lead">
+        <a href="https://vitest.dev/">Vitest</a> + <code>happy-dom</code>: юнит-тесты на JS-модули
+        и отдельный набор, который проверяет, что <code>config/features.js</code> не разошёлся
+        с <code>scripts/sync-features.js</code>.
+      </p>
+
+      <section class="docs-section">
+        <h2>Запуск</h2>
+        <div class="docs-code"><pre><code>npm test              # один прогон
+npm run test:watch    # watch-режим
+npm run test:coverage # + отчёт покрытия (text + html в coverage/)</code></pre></div>
+        <p class="docs-aside">
+          <code>npm run build</code> сам гоняет <code>lint:tokens</code> в строгом режиме
+          (падает на хардкод-цветах/z-index в компонентах) — это отдельная проверка,
+          не часть <code>npm test</code>.
+        </p>
+      </section>
+
+      <section class="docs-section">
+        <h2>Что покрыто</h2>
+        <div class="docs-demo">
+          <ul>
+            <li><code>js/core/</code> — <code>Module</code> (lazy mount + <code>data-lf-lazy</code>),
+              <code>runtime</code> (init/destroy/refresh/unmount), <code>scroll-lock</code></li>
+            <li><code>js/modules/*</code> — по файлу на модуль (modal, tabs, accordion, dropdown,
+              offcanvas, menu-dropdown/accordion/drilldown, form-slider, …)</li>
+            <li><code>js/boot.js</code> — dev vs prod путь, ожидание stylesheet
+              (<code>link.sheet</code> / событие <code>load</code> / <code>error</code> / 2s таймаут),
+              <code>DOMContentLoaded</code> gate</li>
+            <li><code>config/features.js</code> + <code>scripts/sync-features.js</code> — билд-конфиг
+              и генераторы CSS/JS-entry</li>
+          </ul>
+        </div>
+        <p class="docs-aside">
+          Покрытие настроено только на этот список (<code>vitest.config.js</code>
+          → <code>coverage.include</code>) — CLI-скрипты (<code>scripts/build.js</code>,
+          <code>lint-tokens.js</code>) туда сознательно не входят, это I/O-обвязка, а не логика.
+        </p>
+      </section>
+
+      <section class="docs-section">
+        <h2>feature-flags-consistency.test.js</h2>
+        <p>
+          Флаги в <code>styles</code> / <code>scripts</code> / <code>vendors</code> резолвятся
+          в конкретные файлы только через карты <code>STYLE_FOLDERS</code> / <code>SCRIPT_MODULES</code> /
+          <code>KNOWN_VENDORS</code> в <code>scripts/sync-features.js</code>. Опечатка или
+          переименование ключа в одном месте без другого раньше означало, что CSS/JS компонента
+          молча выпадал из бандла — без ошибки где-либо.
+        </p>
+        <div class="docs-note">
+          <strong>Теперь это невозможно тихо</strong>
+          <ul>
+            <li>Генераторы (<code>componentLoads</code>, <code>generateModulesIndex</code>,
+              <code>vendorLoads</code>) бросают ошибку на неизвестном включённом флаге —
+              она свалит <code>npm run dev</code> / <code>npm run build</code> сразу</li>
+            <li>Тест проверяет то же самое статически для <code>full</code>-пресета и каждого
+              билда в <code>builds</code>, плюс что перечисленные файлы модулей существуют на диске</li>
+          </ul>
+        </div>
+        <div class="docs-code"><pre><code>// Пример ошибки при опечатке во флаге
+Error: Unknown script flag "menus" — no entry in SCRIPT_MODULES (scripts/sync-features.js)</code></pre></div>
+        <p class="docs-aside">
+          Добавляешь новый компонент? Флаг в <code>config/features.js</code> +
+          запись в <code>STYLE_FOLDERS</code>/<code>SCRIPT_MODULES</code> — обязательно оба сразу,
+          иначе тест и билд сообщат об этом явно. См. <a href="lifecycle.html#свой-модуль">Свой модуль</a>.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="/js/load-build.js?build=full"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

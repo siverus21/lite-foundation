@@ -11,6 +11,7 @@ const NAV = [
       { href: 'builds.html', title: 'Builds' },
       { href: 'tokens.html', title: 'Токены' },
       { href: 'lifecycle.html', title: 'JS API' },
+      { href: 'testing.html', title: 'Тесты' },
     ],
   },
   {
@@ -207,7 +208,9 @@ function enhanceTopNav(file) {
   links.appendChild(toggle);
 
   FLAT.filter((p) =>
-    ['start.html', 'builds.html', 'tokens.html', 'lifecycle.html'].includes(p.href),
+    ['start.html', 'builds.html', 'tokens.html', 'lifecycle.html', 'testing.html'].includes(
+      p.href,
+    ),
   ).forEach((item) => {
     const a = document.createElement('a');
     a.href = item.href;
