@@ -1,26 +1,33 @@
 /**
  * Menu variants: dropdown, accordion, drilldown.
  * Markup uses data-menu="dropdown|accordion|drilldown".
- *
- * Drilldown mirrors Foundation: slide panels, back button, parent `.invisible`,
- * auto height of the active panel (Foundation `autoHeight: true`).
  */
-export class Menus {
+import { Module } from '../core/Module.js';
+
+export class Menus extends Module {
   constructor(root = document) {
-    new DropdownMenu(root);
-    new AccordionMenu(root);
+    super(root);
+    this._drilldowns = [];
+    new DropdownMenu(root, this);
+    new AccordionMenu(root, this);
     root.querySelectorAll('[data-menu="drilldown"]').forEach((menu) => {
-      new DrilldownMenu(menu);
+      this._drilldowns.push(new DrilldownMenu(menu, this));
     });
+  }
+
+  destroy() {
+    this._drilldowns.forEach((d) => d.destroy?.());
+    this._drilldowns = [];
+    super.destroy();
   }
 }
 
 class DropdownMenu {
-  constructor(root = document) {
+  constructor(root, owner) {
     root.querySelectorAll('[data-menu="dropdown"]').forEach((menu) => {
       markSubmenus(menu);
 
-      menu.addEventListener('click', (event) => {
+      owner.on(menu, 'click', (event) => {
         const link = event.target.closest('a');
         if (!link || !menu.contains(link)) return;
 
@@ -29,27 +36,34 @@ class DropdownMenu {
 
         event.preventDefault();
         const willOpen = !item.classList.contains('is-open');
-        menu.querySelectorAll(':scope > li.is-open').forEach((li) => li.classList.remove('is-open'));
-        if (willOpen) item.classList.add('is-open');
+        menu.querySelectorAll(':scope > li.is-open').forEach((li) => {
+          li.classList.remove('is-open');
+          li.setAttribute('aria-expanded', 'false');
+        });
+        if (willOpen) {
+          item.classList.add('is-open');
+          item.setAttribute('aria-expanded', 'true');
+        }
       });
     });
 
-    document.addEventListener('click', (event) => {
+    owner.on(document, 'click', (event) => {
       if (event.target.closest('[data-menu="dropdown"]')) return;
       document.querySelectorAll('[data-menu="dropdown"] > li.is-open').forEach((li) => {
         li.classList.remove('is-open');
+        li.setAttribute('aria-expanded', 'false');
       });
     });
   }
 }
 
 class AccordionMenu {
-  constructor(root = document) {
+  constructor(root, owner) {
     root.querySelectorAll('[data-menu="accordion"]').forEach((menu) => {
       markSubmenus(menu);
       wrapAccordionPanels(menu);
 
-      menu.addEventListener('click', (event) => {
+      owner.on(menu, 'click', (event) => {
         const link = event.target.closest('a');
         if (!link || !menu.contains(link)) return;
 
@@ -57,13 +71,13 @@ class AccordionMenu {
         if (!item?.classList.contains('has-submenu')) return;
 
         event.preventDefault();
-        item.classList.toggle('is-open');
+        const open = item.classList.toggle('is-open');
+        item.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
     });
   }
 }
 
-/** Wrap each nested ul in a panel so grid 0fr/1fr can animate open/close. */
 function wrapAccordionPanels(menu) {
   menu.querySelectorAll('li.has-submenu').forEach((li) => {
     const nested = li.querySelector(':scope > .nested, :scope > .menu');
@@ -81,14 +95,17 @@ function markSubmenus(menu) {
     const submenu = li.querySelector(':scope > .menu, :scope > .nested');
     if (!submenu) return;
     li.classList.add('has-submenu');
+    if (!li.hasAttribute('aria-expanded')) li.setAttribute('aria-expanded', 'false');
     submenu.classList.add('nested', 'menu', 'vertical');
   });
 }
 
 class DrilldownMenu {
-  constructor(menu) {
+  constructor(menu, owner) {
     this.menu = menu;
+    this.owner = owner;
     this.wrapper = this.#ensureWrapper();
+    this._ro = null;
     this.#setupSubmenus();
     this.#bindMeasure();
     this.#bindClicks();
@@ -149,22 +166,22 @@ class DrilldownMenu {
     if (document.fonts?.ready) {
       document.fonts.ready.then(this.#remeasureActive);
     }
-    window.addEventListener('load', this.#remeasureActive, { once: true });
+    this.owner.on(window, 'load', this.#remeasureActive, { once: true });
 
     if (typeof ResizeObserver !== 'undefined') {
-      const ro = new ResizeObserver(() => this.#remeasureActive());
-      ro.observe(this.menu);
-      this.menu.querySelectorAll(':scope > li > a').forEach((link) => ro.observe(link));
+      this._ro = new ResizeObserver(() => this.#remeasureActive());
+      this._ro.observe(this.menu);
+      this.menu.querySelectorAll(':scope > li > a').forEach((link) => this._ro.observe(link));
     }
 
-    window.addEventListener('resize', () => {
+    this.owner.on(window, 'resize', () => {
       this.wrapper.style.width = '';
       this.#remeasureActive();
     });
   }
 
   #bindClicks() {
-    this.menu.addEventListener('click', (event) => {
+    this.owner.on(this.menu, 'click', (event) => {
       const backLink = event.target.closest('.js-drilldown-back > a');
       if (backLink && this.menu.contains(backLink)) {
         event.preventDefault();
@@ -226,6 +243,10 @@ class DrilldownMenu {
     submenu.addEventListener('transitionend', onEnd);
     window.setTimeout(finish, 200);
   }
+
+  destroy() {
+    this._ro?.disconnect();
+  }
 }
 
 function ensureBackLink(submenu) {
@@ -237,10 +258,6 @@ function ensureBackLink(submenu) {
   submenu.insertBefore(back, submenu.firstChild);
 }
 
-/**
- * Height of the visible level only (each item’s own link, ignoring absolute nested panels).
- * Prefer clone measure when live links still look unstyled (common race before CSS/fonts).
- */
 function setDrilldownHeight(wrapper, panel, width) {
   if (!wrapper || !panel) return;
 
@@ -265,7 +282,7 @@ function measureDrilldownPanel(panel, width) {
   shell.className = 'is-drilldown';
   shell.style.cssText = [
     'position:absolute',
-    'left:-99999px',
+    'inset-inline-start:-99999px',
     'top:0',
     'visibility:hidden',
     'pointer-events:none',
@@ -277,7 +294,7 @@ function measureDrilldownPanel(panel, width) {
   clone.classList.remove('invisible', 'is-closing', 'is-active');
   clone.style.cssText = [
     'position:static',
-    'left:auto',
+    'inset-inline-start:auto',
     'top:auto',
     'transform:none',
     'visibility:visible',

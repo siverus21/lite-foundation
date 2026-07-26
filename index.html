@@ -7,77 +7,9 @@
     <title>Kitchen Sink — lite-foundation</title>
     <link rel="stylesheet" href="dist/app.css">
     <link rel="stylesheet" href="dist/lib-swiper.css">
-    <style>
-      /* Local demo-only helpers (not part of the design system) */
-      .ks-nav {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: #0a0a0a;
-        padding: 0.75rem 0;
-        margin-bottom: 2rem;
-      }
-      .ks-nav .menu a { color: #fefefe; }
-      .ks-nav .menu a:hover { color: #1779ba; }
-      .ks-section {
-        padding: 2rem 0;
-        border-bottom: 1px solid #e6e6e6;
-      }
-      #sticky {
-        --sticky-offset: 4.5rem;
-      }
-      .ks-section > h2 {
-        margin-bottom: 0.25rem;
-      }
-      .ks-section > .ks-meta {
-        color: #8a8a8a;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-      }
-      .ks-demo-box {
-        background: #e6e6e6;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
-        text-align: center;
-      }
-      .ks-callout-demo {
-        position: relative;
-        max-width: 20rem;
-      }
-      .ks-menu-panel {
-        max-width: 250px;
-        width: 250px;
-      }
-      .is-drilldown:has(> .ks-menu-panel) {
-        max-width: 250px;
-        width: 250px;
-      }
-      .ks-tip-row {
-        margin-top: 1rem;
-      }
-      .ks-progress-50 {
-        --progress-value: 50%;
-      }
-      .ks-progress-75 {
-        --progress-value: 75%;
-      }
-      .ks-align-demo {
-        min-height: 4rem;
-        background: #e6e6e6;
-      }
-
-      /*
-        Critical: fully hide drawer before any CSS/JS (no FOUC).
-      */
-      .offcanvas {
-        display: none;
-      }
-      .offcanvas.is-open {
-        display: block;
-      }
-    </style>
+    <link rel="stylesheet" href="assets/kitchen-sink.css">
   </head>
-  <body>
+  <body class="ks-body">
     <aside
       class="offcanvas"
       id="offCanvas"
@@ -93,7 +25,14 @@
         <li><a href="#buttons">Buttons</a></li>
         <li><a href="#forms">Forms</a></li>
         <li><a href="#callouts">Callouts</a></li>
+        <li><a href="#navigation">Navigation</a></li>
+        <li><a href="#accordion">Accordion</a></li>
+        <li><a href="#tabs">Tabs</a></li>
+        <li><a href="#orbit">Slider</a></li>
         <li><a href="#reveal">Dialog</a></li>
+        <li><a href="#motion">Animate</a></li>
+        <li><a href="docs/index.html">Docs</a></li>
+        <li><a href="about.html">About build</a></li>
       </ul>
     </aside>
 
@@ -101,9 +40,12 @@
       <div class="grid-container">
         <div class="grid-x grid-padding-x align-middle">
           <div class="shrink cell">
-            <button type="button" class="button small hollow" data-offcanvas-open="offCanvas">Off-canvas</button>
+            <a class="ks-brand" href="#top">lite-foundation <span>sink</span></a>
           </div>
-          <div class="auto cell">
+          <div class="shrink cell show-for-small-only">
+            <button type="button" class="button small hollow" data-offcanvas-open="offCanvas" aria-label="Open menu">Menu</button>
+          </div>
+          <div class="auto cell hide-for-small-only">
             <ul class="menu simple">
               <li><a href="#grid">Grid</a></li>
               <li><a href="#buttons">Buttons</a></li>
@@ -112,25 +54,66 @@
               <li><a href="#tabs">Tabs</a></li>
               <li><a href="#orbit">Slider</a></li>
               <li><a href="#reveal">Dialog</a></li>
-              <li><a href="#motion">Animate</a></li>
-              <li><a href="about.html">About build</a></li>
+              <li><a href="docs/index.html">Docs</a></li>
+              <li><a href="about.html">About</a></li>
             </ul>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="grid-container">
-          <div class="grid-x grid-padding-x">
-            <div class="cell">
-              <h1>Kitchen Sink</h1>
-              <p class="lead">Песочница для миграции Foundation → свой UI. Каждая секция — отдельный компонент для проверки. Минимальный бандл: <a href="about.html">about.html</a>.</p>
-            </div>
+    <div class="grid-container ks-main" id="top">
+      <header class="ks-hero">
+        <p class="ks-hero-kicker">Component playground</p>
+        <h1 class="ks-hero-title">Kitchen Sink</h1>
+        <p class="ks-hero-lead">
+          Песочница lite-foundation: сетка, формы, навигация и JS-модули в одном месте.
+          Каждая секция — живой пример для проверки бандла.
+        </p>
+        <div class="ks-hero-actions">
+          <a class="button primary" href="docs/index.html">Документация</a>
+          <a class="button hollow" href="about.html">Минимальный about-бандл</a>
+          <button type="button" class="button secondary hollow" data-offcanvas-open="offCanvas">Off-canvas</button>
+        </div>
+      </header>
+
+      <nav class="ks-docs-map" aria-label="Документация по разделам">
+        <p class="ks-docs-map-label">Документация</p>
+        <div class="ks-docs-map-groups">
+          <div class="ks-docs-map-group">
+            <span class="ks-docs-map-group-title">Начать</span>
+            <ul>
+              <li><a href="docs/index.html">Обзор</a></li>
+              <li><a href="docs/start.html">Быстрый старт</a></li>
+              <li><a href="docs/builds.html">Builds</a></li>
+              <li><a href="docs/tokens.html">Токены</a></li>
+              <li><a href="docs/lifecycle.html">JS API</a></li>
+            </ul>
           </div>
+          <div class="ks-docs-map-group">
+            <span class="ks-docs-map-group-title">Компоненты</span>
+            <ul>
+              <li><a href="docs/button.html">Button</a></li>
+              <li><a href="docs/forms.html">Forms</a></li>
+              <li><a href="docs/modal.html">Modal</a></li>
+              <li><a href="docs/tabs.html">Tabs</a></li>
+              <li><a href="docs/accordion.html">Accordion</a></li>
+              <li><a href="docs/dropdown.html">Dropdown</a></li>
+              <li><a href="docs/offcanvas.html">Off-canvas</a></li>
+              <li><a href="docs/menus.html">Menus</a></li>
+              <li><a href="docs/slider.html">Slider</a></li>
+              <li><a href="docs/callout-card.html">Callout &amp; Card</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
           <!-- Grid -->
           <section class="ks-section" id="grid">
-            <h2>Grid</h2>
+            <div class="ks-section-head">
+              <h2>Grid</h2>
+              <a class="ks-docs-link" href="docs/start.html">Старт</a>
+            </div>
             <p class="ks-meta">CSS Grid: <code>grid-container</code>, <code>grid-x</code>, <code>cell</code> + CSS vars (<code>--grid-gap-x</code>, <code>--grid-columns</code>, …)</p>
             <div class="grid-x grid-padding-x">
               <div class="large-12 cell"><div class="ks-demo-box">12</div></div>
@@ -167,7 +150,10 @@
 
           <!-- Typography -->
           <section class="ks-section" id="typography">
-            <h2>Typography</h2>
+            <div class="ks-section-head">
+              <h2>Typography</h2>
+              <a class="ks-docs-link" href="docs/tokens.html">Токены</a>
+            </div>
             <p class="ks-meta">Своя typography: заголовки, lead, subheader, списки, code, blockquote</p>
             <h1>Heading 1</h1>
             <h2>Heading 2</h2>
@@ -195,7 +181,10 @@
 
           <!-- Buttons -->
           <section class="ks-section" id="buttons">
-            <h2>Buttons</h2>
+            <div class="ks-section-head">
+              <h2>Buttons</h2>
+              <a class="ks-docs-link" href="docs/button.html">Docs</a>
+            </div>
             <p class="ks-meta">Свои <code>.button</code>, размеры, цвета, hollow, button-group, close-button</p>
             <p>
               <a href="#" class="button">Primary</a>
@@ -221,18 +210,21 @@
               <a class="button">Two</a>
               <a class="button">Three</a>
             </div>
-            <div class="callout ks-callout-demo">
-              <button class="close-button" aria-label="Close alert" type="button">
+            <div class="callout ks-callout-demo" data-closable>
+              <button class="close-button" aria-label="Close alert" type="button" data-close>
                 <span aria-hidden="true">&times;</span>
               </button>
-              <p>Callout with close-button (visual only here).</p>
+              <p>Callout with close-button — закрывается через <code>data-close</code>.</p>
             </div>
           </section>
 
           <!-- Forms -->
           <section class="ks-section" id="forms">
-            <h2>Forms</h2>
-            <p class="ks-meta">Свои forms: inputs, select, textarea, radio, checkbox, input-group, switch, range; slider — свой JS (без Foundation)</p>
+            <div class="ks-section-head">
+              <h2>Forms</h2>
+              <a class="ks-docs-link" href="docs/forms.html">Docs</a>
+            </div>
+            <p class="ks-meta">Свои forms: inputs, select, textarea, native + custom checkbox/radio, input-group, switch, range; slider — свой JS</p>
             <form>
               <div class="grid-x grid-padding-x">
                 <div class="large-6 cell">
@@ -258,7 +250,7 @@
                   </div>
 
                   <fieldset class="fieldset">
-                    <legend>Radios</legend>
+                    <legend>Radios (native)</legend>
                     <input type="radio" name="pokemon" value="Red" id="pokemonRed" checked>
                     <label for="pokemonRed">Radio 1</label>
                     <input type="radio" name="pokemon" value="Blue" id="pokemonBlue">
@@ -266,9 +258,52 @@
                   </fieldset>
 
                   <fieldset class="fieldset">
-                    <legend>Checkboxes</legend>
+                    <legend>Checkboxes (native)</legend>
                     <input id="checkbox1" type="checkbox"><label for="checkbox1">Checkbox 1</label>
                     <input id="checkbox2" type="checkbox"><label for="checkbox2">Checkbox 2</label>
+                  </fieldset>
+
+                  <fieldset class="fieldset">
+                    <legend>Custom checkbox / radio</legend>
+                    <div class="ks-choice-row">
+                      <label class="checkbox primary">
+                        <input class="checkbox-input" type="checkbox" checked>
+                        <span class="checkbox-control" aria-hidden="true"></span>
+                        Primary solid
+                      </label>
+                      <label class="checkbox success hollow">
+                        <input class="checkbox-input" type="checkbox" checked>
+                        <span class="checkbox-control" aria-hidden="true"></span>
+                        Success hollow
+                      </label>
+                      <label class="checkbox alert large">
+                        <input class="checkbox-input" type="checkbox">
+                        <span class="checkbox-control" aria-hidden="true"></span>
+                        Alert large
+                      </label>
+                      <label class="checkbox secondary">
+                        <input class="checkbox-input" type="checkbox" checked disabled>
+                        <span class="checkbox-control" aria-hidden="true"></span>
+                        Disabled
+                      </label>
+                    </div>
+                    <div class="ks-choice-row">
+                      <label class="radio primary">
+                        <input class="radio-input" type="radio" name="ks-plan" checked>
+                        <span class="radio-control" aria-hidden="true"></span>
+                        Primary
+                      </label>
+                      <label class="radio warning hollow">
+                        <input class="radio-input" type="radio" name="ks-plan">
+                        <span class="radio-control" aria-hidden="true"></span>
+                        Warning hollow
+                      </label>
+                      <label class="radio secondary small">
+                        <input class="radio-input" type="radio" name="ks-plan">
+                        <span class="radio-control" aria-hidden="true"></span>
+                        Small
+                      </label>
+                    </div>
                   </fieldset>
 
                   <div class="switch">
@@ -296,7 +331,10 @@
 
           <!-- Callout / Card / Label / Badge -->
           <section class="ks-section" id="callouts">
-            <h2>Callout, Card, Label, Badge</h2>
+            <div class="ks-section-head">
+              <h2>Callout, Card, Label, Badge</h2>
+              <a class="ks-docs-link" href="docs/callout-card.html">Docs</a>
+            </div>
             <p class="ks-meta">Свои callout, card, label, badge</p>
             <div class="grid-x grid-padding-x">
               <div class="medium-6 cell">
@@ -336,7 +374,10 @@
 
           <!-- Table -->
           <section class="ks-section" id="table">
-            <h2>Table</h2>
+            <div class="ks-section-head">
+              <h2>Table</h2>
+              <a class="ks-docs-link" href="docs/index.html">Docs</a>
+            </div>
             <p class="ks-meta">Своя table: <code>striped</code>, <code>hover</code>, <code>stack</code></p>
             <table class="striped hover">
               <thead>
@@ -368,7 +409,10 @@
 
           <!-- Navigation -->
           <section class="ks-section" id="navigation">
-            <h2>Navigation</h2>
+            <div class="ks-section-head">
+              <h2>Navigation</h2>
+              <a class="ks-docs-link" href="docs/menus.html">Docs</a>
+            </div>
             <p class="ks-meta">Свои menus (dropdown / accordion / drilldown), breadcrumbs и pagination</p>
 
             <h5>Menu</h5>
@@ -481,7 +525,10 @@
 
           <!-- Accordion -->
           <section class="ks-section" id="accordion">
-            <h2>Accordion</h2>
+            <div class="ks-section-head">
+              <h2>Accordion</h2>
+              <a class="ks-docs-link" href="docs/accordion.html">Docs</a>
+            </div>
             <p class="ks-meta">Нативный <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> — плавная высота, chevron, закрытие предыдущего перед открытием нового</p>
             <div class="accordion" data-accordion>
               <details class="accordion-item" open>
@@ -507,7 +554,10 @@
 
           <!-- Tabs -->
           <section class="ks-section" id="tabs">
-            <h2>Tabs</h2>
+            <div class="ks-section-head">
+              <h2>Tabs</h2>
+              <a class="ks-docs-link" href="docs/tabs.html">Docs</a>
+            </div>
             <p class="ks-meta">Свой модуль (a11y + клавиатура) вместо Foundation <code>data-tabs</code></p>
             <ul class="tabs" data-tabs id="example-tabs" role="tablist">
               <li class="tabs-title is-active" role="presentation">
@@ -535,7 +585,10 @@
 
           <!-- Dropdown / Tooltip -->
           <section class="ks-section" id="dropdown">
-            <h2>Dropdown &amp; Tooltip</h2>
+            <div class="ks-section-head">
+              <h2>Dropdown &amp; Tooltip</h2>
+              <a class="ks-docs-link" href="docs/dropdown.html">Docs</a>
+            </div>
             <p class="ks-meta">Свои модули: dropdown по клику, tooltip через <code>data-tip</code> (не <code>data-tooltip</code> — его ещё слушает Foundation)</p>
             <div class="dropdown">
               <button
@@ -560,7 +613,10 @@
 
           <!-- Media / Thumbnail / Embed -->
           <section class="ks-section" id="media">
-            <h2>Media Object, Thumbnail, Responsive Embed</h2>
+            <div class="ks-section-head">
+              <h2>Media Object, Thumbnail, Responsive Embed</h2>
+              <a class="ks-docs-link" href="docs/index.html">Docs</a>
+            </div>
             <p class="ks-meta">Свои media-object, thumbnail, responsive-embed</p>
             <div class="media-object">
               <div class="media-object-section">
@@ -580,7 +636,10 @@
 
           <!-- Progress / Meter -->
           <section class="ks-section" id="progress">
-            <h2>Progress &amp; Meter</h2>
+            <div class="ks-section-head">
+              <h2>Progress &amp; Meter</h2>
+              <a class="ks-docs-link" href="docs/index.html">Docs</a>
+            </div>
             <p class="ks-meta">Свои <code>progress</code>, <code>meter</code></p>
             <div class="progress ks-progress-50" role="progressbar" tabindex="0" aria-valuenow="50" aria-valuemin="0" aria-valuetext="50 percent" aria-valuemax="100">
               <div class="progress-meter"></div>
@@ -595,7 +654,10 @@
 
           <!-- Slider (Swiper) -->
           <section class="ks-section" id="orbit">
-            <h2>Slider (Swiper)</h2>
+            <div class="ks-section-head">
+              <h2>Slider (Swiper)</h2>
+              <a class="ks-docs-link" href="docs/slider.html">Docs</a>
+            </div>
             <p class="ks-meta">Замена Foundation Orbit → <strong>Swiper</strong></p>
             <div class="swiper ks-swiper" data-swiper>
               <div class="swiper-wrapper">
@@ -626,7 +688,10 @@
 
           <!-- Dialog (native modal) -->
           <section class="ks-section" id="reveal">
-            <h2>Dialog (modal)</h2>
+            <div class="ks-section-head">
+              <h2>Dialog (modal)</h2>
+              <a class="ks-docs-link" href="docs/modal.html">Docs</a>
+            </div>
             <p class="ks-meta">Замена Foundation Reveal → нативный <code>&lt;dialog&gt;</code></p>
             <p><button class="button" type="button" data-dialog-open="exampleModal">Open dialog</button></p>
             <dialog class="modal" id="exampleModal">
@@ -641,7 +706,10 @@
 
           <!-- Sticky -->
           <section class="ks-section" id="sticky">
-            <h2>Sticky</h2>
+            <div class="ks-section-head">
+              <h2>Sticky</h2>
+              <a class="ks-docs-link" href="docs/index.html">Docs</a>
+            </div>
             <p class="ks-meta">CSS <code>position: sticky</code> в пределах секции (page-level; off-canvas больше не блокирует)</p>
             <div class="grid-x grid-padding-x">
               <div class="medium-3 cell">
@@ -662,7 +730,10 @@
 
           <!-- Visibility / Flex -->
           <section class="ks-section" id="helpers">
-            <h2>Visibility &amp; Flex helpers</h2>
+            <div class="ks-section-head">
+              <h2>Visibility &amp; Flex helpers</h2>
+              <a class="ks-docs-link" href="docs/start.html">Старт</a>
+            </div>
             <p class="ks-meta">Свои helpers: show/hide breakpoints, align-*, show-for-sr</p>
             <p class="show-for-small-only callout">Visible only on small</p>
             <p class="show-for-medium-only callout primary">Visible only on medium</p>
@@ -676,7 +747,10 @@
 
           <!-- Animate.css -->
           <section class="ks-section" id="motion">
-            <h2>Animate.css</h2>
+            <div class="ks-section-head">
+              <h2>Animate.css</h2>
+              <a class="ks-docs-link" href="docs/lifecycle.html">JS API</a>
+            </div>
             <p class="ks-meta">Замена Motion UI → модульный <strong>Animate.css</strong> (<code>fadeIn</code> / <code>fadeOut</code>)</p>
             <p>
               <button type="button" class="button" id="ks-animate-trigger">Toggle fade animation</button>
@@ -687,13 +761,41 @@
           </section>
 
           <section class="ks-section" id="offcanvas-note">
-            <h2>Off-canvas</h2>
+            <div class="ks-section-head">
+              <h2>Off-canvas</h2>
+              <a class="ks-docs-link" href="docs/offcanvas.html">Docs</a>
+            </div>
             <p class="ks-meta">Свой drawer: <code>data-offcanvas-open</code> / backdrop / Esc</p>
             <p><button type="button" class="button" data-offcanvas-open="offCanvas">Open off-canvas</button></p>
           </section>
-        </div>
 
-    <script type="module" src="/js/lib.js"></script>
+      <footer class="ks-footer">
+        <p>
+          lite-foundation kitchen sink ·
+          <a href="docs/index.html">Docs</a> ·
+          <a href="about.html">About build</a> ·
+          <a href="https://github.com/siverus21/lite-foundation">GitHub</a>
+        </p>
+      </footer>
+    </div>
+
+    <script type="module" src="/js/builds/full/entry.js"></script>
     <script type="module" src="/js/builds/swiper/entry.js"></script>
+    <script type="module">
+      const sections = [...document.querySelectorAll('.ks-section')];
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) entry.target.classList.add('is-inview');
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+        );
+        sections.forEach((section) => io.observe(section));
+      } else {
+        sections.forEach((section) => section.classList.add('is-inview'));
+      }
+    </script>
   </body>
 </html>

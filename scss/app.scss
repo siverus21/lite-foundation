@@ -1,16 +1,5 @@
 @charset 'utf-8';
 
-// Required core — always on (see config/features.js → required)
-@import 'abstracts/functions';
-@import 'settings';
-@import 'abstracts/mixins';
-@import 'base';
-
-// Optional layers — toggled via config/features.js
-@import 'vendors';
-@import 'layout';
-@import 'components';
-@import 'utilities';
-
-// Emergency / hotfix overrides (not token-linted — see scss/critical/)
-@import 'critical';
+// Thin re-export of the full page build entry (GENERATED: scss/builds/full/app.scss).
+// Prefer importing builds/{name}/app.scss directly in tooling.
+@import 'builds/full/app';

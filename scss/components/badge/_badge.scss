@@ -5,8 +5,8 @@
   min-width: $badge-minwidth;
   padding: $badge-padding;
   border-radius: 50%;
-  background: $badge-background;
-  color: $badge-color;
+  background: var(--lf-badge-bg, #{$badge-background});
+  color: var(--lf-badge-color, #{$badge-color});
   font-size: $badge-font-size;
   text-align: center;
 }
@@ -14,7 +14,7 @@
 @each $name, $color in $badge-palette {
   .badge.#{$name},
   .#{$name}.badge {
-    background: $color;
-    color: color-pick-contrast($color, ($badge-color, $badge-color-alt));
+    background: var(--lf-color-#{$name}, #{$color});
+    color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($badge-color, $badge-color-alt))});
   }
 }

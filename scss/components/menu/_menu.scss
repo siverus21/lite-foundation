@@ -43,7 +43,7 @@
 }
 
 .menu.simple > li + li {
-  margin-left: 1rem;
+  margin-inline-start: 1rem;
 }
 
 .menu-text {
@@ -66,7 +66,7 @@
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
+  inset-inline-start: 0;
   z-index: var(--lf-z-dropdown);
   min-width: 200px;
   flex-direction: column;
@@ -84,11 +84,8 @@
 }
 
 .dropdown.menu > li.has-submenu > a::after {
-  content: '';
-  display: inline-block;
-  margin-left: 0.5rem;
-  border: 4px solid transparent;
-  border-top-color: var(--lf-color-primary);
+  @include lf-chevron(down, 4px, var(--lf-color-primary));
+  margin-inline-start: 0.5rem;
   vertical-align: middle;
 }
 
@@ -108,23 +105,19 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
-  margin-left: 1rem;
+  margin-inline-start: 1rem;
 }
 
 .accordion-menu li.has-submenu > a {
   position: relative;
-  padding-right: 2rem;
+  padding-inline-end: 2rem;
 }
 
 .accordion-menu li.has-submenu > a::after {
-  content: '';
+  @include lf-chevron-angle(0.4rem, var(--lf-color-primary));
   position: absolute;
   top: 50%;
-  right: 1rem;
-  width: 0.4rem;
-  height: 0.4rem;
-  border-right: 2px solid var(--lf-color-primary);
-  border-bottom: 2px solid var(--lf-color-primary);
+  inset-inline-end: 1rem;
   transform: translateY(-65%) rotate(45deg);
   transition: transform 0.35s ease;
 }
@@ -156,6 +149,7 @@
 .drilldown .is-drilldown-submenu {
   position: absolute;
   top: 0;
+  // Physical left + translateX: slide animation is LTR-oriented.
   left: 100%;
   z-index: var(--lf-z-behind);
   display: flex;
@@ -186,25 +180,20 @@
 }
 
 .drilldown .js-drilldown-back > a::before {
-  content: '';
-  display: inline-block;
+  @include lf-chevron(left, 6px, var(--lf-color-primary));
   vertical-align: middle;
-  margin-right: 0.75rem;
-  border: 6px solid transparent;
-  border-right-color: var(--lf-color-primary);
+  margin-inline-end: 0.75rem;
 }
 
 .drilldown .is-drilldown-submenu-parent > a {
   position: relative;
-  padding-right: 2rem;
+  padding-inline-end: 2rem;
 }
 
 .drilldown .is-drilldown-submenu-parent > a::after {
-  content: '';
+  @include lf-chevron(right, 6px, var(--lf-color-primary));
   position: absolute;
   top: 50%;
-  right: 1rem;
+  inset-inline-end: 1rem;
   margin-top: -6px;
-  border: 6px solid transparent;
-  border-left-color: var(--lf-color-primary);
 }

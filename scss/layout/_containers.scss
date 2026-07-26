@@ -9,8 +9,7 @@
   grid-template-columns: minmax(0, var(--grid-container-max));
   justify-content: center;
   box-sizing: border-box;
-  padding-right: var(--grid-container-pad);
-  padding-left: var(--grid-container-pad);
+  padding-inline: var(--grid-container-pad);
 }
 
 .grid-container > * {
@@ -31,6 +30,5 @@
 .grid-container.full {
   --grid-container-max: 100%;
   --grid-container-pad: 0;
-  padding-right: 0;
-  padding-left: 0;
+  padding-inline: 0;
 }

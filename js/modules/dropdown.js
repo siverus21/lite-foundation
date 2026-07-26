@@ -3,14 +3,18 @@
  * Toggle: [data-dropdown-open="paneId"]
  * Close: outside click, Esc, second click on trigger
  */
-export class Dropdown {
+import { Module } from '../core/Module.js';
+
+export class Dropdown extends Module {
   constructor(root = document) {
-    this.root = root;
+    super(root);
+    this._lastFocus = null;
     this.#bind();
   }
 
   #bind() {
-    this.root.addEventListener(
+    this.on(
+      this.root,
       'click',
       (event) => {
         const trigger = event.target.closest('[data-dropdown-open]');
@@ -34,7 +38,7 @@ export class Dropdown {
       true,
     );
 
-    document.addEventListener('keydown', (event) => {
+    this.on(document, 'keydown', (event) => {
       if (event.key === 'Escape') this.closeAll();
     });
   }
@@ -43,6 +47,12 @@ export class Dropdown {
     pane.classList.add('is-open');
     pane.setAttribute('aria-hidden', 'false');
     trigger.setAttribute('aria-expanded', 'true');
+    trigger.setAttribute('aria-controls', pane.id);
+    this._lastFocus = trigger;
+    const focusable = pane.querySelector(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    focusable?.focus?.();
   }
 
   closeAll() {
@@ -54,5 +64,14 @@ export class Dropdown {
     document.querySelectorAll('[data-dropdown-open][aria-expanded="true"]').forEach((trigger) => {
       trigger.setAttribute('aria-expanded', 'false');
     });
+
+    const restore = this._lastFocus;
+    this._lastFocus = null;
+    if (restore && typeof restore.focus === 'function') restore.focus();
+  }
+
+  destroy() {
+    this.closeAll();
+    super.destroy();
   }
 }

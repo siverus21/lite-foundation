@@ -4,11 +4,11 @@
 .accordion {
   margin: 0;
   list-style: none;
-  background: $accordion-background;
+  background: var(--lf-accordion-bg, #{$accordion-background});
 }
 
 .accordion-item {
-  border-bottom: 1px solid $light-gray;
+  border-bottom: 1px solid var(--lf-accordion-border, #{$light-gray});
 }
 
 .accordion-item:last-child {
@@ -19,11 +19,11 @@
   display: block;
   position: relative;
   padding: $accordion-item-padding;
-  padding-right: 2.5rem;
+  padding-inline-end: 2.5rem;
   font-size: $accordion-title-font-size;
   line-height: 1;
-  color: $accordion-item-color;
-  background: $accordion-background;
+  color: var(--lf-accordion-item-color, #{$accordion-item-color});
+  background: var(--lf-accordion-bg, #{$accordion-background});
   cursor: pointer;
   list-style: none;
 }
@@ -38,14 +38,13 @@
 
 /* Chevron */
 .accordion-title::after {
-  content: '';
+  @include lf-chevron-angle(
+    0.5rem,
+    var(--lf-accordion-item-color, #{$accordion-item-color})
+  );
   position: absolute;
   top: 50%;
-  right: 1rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-right: 2px solid $accordion-item-color;
-  border-bottom: 2px solid $accordion-item-color;
+  inset-inline-end: 1rem;
   transform: translateY(-65%) rotate(45deg);
   transition: transform 0.35s ease;
 }
@@ -56,20 +55,34 @@
 
 .accordion-title:hover,
 .accordion-title:focus {
-  background: $accordion-item-background-hover;
+  background: var(--lf-accordion-item-bg-hover, #{$accordion-item-background-hover});
   outline: none;
 }
 
 .accordion-content {
   overflow: hidden;
-  height: 0;
   transition: height 0.4s ease-in-out;
-  background: $accordion-content-background;
-  color: $accordion-content-color;
-  border-top: 0 solid $accordion-content-border;
+  background: var(--lf-accordion-content-bg, #{$accordion-content-background});
+  color: var(--lf-accordion-content-color, #{$accordion-content-color});
+  border-top: 0 solid var(--lf-accordion-content-border, #{$light-gray});
 }
 
-.accordion-item.is-open > .accordion-content {
+/* JS-enhanced: collapsed panels are height:0; open height set inline. */
+.accordion[data-lf-enhanced] .accordion-item:not(.is-open) > .accordion-content {
+  height: 0;
+}
+
+/* Native fallback (before init / after destroyModules). */
+.accordion:not([data-lf-enhanced]) .accordion-item:not([open]) > .accordion-content {
+  display: none;
+}
+
+.accordion:not([data-lf-enhanced]) .accordion-item[open] > .accordion-content {
+  height: auto;
+}
+
+.accordion-item.is-open > .accordion-content,
+.accordion:not([data-lf-enhanced]) .accordion-item[open] > .accordion-content {
   border-top-width: 1px;
 }
 

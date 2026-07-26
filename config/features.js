@@ -27,7 +27,7 @@ export const BUILD_META_KEYS = ['kind'];
 /** Full kitchen-sink page preset (also the `full` build). Swiper is a separate library build. */
 export default {
   vendors: {
-    cash: true,
+    cash: false,
     swiper: false,
     animate: true,
   },
@@ -76,6 +76,7 @@ export default {
     dropdown: true,
     tooltip: true,
     menus: true,
+    dismiss: true,
   },
 };
 
@@ -89,7 +90,7 @@ export const builds = {
   /** Minimal demo page — about.html → app-about.css + lib-about.js */
   about: {
     vendors: {
-      cash: true,
+      cash: false,
       swiper: false,
       animate: false,
     },

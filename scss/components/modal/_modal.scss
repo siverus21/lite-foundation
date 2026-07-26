@@ -24,15 +24,16 @@
 
 .modal .close-button {
   position: absolute;
-  right: 1rem;
+  inset-inline-end: 1rem;
   top: 0.5rem;
 }
 
-// Lock page scroll while a modal is open (see js/modules/modal.js).
-body.is-modal-open {
+// Only is-scroll-locked applies position:fixed (set by lockScroll after saving scrollY).
+// Do not couple this to is-modal-open / is-offcanvas-open — those can be added first and
+// would reset window.scrollY to 0 before the offset is applied.
+body.is-scroll-locked {
   position: fixed;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   width: 100%;
   overflow: hidden;
 }

@@ -41,19 +41,3 @@
 .show-on-focus:focus {
   @include visually-hidden-off;
 }
-
-.show-for-landscape,
-.hide-for-portrait {
-  @include breakpoint(portrait) {
-    display: none !important;
-  }
-}
-
-.hide-for-landscape,
-.show-for-portrait {
-  display: none !important;
-
-  @include breakpoint(portrait) {
-    display: block !important;
-  }
-}

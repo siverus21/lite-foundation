@@ -11,7 +11,7 @@
 
 .breadcrumbs li {
   font-size: $breadcrumbs-item-font-size;
-  color: $breadcrumbs-item-color-current;
+  color: var(--lf-breadcrumbs-item-color-current, #{$breadcrumbs-item-color-current});
   cursor: default;
 
   @if $breadcrumbs-item-uppercase {
@@ -23,7 +23,7 @@
   .breadcrumbs li:not(:last-child)::after {
     margin: 0 $breadcrumbs-item-margin;
     content: $breadcrumbs-item-separator-item;
-    color: $breadcrumbs-item-separator-color;
+    color: var(--lf-breadcrumbs-separator-color, #{$breadcrumbs-item-separator-color});
   }
 } @else {
   .breadcrumbs li:not(:last-child) {
@@ -32,7 +32,7 @@
 }
 
 .breadcrumbs a {
-  color: $breadcrumbs-item-color;
+  color: var(--lf-breadcrumbs-item-color, #{$breadcrumbs-item-color});
 }
 
 .breadcrumbs a:hover {
@@ -40,6 +40,6 @@
 }
 
 .breadcrumbs .disabled {
-  color: $breadcrumbs-item-color-disabled;
+  color: var(--lf-breadcrumbs-item-color-disabled, #{$breadcrumbs-item-color-disabled});
   cursor: not-allowed;
 }

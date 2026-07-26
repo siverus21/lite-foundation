@@ -5,12 +5,12 @@
   flex-direction: column;
   flex-grow: 1;
   margin-bottom: $card-margin-bottom;
-  border: $card-border;
+  border: 1px solid var(--lf-card-border, #{$light-gray});
   border-radius: $card-border-radius;
-  background: $card-background;
-  box-shadow: $card-shadow;
+  background: var(--lf-card-bg, #{$card-background});
+  box-shadow: var(--lf-card-shadow, #{$card-shadow});
   overflow: hidden;
-  color: $card-font-color;
+  color: var(--lf-card-color, #{$card-font-color});
 }
 
 .card > :last-child {
@@ -21,7 +21,7 @@
   display: flex;
   flex: 0 1 auto;
   padding: $card-padding;
-  background: $card-divider-background;
+  background: var(--lf-card-divider-bg, #{$card-divider-background});
 }
 
 .card-divider > :last-child {

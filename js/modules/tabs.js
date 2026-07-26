@@ -1,25 +1,27 @@
 /**
  * Accessible tabs (replaces Foundation Tabs).
- *
- * Markup:
- * <ul class="tabs" data-tabs role="tablist">
- *   <li class="tabs-title is-active"><button type="button" role="tab" aria-controls="panel1" aria-selected="true">…</button></li>
- * </ul>
- * <div class="tabs-content" data-tabs-content>
- *   <div class="tabs-panel is-active" id="panel1" role="tabpanel">…</div>
- * </div>
  */
-export class Tabs {
+import { Module } from '../core/Module.js';
+
+export class Tabs extends Module {
   constructor(root = document) {
+    super(root);
+    this._groups = [];
     root.querySelectorAll('[data-tabs]').forEach((tablist) => {
-      new TabsGroup(tablist);
+      this._groups.push(new TabsGroup(tablist, this));
     });
+  }
+
+  destroy() {
+    this._groups = [];
+    super.destroy();
   }
 }
 
 class TabsGroup {
-  constructor(tablist) {
+  constructor(tablist, owner) {
     this.tablist = tablist;
+    this.owner = owner;
     this.tabs = [...tablist.querySelectorAll('[role="tab"]')];
 
     const contentId = tablist.id;
@@ -37,12 +39,11 @@ class TabsGroup {
 
   #bind() {
     this.tabs.forEach((tab) => {
-      tab.addEventListener('click', (event) => {
+      this.owner.on(tab, 'click', (event) => {
         event.preventDefault();
         this.#activate(tab);
       });
-
-      tab.addEventListener('keydown', (event) => this.#onKeydown(event, tab));
+      this.owner.on(tab, 'keydown', (event) => this.#onKeydown(event, tab));
     });
   }
 

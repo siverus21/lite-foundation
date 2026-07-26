@@ -1,0 +1,169 @@
+// Custom checkbox / radio — opt-in via .checkbox / .radio (native inputs unchanged).
+
+@mixin -lf-choice-control-box($radius) {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: $choice-size;
+  height: $choice-size;
+  border: $choice-border-width solid var(--lf-choice-border, #{$choice-border});
+  border-radius: $radius;
+  background-color: var(--lf-choice-bg, #{$choice-bg});
+  transition: $choice-transition;
+}
+
+@mixin -lf-choice-size($size) {
+  .checkbox-control,
+  .radio-control {
+    width: $size;
+    height: $size;
+  }
+}
+
+.checkbox,
+.radio {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $choice-gap;
+  margin: 0 $choice-margin $choice-margin 0;
+  font-size: inherit;
+  font-weight: $global-weight-normal;
+  line-height: 1.2;
+  color: inherit;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+
+  // Default accent = primary
+  --lf-choice-accent: var(--lf-color-primary, #{$primary-color});
+  --lf-choice-accent-contrast: var(--lf-color-primary-contrast, #{$white});
+}
+
+.checkbox-input,
+.radio-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.checkbox-control {
+  @include -lf-choice-control-box($choice-checkbox-radius);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 45%;
+    inset-inline-start: 50%;
+    width: 28%;
+    height: 55%;
+    border: solid var(--lf-choice-mark, #{$choice-mark});
+    border-width: 0 2px 2px 0;
+    opacity: 0;
+    transform: translate(-50%, -60%) rotate(45deg);
+    transition: opacity 0.15s ease;
+  }
+}
+
+.radio-control {
+  @include -lf-choice-control-box(50%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 42%;
+    height: 42%;
+    border-radius: 50%;
+    background-color: var(--lf-choice-mark, #{$choice-mark});
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+}
+
+/* Solid (default): fill on checked */
+.checkbox:not(.hollow) .checkbox-input:checked + .checkbox-control,
+.radio:not(.hollow) .radio-input:checked + .radio-control {
+  border-color: var(--lf-choice-accent);
+  background-color: var(--lf-choice-accent);
+}
+
+.checkbox:not(.hollow) .checkbox-input:checked + .checkbox-control::after {
+  opacity: 1;
+  background-color: transparent;
+  border-color: var(--lf-choice-accent-contrast);
+}
+
+.radio:not(.hollow) .radio-input:checked + .radio-control::after {
+  opacity: 1;
+  background-color: var(--lf-choice-accent-contrast);
+}
+
+/* Hollow: colored border + mark, no fill */
+.checkbox.hollow .checkbox-control,
+.radio.hollow .radio-control {
+  border-color: var(--lf-choice-accent);
+  background-color: transparent;
+}
+
+.checkbox.hollow .checkbox-input:checked + .checkbox-control::after {
+  opacity: 1;
+  background-color: transparent;
+  border-color: var(--lf-choice-accent);
+}
+
+.radio.hollow .radio-input:checked + .radio-control::after {
+  opacity: 1;
+  background-color: var(--lf-choice-accent);
+}
+
+/* Focus */
+.checkbox-input:focus-visible + .checkbox-control,
+.radio-input:focus-visible + .radio-control {
+  box-shadow: 0 0 0 3px var(--lf-choice-focus-ring, #{$choice-focus-ring});
+}
+
+/* Disabled */
+.checkbox:has(.checkbox-input:disabled),
+.radio:has(.radio-input:disabled) {
+  cursor: $choice-cursor-disabled;
+  opacity: $choice-opacity-disabled;
+}
+
+/* Sizes */
+.checkbox.tiny,
+.radio.tiny {
+  @include -lf-choice-size($choice-size-tiny);
+}
+
+.checkbox.small,
+.radio.small {
+  @include -lf-choice-size($choice-size-small);
+}
+
+.checkbox.large,
+.radio.large {
+  @include -lf-choice-size($choice-size-large);
+}
+
+/* Palette colors */
+@each $name, $color in $choice-palette {
+  .checkbox.#{$name},
+  .radio.#{$name} {
+    --lf-choice-accent: var(--lf-color-#{$name}, #{$color});
+    --lf-choice-accent-contrast: var(
+      --lf-color-#{$name}-contrast,
+      #{color-pick-contrast($color, ($white, $black))}
+    );
+    --lf-choice-focus-ring: #{rgba($color, 0.35)};
+  }
+}

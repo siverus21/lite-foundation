@@ -40,8 +40,7 @@
   &.expanded {
     display: block;
     width: 100%;
-    margin-right: 0;
-    margin-left: 0;
+    margin-inline: 0;
   }
 
   &.disabled,
@@ -94,21 +93,17 @@
   }
 
   &.dropdown::after {
-    content: '';
-    display: inline-block;
-    float: right;
+    @include lf-chevron(down, 0.4em, var(--lf-button-color, #{$button-color}));
+    float: inline-end;
     position: relative;
     top: 0.4em;
-    margin-left: 1em;
-    border: 0.4em solid transparent;
-    border-top-color: var(--lf-button-color, #{$button-color});
-    border-bottom-width: 0;
+    margin-inline-start: 1em;
   }
 
   &.arrow-only::after {
     top: -0.1em;
     float: none;
-    margin-left: 0;
+    margin-inline-start: 0;
   }
 
   @each $size, $value in map-remove($button-sizes, default) {

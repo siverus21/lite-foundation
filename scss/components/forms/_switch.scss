@@ -7,7 +7,7 @@
   outline: 0;
   font-size: rem-calc(14);
   font-weight: bold;
-  color: $white;
+  color: var(--lf-color-white, #{$white});
   user-select: none;
 }
 
@@ -28,7 +28,7 @@
   height: $switch-height;
   margin: 0;
   border-radius: $switch-radius;
-  background: $switch-background;
+  background: var(--lf-switch-bg, #{$switch-background});
   font-weight: inherit;
   color: inherit;
   cursor: pointer;
@@ -43,30 +43,30 @@
   content: '';
   position: absolute;
   top: $switch-paddle-offset;
-  left: $switch-paddle-offset;
+  inset-inline-start: $switch-paddle-offset;
   display: block;
   width: $switch-height - ($switch-paddle-offset * 2);
   height: $switch-height - ($switch-paddle-offset * 2);
   border-radius: $switch-paddle-radius;
-  background: $switch-paddle-background;
+  background: var(--lf-switch-paddle-bg, #{$switch-paddle-background});
   transition: $switch-paddle-transition;
   transform: translate3d(0, 0, 0);
 }
 
 .switch-input:checked ~ .switch-paddle {
-  background: $switch-background-active;
+  background: var(--lf-switch-bg-active, #{$switch-background-active});
 }
 
 .switch-input:checked ~ .switch-paddle::after {
-  left: ($switch-height * 2) - ($switch-height - ($switch-paddle-offset * 2)) - $switch-paddle-offset;
+  inset-inline-start: ($switch-height * 2) - ($switch-height - ($switch-paddle-offset * 2)) - $switch-paddle-offset;
 }
 
 .switch-input:focus-visible ~ .switch-paddle {
-  background: $switch-background-focus;
+  background: var(--lf-switch-bg-focus, #{$switch-background-focus});
 }
 
 .switch-input:checked:focus-visible ~ .switch-paddle {
-  background: $switch-background-active-focus;
+  background: var(--lf-switch-bg-active-focus, #{$switch-background-active-focus});
 }
 
 .switch-input:disabled ~ .switch-paddle {
@@ -82,7 +82,7 @@
 }
 
 .switch-active {
-  left: 8%;
+  inset-inline-start: 8%;
   display: none;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .switch-inactive {
-  right: 15%;
+  inset-inline-end: 15%;
 }
 
 .switch-input:checked + label > .switch-inactive {
@@ -113,13 +113,13 @@
 
   .switch-paddle::after {
     top: $offset;
-    left: $offset;
+    inset-inline-start: $offset;
     width: $paddle;
     height: $paddle;
   }
 
   input:checked ~ .switch-paddle::after {
-    left: $active;
+    inset-inline-start: $active;
   }
 }
 

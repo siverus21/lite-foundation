@@ -59,12 +59,12 @@ h6, .h6 {
   font-family: $header-font-family;
   font-style: $header-font-style;
   font-weight: $header-font-weight;
-  color: $header-color;
+  color: var(--lf-header-color, #{$header-color});
   text-rendering: $header-text-rendering;
 
   small {
     line-height: 0;
-    color: $header-small-font-color;
+    color: var(--lf-header-small-color, #{$header-small-font-color});
   }
 }
 
@@ -116,13 +116,13 @@ h6, .h6 {
 /* Links */
 a {
   line-height: inherit;
-  color: $anchor-color;
+  color: var(--lf-anchor-color, #{$anchor-color});
   text-decoration: $anchor-text-decoration;
   cursor: pointer;
 
   &:hover,
   &:focus {
-    color: $anchor-color-hover;
+    color: var(--lf-anchor-color-hover, #{$anchor-color-hover});
 
     @if $anchor-text-decoration-hover != $anchor-text-decoration {
       text-decoration: $anchor-text-decoration-hover;
@@ -140,10 +140,9 @@ hr {
   max-width: $hr-width;
   height: 0;
   margin: $hr-margin;
-  border-top: 0;
-  border-right: 0;
-  border-bottom: $hr-border;
-  border-left: 0;
+  border-block-start: 0;
+  border-inline: 0;
+  border-block-end: 1px solid var(--lf-hr-border, #{$medium-gray});
 }
 
 /* Lists */
@@ -160,19 +159,19 @@ li {
 }
 
 ul {
-  margin-left: $list-side-margin;
+  margin-inline-start: $list-side-margin;
   list-style-type: $list-style-type;
 }
 
 ol {
-  margin-left: $list-side-margin;
+  margin-inline-start: $list-side-margin;
 }
 
 ul ul,
 ul ol,
 ol ul,
 ol ol {
-  margin-left: $list-nested-side-margin;
+  margin-inline-start: $list-nested-side-margin;
   margin-bottom: 0;
 }
 
@@ -189,19 +188,19 @@ dl dt {
 blockquote {
   margin: 0 0 $paragraph-margin-bottom;
   padding: $blockquote-padding;
-  border-left: $blockquote-border;
+  border-inline-start: 1px solid var(--lf-blockquote-border, #{$medium-gray});
 
   &,
   p {
     line-height: $paragraph-lineheight;
-    color: $blockquote-color;
+    color: var(--lf-blockquote-color, #{$blockquote-color});
   }
 }
 
 /* Cite */
 @mixin -lf-cite-block {
   display: block;
-  color: $cite-color;
+  color: var(--lf-cite-color, #{$cite-color});
   font-size: $cite-font-size;
 
   &::before {
@@ -222,7 +221,7 @@ blockquote {
 /* Abbreviations */
 abbr,
 abbr[title] {
-  border-bottom: $abbr-underline;
+  border-bottom: 1px dotted var(--lf-abbr-underline, #{$black});
   cursor: help;
   text-decoration: none;
 }
@@ -233,11 +232,11 @@ figure {
 
 /* Code */
 @mixin -lf-code-style {
-  border: $code-border;
-  background-color: $code-background;
+  border: 1px solid var(--lf-code-border, #{$medium-gray});
+  background-color: var(--lf-code-bg, #{$code-background});
   font-family: $code-font-family;
   font-weight: $code-font-weight;
-  color: $code-color;
+  color: var(--lf-code-color, #{$code-color});
 }
 
 .code-inline {
@@ -267,14 +266,16 @@ figure {
   white-space: pre;
 }
 
-/* Keystrokes */
-kbd {
-  margin: 0;
-  padding: $keystroke-padding;
-  border-radius: $keystroke-radius;
-  background-color: $keystroke-background;
-  font-family: $keystroke-font;
-  color: $keystroke-color;
+/* Keystrokes (opt-in — unused by kitchen-sink) */
+@if $enable-keystroke {
+  kbd {
+    margin: 0;
+    padding: $keystroke-padding;
+    border-radius: $keystroke-radius;
+    background-color: var(--lf-keystroke-bg, #{$keystroke-background});
+    font-family: $keystroke-font;
+    color: var(--lf-keystroke-color, #{$keystroke-color});
+  }
 }
 
 /* Helpers */
@@ -283,7 +284,7 @@ kbd {
   margin-bottom: $subheader-margin-bottom;
   font-weight: $subheader-font-weight;
   line-height: $subheader-lineheight;
-  color: $subheader-color;
+  color: var(--lf-subheader-color, #{$subheader-color});
 }
 
 .lead {
@@ -302,113 +303,122 @@ p + .stat {
 
 ul.no-bullet,
 ol.no-bullet {
-  margin-left: 0;
+  margin-inline-start: 0;
   list-style: none;
 }
 
-/* Text alignment */
+/* Text alignment — class names keep left/right; values are logical start/end */
+$-lf-text-align: (
+  left: start,
+  right: end,
+  center: center,
+  justify: justify,
+);
+
 @each $size in $breakpoint-classes {
   @include breakpoint($size) {
-    @each $align in (left, right, center, justify) {
+    @each $name, $value in $-lf-text-align {
       @if $size != $-zf-zero-breakpoint {
-        .#{$size}-text-#{$align} {
-          text-align: $align;
+        .#{$size}-text-#{$name} {
+          text-align: $value;
         }
       } @else {
-        .text-#{$align} {
-          text-align: $align;
+        .text-#{$name} {
+          text-align: $value;
         }
       }
     }
   }
 }
 
-/* Print */
-.show-for-print {
-  display: none !important;
-}
-
-@media print {
-  @if $print-transparent-backgrounds {
-    * {
-      background: transparent !important;
-      color: black !important;
-      print-color-adjust: economy;
-      box-shadow: none !important;
-      text-shadow: none !important;
-    }
-  } @else {
-    * {
-      print-color-adjust: exact;
-      box-shadow: none !important;
-      text-shadow: none !important;
-    }
-  }
-
+/* Print (opt-in — heavy Foundation leftover; unused by kitchen-sink) */
+@if $enable-print-styles {
   .show-for-print {
-    display: block !important;
-  }
-
-  .hide-for-print {
     display: none !important;
   }
 
-  a,
-  a:visited {
-    text-decoration: underline;
-  }
-
-  @if $print-hrefs {
-    a[href]::after {
-      content: ' (' attr(href) ')';
+  @media print {
+    @if $print-transparent-backgrounds {
+      * {
+        background: transparent !important;
+        color: var(--lf-color-black, #{$black}) !important;
+        print-color-adjust: economy;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+    } @else {
+      * {
+        print-color-adjust: exact;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
     }
-  }
 
-  a[href^='javascript:']::after,
-  a[href^='#']::after {
-    content: '';
-  }
+    .show-for-print {
+      display: block !important;
+    }
 
-  abbr[title]::after {
-    content: ' (' attr(title) ')';
-  }
+    .hide-for-print {
+      display: none !important;
+    }
 
-  pre,
-  blockquote {
-    border: 1px solid $dark-gray;
-    page-break-inside: avoid;
-  }
+    a,
+    a:visited {
+      text-decoration: underline;
+    }
 
-  thead {
-    display: table-header-group;
-  }
+    @if $print-hrefs {
+      a[href]::after {
+        content: ' (' attr(href) ')';
+      }
+    }
 
-  tr,
-  img {
-    page-break-inside: avoid;
-  }
+    a[href^='javascript:']::after,
+    a[href^='#']::after {
+      content: '';
+    }
 
-  img {
-    max-width: 100% !important;
-  }
+    abbr[title]::after {
+      content: ' (' attr(title) ')';
+    }
 
-  @page {
-    margin: 0.5cm;
-  }
+    pre,
+    blockquote {
+      border: 1px solid var(--lf-color-dark-gray, #{$dark-gray});
+      page-break-inside: avoid;
+    }
 
-  p,
-  h2,
-  h3 {
-    orphans: 3;
-    widows: 3;
-  }
+    thead {
+      display: table-header-group;
+    }
 
-  h2,
-  h3 {
-    page-break-after: avoid;
-  }
+    tr,
+    img {
+      page-break-inside: avoid;
+    }
 
-  .print-break-inside {
-    page-break-inside: auto;
+    img {
+      max-width: 100% !important;
+    }
+
+    @page {
+      margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+      orphans: 3;
+      widows: 3;
+    }
+
+    h2,
+    h3 {
+      page-break-after: avoid;
+    }
+
+    .print-break-inside {
+      page-break-inside: auto;
+    }
   }
 }

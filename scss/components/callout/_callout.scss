@@ -4,12 +4,15 @@
   position: relative;
   margin: $callout-margin;
   padding: map-get($callout-sizes, default);
-  border: $callout-border;
+  border: 1px solid var(--lf-callout-border, #{rgba($black, 0.25)});
   border-radius: $callout-radius;
-  background-color: scale-color($callout-background, $lightness: $callout-background-fade);
-  color: color-pick-contrast(
-    scale-color($callout-background, $lightness: $callout-background-fade),
-    ($callout-font-color, $callout-font-color-alt)
+  background-color: var(--lf-callout-bg, #{scale-color($callout-background, $lightness: $callout-background-fade)});
+  color: var(
+    --lf-callout-color,
+    #{color-pick-contrast(
+      scale-color($callout-background, $lightness: $callout-background-fade),
+      ($callout-font-color, $callout-font-color-alt)
+    )}
   );
 }
 
@@ -22,11 +25,14 @@
 }
 
 @each $name, $color in $foundation-palette {
-  .callout.#{$name} {
-    $background: scale-color($color, $lightness: $callout-background-fade);
+  $background: scale-color($color, $lightness: $callout-background-fade);
 
-    background-color: $background;
-    color: color-pick-contrast($background, ($callout-font-color, $callout-font-color-alt));
+  .callout.#{$name} {
+    background-color: var(--lf-callout-#{$name}-bg, #{$background});
+    color: var(
+      --lf-callout-#{$name}-color,
+      #{color-pick-contrast($background, ($callout-font-color, $callout-font-color-alt))}
+    );
   }
 }
 

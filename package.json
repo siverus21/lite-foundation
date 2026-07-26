@@ -1,14 +1,18 @@
 {
   "name": "lite-foundation",
   "version": "1.1.1",
-  "description": "Lightweight Foundation-compatible UI starter (Vite + Sass + Cash + Swiper + Animate.css).",
+  "description": "Lightweight Foundation-compatible UI starter (Vite + Sass + optional Cash/Swiper/Animate.css).",
   "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "prebuild": "node scripts/sync-features.js",
     "build": "node scripts/build.js",
     "sync:features": "node scripts/sync-features.js",
-    "lint:tokens": "node scripts/lint-tokens.js"
+    "lint:tokens": "node scripts/lint-tokens.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "license": "MIT",
   "engines": {
@@ -20,9 +24,12 @@
     "swiper": "^11.2.10"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.10",
+    "happy-dom": "^20.11.1",
     "playwright-core": "^1.49.0",
     "sass": "^1.79.3",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "vitest": "^4.1.10"
   },
   "private": true,
   "browserslist": [

@@ -21,11 +21,11 @@
 }
 
 .media-object-section:first-child {
-  padding-right: $mediaobject-section-padding;
+  padding-inline-end: $mediaobject-section-padding;
 }
 
 .media-object-section:last-child:not(:nth-child(2)) {
-  padding-left: $mediaobject-section-padding;
+  padding-inline-start: $mediaobject-section-padding;
 }
 
 .media-object-section > :last-child {

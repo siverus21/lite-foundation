@@ -1,22 +1,42 @@
 /**
  * Accordion on native <details>/<summary> with smooth height animation.
- * Exclusive open waits for the previous panel to finish closing.
  */
-export class Accordion {
+import { Module } from '../core/Module.js';
+
+export class Accordion extends Module {
   constructor(root = document) {
+    super(root);
+    this._groups = [];
     root.querySelectorAll('[data-accordion]').forEach((el) => {
-      new AccordionGroup(el);
+      this._groups.push(new AccordionGroup(el, this));
     });
+  }
+
+  destroy() {
+    this._groups.forEach((group) => group.destroy());
+    this._groups = [];
+    super.destroy();
   }
 }
 
 class AccordionGroup {
-  constructor(root) {
+  constructor(root, owner) {
     this.root = root;
+    this.owner = owner;
     this.multi = root.getAttribute('data-multi-expand') === 'true';
     this.queue = Promise.resolve();
+    this.root.setAttribute('data-lf-enhanced', '');
     this.#ensureContentWrappers();
     this.#bind();
+  }
+
+  destroy() {
+    this.root.removeAttribute('data-lf-enhanced');
+    this.root.querySelectorAll('details.accordion-item').forEach((item) => {
+      const content = item.querySelector(':scope > .accordion-content');
+      if (content) content.style.height = '';
+      item.classList.toggle('is-open', item.open);
+    });
   }
 
   #ensureContentWrappers() {
@@ -40,9 +60,10 @@ class AccordionGroup {
         item.classList.add('is-open');
       } else {
         content.style.height = '0px';
+        item.classList.remove('is-open');
       }
 
-      summary.addEventListener('click', (event) => {
+      this.owner.on(summary, 'click', (event) => {
         event.preventDefault();
         this.queue = this.queue.then(() => this.#toggle(item, content));
       });
@@ -104,9 +125,10 @@ class AccordionGroup {
         return;
       }
 
-      const current = content.style.height === 'auto' || !content.style.height
-        ? content.scrollHeight
-        : content.offsetHeight;
+      const current =
+        content.style.height === 'auto' || !content.style.height
+          ? content.scrollHeight
+          : content.offsetHeight;
 
       content.style.height = `${current}px`;
       void content.offsetHeight;

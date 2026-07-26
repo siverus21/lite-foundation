@@ -65,6 +65,15 @@ const STYLE_SETTINGS = {
   forms: ['forms'],
 };
 
+const SETTINGS_PREFERRED = [
+  'forms',
+  'button',
+  'menu',
+  'accordion-menu',
+  'drilldown',
+  'dropdown-menu',
+];
+
 /** Map script feature → { className, file relative to js/builds/{name}/ } */
 export const SCRIPT_MODULES = {
   modal: { file: '../../modules/modal.js', className: 'Modal' },
@@ -77,6 +86,7 @@ export const SCRIPT_MODULES = {
   dropdown: { file: '../../modules/dropdown.js', className: 'Dropdown' },
   tooltip: { file: '../../modules/tooltip.js', className: 'Tooltip' },
   menus: { file: '../../modules/menus.js', className: 'Menus' },
+  dismiss: { file: '../../modules/dismiss.js', className: 'Dismiss' },
 };
 
 function enabledEntries(map = {}) {
@@ -113,11 +123,6 @@ export function emptyFeatures() {
   };
 }
 
-/**
- * Resolve a named build to a full features object (meta keys like `kind` stripped).
- * `full` → default preset (+ optional feature patch).
- * Other keys → start from empty, apply build config (sparse = only listed flags on).
- */
 export function resolveBuild(buildName) {
   const { features: override } = splitBuildConfig(builds[buildName] ?? {});
   if (buildName === 'full') {
@@ -128,6 +133,26 @@ export function resolveBuild(buildName) {
 
 export function listBuildNames() {
   return Object.keys(builds);
+}
+
+/** Collect optional settings folders for enabled style/layout/utilities flags. */
+export function collectSettings(features) {
+  const settings = new Set();
+  for (const [key, on] of enabledEntries(features.styles)) {
+    if (!on) continue;
+    for (const folder of STYLE_SETTINGS[key] || []) settings.add(folder);
+  }
+  if (features.layout?.titleBar) settings.add('title-bar');
+  if (features.layout?.topBar) settings.add('top-bar');
+  if (features.utilities) settings.add('utilities');
+  return settings;
+}
+
+export function orderSettings(settings) {
+  return [
+    ...SETTINGS_PREFERRED.filter((s) => settings.has(s)),
+    ...[...settings].filter((s) => !SETTINGS_PREFERRED.includes(s)).sort(),
+  ];
 }
 
 function generateSettingsIndex(features) {
@@ -141,29 +166,8 @@ function generateSettingsIndex(features) {
     lines.push(`@import '${folder}';`);
   }
 
-  const settings = new Set();
-  for (const [key, on] of enabledEntries(features.styles)) {
-    if (!on) continue;
-    for (const folder of STYLE_SETTINGS[key] || []) {
-      settings.add(folder);
-    }
-  }
-
-  if (features.layout?.titleBar) settings.add('title-bar');
-  if (features.layout?.topBar) settings.add('top-bar');
-
-  const preferred = ['forms', 'button', 'menu', 'accordion-menu', 'drilldown', 'dropdown-menu'];
-  const ordered = [
-    ...preferred.filter((s) => settings.has(s)),
-    ...[...settings].filter((s) => !preferred.includes(s)).sort(),
-  ];
-
-  for (const folder of ordered) {
+  for (const folder of orderSettings(collectSettings(features))) {
     lines.push(`@import '${folder}';`);
-  }
-
-  if (features.utilities) {
-    lines.push("@import 'utilities';");
   }
 
   if (required.settings.includes('css-variables')) {
@@ -176,12 +180,10 @@ function generateSettingsIndex(features) {
 
 function generateComponentsIndex(features) {
   const lines = ['// GENERATED — do not edit by hand.'];
-
   for (const [key, on] of enabledEntries(features.styles)) {
     const folder = STYLE_FOLDERS[key];
     if (on && folder) lines.push(`@import '${folder}';`);
   }
-
   lines.push('');
   return lines.join('\n');
 }
@@ -219,13 +221,17 @@ function generateUtilitiesIndex(features) {
 }
 
 function generateModulesIndex(features, { moduleImportPrefix = './' } = {}) {
-  const imports = [];
+  const runtimeImport =
+    moduleImportPrefix === './'
+      ? "import { createModuleRuntime } from '../core/runtime.js';"
+      : "import { createModuleRuntime } from '../../core/runtime.js';";
+
+  const imports = [runtimeImport];
   const classes = [];
 
   for (const [key, on] of enabledEntries(features.scripts)) {
     const mod = SCRIPT_MODULES[key];
     if (!on || !mod) continue;
-    // SCRIPT_MODULES paths are relative to js/builds/{name}/ → ../../modules/
     const file =
       moduleImportPrefix === './'
         ? mod.file.replace('../../modules/', './')
@@ -234,37 +240,29 @@ function generateModulesIndex(features, { moduleImportPrefix = './' } = {}) {
     classes.push(`    ${mod.className},`);
   }
 
-  const importBlock = imports.length ? `${imports.join('\n')}\n` : '';
+  return `${imports.join('\n')}
 
-  return `${importBlock}
 /**
  * Register and run enabled UI modules (see config/features.js builds).
  * GENERATED — do not edit by hand.
  */
-export function initModules() {
-  const modules = [
+const runtime = createModuleRuntime([
 ${classes.join('\n')}
-  ];
+]);
 
-  modules.forEach((Module) => {
-    try {
-      new Module();
-    } catch (error) {
-      console.error('[lite-foundation] module init failed:', Module.name, error);
-    }
-  });
-}
+export const initModules = runtime.init;
+export const destroyModules = runtime.destroy;
+export const refreshModules = runtime.refresh;
+export const unmountModules = runtime.unmount;
 `;
 }
 
 function generateVendorsJs(features) {
   const lines = ['// GENERATED — do not edit by hand.'];
-
   if (features.vendors?.cash) {
     lines.push("import $ from 'cash-dom';");
     lines.push('window.$ = $;');
   }
-
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -293,99 +291,136 @@ function generateCriticalIndex() {
 }
 
 /**
- * Self-contained Sass entry for a named build (paths relative to scss/builds/{name}/app.scss).
- * `kind: 'library'` → addon CSS only (vendors + components), no base/layout/critical.
+ * Page build: layered CSS with @layer for cascade control.
+ * Paths relative to scss/builds/{name}/app.scss.
  */
 function generateBuildAppScss(features, { kind = 'page' } = {}) {
   if (kind === 'library') {
     return generateLibraryAppScss(features);
   }
 
+  const p = (rel) => `@import '../../${rel}';`;
   const lines = [
     "@charset 'utf-8';",
     '// GENERATED build entry — do not edit by hand.',
     '',
-    "@import '../../abstracts/functions';",
+    '// Cascade layers (critical wins over utilities/components).',
+    '@layer lf-reset, lf-base, lf-vendors, lf-layout, lf-components, lf-utilities, lf-critical;',
+    '',
+    p('abstracts/functions'),
   ];
 
   const core = required.settings.filter((s) => s !== 'css-variables');
   for (const folder of core) {
-    lines.push(`@import '../../settings/${folder}';`);
+    lines.push(p(`settings/${folder}`));
+  }
+  for (const folder of orderSettings(collectSettings(features))) {
+    lines.push(p(`settings/${folder}`));
+  }
+  lines.push(p('settings/css-variables'));
+  lines.push(p('abstracts/mixins'));
+
+  lines.push('');
+  // One name per @layer block — `@layer a, b { ... }` is invalid CSS.
+  lines.push('@layer lf-base {');
+  lines.push(`  ${p('base')}`);
+  lines.push('}');
+
+  const vendorImports = [];
+  if (features.vendors?.swiper) vendorImports.push(p('vendors/swiper'));
+  if (features.vendors?.animate) vendorImports.push(p('vendors/animate'));
+  if (vendorImports.length) {
+    lines.push('');
+    lines.push('@layer lf-vendors {');
+    for (const line of vendorImports) lines.push(`  ${line}`);
+    lines.push('}');
   }
 
-  const settings = new Set();
-  for (const [key, on] of enabledEntries(features.styles)) {
-    if (!on) continue;
-    for (const folder of STYLE_SETTINGS[key] || []) settings.add(folder);
-  }
-  if (features.layout?.titleBar) settings.add('title-bar');
-  if (features.layout?.topBar) settings.add('top-bar');
-  if (features.utilities) settings.add('utilities');
+  lines.push('');
+  lines.push('@layer lf-layout {');
+  lines.push(`  ${p('layout/containers')}`);
+  lines.push(`  ${p('layout/grid')}`);
+  if (features.layout?.titleBar) lines.push(`  ${p('layout/title-bar')}`);
+  if (features.layout?.topBar) lines.push(`  ${p('layout/top-bar')}`);
+  lines.push('}');
 
-  const preferred = ['forms', 'button', 'menu', 'accordion-menu', 'drilldown', 'dropdown-menu'];
-  const ordered = [
-    ...preferred.filter((s) => settings.has(s)),
-    ...[...settings].filter((s) => !preferred.includes(s)).sort(),
-  ];
-  for (const folder of ordered) {
-    lines.push(`@import '../../settings/${folder}';`);
-  }
-  lines.push("@import '../../settings/css-variables';");
-  lines.push("@import '../../abstracts/mixins';");
-  lines.push("@import '../../base';");
-
-  if (features.vendors?.swiper) lines.push("@import '../../vendors/swiper';");
-  if (features.vendors?.animate) lines.push("@import '../../vendors/animate';");
-
-  lines.push("@import '../../layout/containers';");
-  lines.push("@import '../../layout/grid';");
-  if (features.layout?.titleBar) lines.push("@import '../../layout/title-bar';");
-  if (features.layout?.topBar) lines.push("@import '../../layout/top-bar';");
-
+  const componentImports = [];
   for (const [key, on] of enabledEntries(features.styles)) {
     const folder = STYLE_FOLDERS[key];
-    if (on && folder) lines.push(`@import '../../components/${folder}';`);
+    if (on && folder) componentImports.push(p(`components/${folder}`));
+  }
+  if (componentImports.length) {
+    lines.push('');
+    lines.push('@layer lf-components {');
+    for (const line of componentImports) lines.push(`  ${line}`);
+    lines.push('}');
   }
 
   if (features.utilities) {
-    lines.push("@import '../../utilities/flex';");
-    lines.push("@import '../../utilities/visibility';");
+    lines.push('');
+    lines.push('@layer lf-utilities {');
+    lines.push(`  ${p('utilities/flex')}`);
+    lines.push(`  ${p('utilities/visibility')}`);
+    lines.push('}');
   }
 
-  lines.push("@import '../../critical';");
+  lines.push('');
+  lines.push('@layer lf-critical {');
+  lines.push(`  ${p('critical')}`);
+  lines.push('}');
   lines.push('');
   return lines.join('\n');
 }
 
-/** Addon library CSS — pair with a page bundle; does not repeat reset/grid/tokens. */
+/** Addon library CSS — pair with a page bundle; no base/layout/critical. */
 function generateLibraryAppScss(features) {
   const lines = [
     "@charset 'utf-8';",
     '// GENERATED library build — addon CSS (load alongside a page app-*.css).',
     '',
+    '@layer lf-vendors, lf-components;',
+    '',
   ];
 
-  const settings = new Set();
+  const settings = collectSettings({
+    ...features,
+    utilities: false,
+    layout: { titleBar: false, topBar: false },
+  });
+  // library: only STYLE_SETTINGS, not utilities/layout bars
+  const styleSettings = new Set();
   for (const [key, on] of enabledEntries(features.styles)) {
     if (!on) continue;
-    for (const folder of STYLE_SETTINGS[key] || []) settings.add(folder);
+    for (const folder of STYLE_SETTINGS[key] || []) styleSettings.add(folder);
   }
 
-  if (settings.size > 0) {
+  if (styleSettings.size > 0) {
     lines.push("@import '../../abstracts/functions';");
     lines.push("@import '../../settings/global';");
-    for (const folder of [...settings].sort()) {
+    for (const folder of [...styleSettings].sort()) {
       lines.push(`@import '../../settings/${folder}';`);
     }
     lines.push("@import '../../abstracts/mixins';");
   }
 
-  if (features.vendors?.swiper) lines.push("@import '../../vendors/swiper';");
-  if (features.vendors?.animate) lines.push("@import '../../vendors/animate';");
+  const vendors = [];
+  if (features.vendors?.swiper) vendors.push("@import '../../vendors/swiper';");
+  if (features.vendors?.animate) vendors.push("@import '../../vendors/animate';");
+  if (vendors.length) {
+    lines.push('@layer lf-vendors {');
+    for (const v of vendors) lines.push(`  ${v}`);
+    lines.push('}');
+  }
 
+  const comps = [];
   for (const [key, on] of enabledEntries(features.styles)) {
     const folder = STYLE_FOLDERS[key];
-    if (on && folder) lines.push(`@import '../../components/${folder}';`);
+    if (on && folder) comps.push(`@import '../../components/${folder}';`);
+  }
+  if (comps.length) {
+    lines.push('@layer lf-components {');
+    for (const c of comps) lines.push(`  ${c}`);
+    lines.push('}');
   }
 
   lines.push('');
@@ -394,10 +429,8 @@ function generateLibraryAppScss(features) {
 
 function generateBuildEntry(buildName) {
   const { css } = buildOutputNames(buildName);
-  const scssPath =
-    buildName === 'full' ? '../../../scss/app.scss' : `../../../scss/builds/${buildName}/app.scss`;
+  const scssPath = `../../../scss/builds/${buildName}/app.scss`;
 
-  // Ternary so production build can tree-shake the Sass import (no CSS-in-JS).
   return `import './vendors.js';
 import { initModules } from './modules.js';
 import { boot } from '../../boot.js';
@@ -420,7 +453,7 @@ function writeFile(root, rel, content) {
   writeFileSync(file, content);
 }
 
-/** Sync shared indexes used by scss/app.scss (always = full build). */
+/** Sync shared indexes (docs / legacy tooling; full build features). */
 export function syncFeatures(features = resolveBuild('full')) {
   const root = path.resolve('.');
   const writes = [
@@ -430,7 +463,6 @@ export function syncFeatures(features = resolveBuild('full')) {
     ['scss/layout/_index.scss', generateLayoutIndex(features)],
     ['scss/utilities/_index.scss', generateUtilitiesIndex(features)],
     ['scss/critical/_index.scss', generateCriticalIndex()],
-    // Legacy paths still imported by older tooling / docs
     ['js/modules/index.js', generateModulesIndex(features, { moduleImportPrefix: './' })],
     ['js/vendors.js', generateVendorsJs(features)],
   ];
@@ -458,19 +490,16 @@ export function syncAllBuilds() {
     writeFile(root, `js/builds/${name}/entry.js`, generateBuildEntry(name));
     writeFile(root, `scss/builds/${name}/app.scss`, generateBuildAppScss(features, { kind }));
   }
-
-  // Keep root lib.js as a thin re-export of full entry for convenience
-  writeFile(
-    root,
-    'js/lib.js',
-    `/** @deprecated import js/builds/full/entry.js — kept for BC */\nimport './builds/full/entry.js';\n`,
-  );
 }
 
-/** Vite plugin: regenerate all build entries when features.js changes. */
-export function featuresPlugin() {
+/**
+ * Vite plugin: regenerate build entries when features.js changes.
+ * Sync on serve always; on build only when not orchestrated by scripts/build.js.
+ */
+export function featuresPlugin({ syncOnBuild = false } = {}) {
   return {
     name: 'lf-features',
+    apply: syncOnBuild ? undefined : 'serve',
     buildStart() {
       syncAllBuilds();
       this.addWatchFile(path.resolve('config/features.js'));

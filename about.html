@@ -5,46 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About — lite-foundation</title>
     <link rel="stylesheet" href="dist/app-about.css">
+    <link rel="stylesheet" href="assets/about.css">
   </head>
-  <body>
-    <div class="grid-container" style="padding-block: 2rem;">
-      <p><a href="index.html">← Kitchen sink</a></p>
+  <body class="about-body">
+    <div class="about-shell">
+      <header class="about-top">
+        <a class="about-top-link" href="index.html">← Kitchen sink</a>
+        <nav class="about-top-nav" aria-label="About">
+          <a class="about-top-link" href="docs/builds.html">Builds</a>
+          <a class="about-top-link" href="docs/index.html">Docs</a>
+        </nav>
+      </header>
 
-      <h1>About</h1>
-      <p class="callout primary">
-        Эта страница собирается отдельным бандлом:
-        <code>app-about.css</code> + <code>lib-about.js</code>
-        (см. <code>builds.about</code> в <code>config/features.js</code>).
-      </p>
+      <section class="about-hero">
+        <p class="about-brand">lite-foundation</p>
+        <h1 class="about-hero-title">Минимальный about-бандл</h1>
+        <p class="about-hero-lead">
+          Та же дизайн-система, другой вес: только то, что нужно этой странице.
+          Named builds режут CSS/JS по шаблонам, а не отдают весь kitchen sink.
+        </p>
+        <div class="about-hero-actions">
+          <a class="button primary" href="index.html">Kitchen sink</a>
+          <a class="button hollow" href="docs/builds.html">Как устроены builds</a>
+        </div>
+      </section>
 
-      <div class="grid-x grid-margin-x">
-        <div class="cell medium-6">
-          <div class="card">
-            <div class="card-section">
-              <h2>Минимальный набор</h2>
-              <p>
-                В about-сборке только grid/base, utilities, button, callout, card и Cash —
-                без Swiper, меню, модалок и остального kitchen-sink.
-              </p>
-              <p>
-                <a class="button primary" href="index.html">Открыть kitchen sink</a>
-                <button type="button" class="button secondary">Secondary</button>
-              </p>
+      <main class="about-main">
+        <section class="about-section">
+          <p class="about-kicker">Этот бандл</p>
+          <h2>Что подключено</h2>
+          <p class="callout primary about-callout">
+            Страница тянет <code>app-about.css</code> + <code>lib-about.js</code>
+            из <code>builds.about</code> в <code>config/features.js</code>.
+          </p>
+          <ul class="about-feature-list">
+            <li>
+              <strong>Base + grid</strong>
+              <span>reset, typography, containers — всегда в page-бандле</span>
+            </li>
+            <li>
+              <strong>Utilities</strong>
+              <span>видимость, flex-хелперы без лишних компонентов</span>
+            </li>
+            <li>
+              <strong>Button</strong>
+              <span>CTA в hero и дальше по странице</span>
+            </li>
+            <li>
+              <strong>Callout + Card</strong>
+              <span>статусы и контентные блоки; без Swiper, меню и модалок</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="about-section">
+          <p class="about-kicker">Зачем</p>
+          <h2>Разные страницы — разный вес</h2>
+          <p>
+            Главная может нуждаться в off-canvas и формах, внутренняя — только в кнопках и карточках.
+            Named builds дают отдельный CSS/JS на шаблон, library-бандлы (Swiper) подключаются точечно.
+          </p>
+          <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+              <div class="card">
+                <div class="card-section">
+                  <h3>About</h3>
+                  <p>Узкий набор. Идеален для лендинга «о продукте» или статичной внутренней.</p>
+                  <code class="about-code">app-about.css · lib-about.js</code>
+                </div>
+              </div>
+            </div>
+            <div class="cell medium-6">
+              <div class="card">
+                <div class="card-section">
+                  <h3>Full sink</h3>
+                  <p>Полный playground: формы, меню, dialog, animate, плюс library Swiper.</p>
+                  <code class="about-code">app.css · lib.js · lib-swiper.*</code>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="cell medium-6">
-          <div class="card">
-            <div class="card-section">
-              <h2>Зачем так</h2>
-              <p>
-                Главная и внутренние страницы могут тянуть разные CSS/JS,
-                чтобы не отдавать лишний вес.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </section>
+
+        <section class="about-section">
+          <p class="about-kicker">Дальше</p>
+          <h2>Документация и песочница</h2>
+          <p>
+            Настройка флагов, токены и lifecycle модулей — в docs.
+            Живые примеры всех компонентов — в kitchen sink.
+          </p>
+          <p>
+            <a class="button primary" href="docs/index.html">Открыть docs</a>
+            <a class="button secondary hollow" href="docs/tokens.html">Токены</a>
+          </p>
+        </section>
+      </main>
+
+      <footer class="about-footer">
+        <p>
+          lite-foundation ·
+          <a href="index.html">Kitchen sink</a> ·
+          <a href="docs/builds.html">Builds</a>
+        </p>
+      </footer>
     </div>
 
     <script type="module" src="/js/builds/about/entry.js"></script>

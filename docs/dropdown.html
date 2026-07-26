@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown — lite-foundation docs</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+        </div>
+      </div>
+    </header>
+    <main class="docs-main grid-container">
+      <p class="docs-kicker">Component</p>
+      <h1>Dropdown &amp; Tooltip</h1>
+      <p class="docs-lead">
+        Лёгкие всплывающие панели у триггера. Dropdown — по клику; tooltip — по hover/focus.
+        Не блокируют страницу (в отличие от modal).
+      </p>
+      <div class="docs-flags">
+        <span class="docs-flag">styles.dropdown</span>
+        <span class="docs-flag">scripts.dropdown</span>
+        <span class="docs-flag">styles.tooltip</span>
+        <span class="docs-flag">scripts.tooltip</span>
+      </div>
+
+      <section class="docs-section">
+        <h2>Когда использовать</h2>
+        <div class="docs-note">
+          <strong>Dropdown</strong>
+          <ul>
+            <li>Короткое меню действий у кнопки («ещё…»), фильтр, список ссылок</li>
+            <li>Не для полноценной навигации сайта — см. <a href="menus.html">Menus</a></li>
+          </ul>
+        </div>
+        <div class="docs-note">
+          <strong>Tooltip</strong>
+          <ul>
+            <li>Пояснение к иконке или термину (1–2 предложения)</li>
+            <li>Не клади внутрь формы и критичные CTA — плохо на тач-устройствах</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Dropdown</h2>
+        <p class="docs-meta">
+          <code>data-dropdown-open="paneId"</code>, панель с тем же <code>id</code> и классом
+          <code>dropdown-pane</code>. Закрытие: повторный клик, клик снаружи, Esc.
+        </p>
+        <div class="docs-demo">
+          <div class="dropdown">
+            <button
+              class="button"
+              type="button"
+              data-dropdown-open="docs-dropdown"
+              aria-expanded="false"
+              aria-controls="docs-dropdown"
+            >
+              Toggle Dropdown
+            </button>
+            <div class="dropdown-pane" id="docs-dropdown" aria-hidden="true">
+              Example dropdown pane content.
+            </div>
+          </div>
+        </div>
+        <div class="docs-code"><pre><code>&lt;button type="button" class="button"
+  data-dropdown-open="docs-dropdown"
+  aria-expanded="false" aria-controls="docs-dropdown"&gt;
+  Toggle
+&lt;/button&gt;
+&lt;div class="dropdown-pane" id="docs-dropdown" aria-hidden="true"&gt;…&lt;/div&gt;</code></pre></div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Tooltip</h2>
+        <p class="docs-meta">Атрибут специально <code>data-tip</code>, не <code>data-tooltip</code> (чтобы не конфликтовать с title-паттернами).</p>
+        <div class="docs-demo">
+          <p>
+            Hover or focus
+            <span class="has-tip" data-tip="Tooltip text">this tip</span>
+            for a tooltip.
+          </p>
+        </div>
+        <div class="docs-code"><pre><code>&lt;span class="has-tip" data-tip="Tooltip text"&gt;this tip&lt;/span&gt;</code></pre></div>
+      </section>
+    </main>
+    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+// Custom checkbox / radio (opt-in .checkbox / .radio).
+
+$choice-palette: $foundation-palette !default;
+
+$choice-size: 1.25rem !default;
+$choice-size-tiny: 0.875rem !default;
+$choice-size-small: 1rem !default;
+$choice-size-large: 1.5rem !default;
+
+$choice-gap: 0.5rem !default;
+$choice-margin: $global-margin !default;
+$choice-checkbox-radius: $global-radius !default;
+$choice-border-width: 2px !default;
+$choice-transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease !default;
+
+$choice-border: $medium-gray !default;
+$choice-bg: $white !default;
+$choice-bg-checked: $primary-color !default;
+$choice-mark: $white !default;
+$choice-focus-ring: rgba($primary-color, 0.35) !default;
+
+$choice-opacity-disabled: 0.5 !default;
+$choice-cursor-disabled: not-allowed !default;

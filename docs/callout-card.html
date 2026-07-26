@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callout &amp; Card — lite-foundation docs</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+        </div>
+      </div>
+    </header>
+    <main class="docs-main grid-container">
+      <p class="docs-kicker">Component</p>
+      <h1>Callout &amp; Card</h1>
+      <p class="docs-lead">
+        Статусы/сообщения (callout) и карточки контента (card).
+        Цвета тянут токены <code>--lf-color-*</code>. Закрываемые callout — через <code>scripts.dismiss</code>.
+      </p>
+      <div class="docs-flags">
+        <span class="docs-flag">styles.callout</span>
+        <span class="docs-flag">styles.card</span>
+        <span class="docs-flag">scripts.dismiss</span>
+      </div>
+
+      <section class="docs-section">
+        <h2>Когда использовать</h2>
+        <div class="docs-note">
+          <strong>Callout</strong> — инлайн-уведомление: успех формы, предупреждение, подсказка в потоке текста.
+          Не заменяет toast/snackbar и не блокирует UI (это не modal).
+        </div>
+        <div class="docs-note">
+          <strong>Card</strong> — единица списка: товар, статья, человек в команде.
+          Внутри — divider / section; сетку даёт layout (<code>grid-x</code>), не сам card.
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Callout</h2>
+        <div class="docs-demo">
+          <div class="callout primary"><p>Primary callout</p></div>
+          <div class="callout secondary"><p>Secondary</p></div>
+          <div class="callout success"><p>Success</p></div>
+          <div class="callout warning"><p>Warning</p></div>
+          <div class="callout alert"><p>Alert</p></div>
+        </div>
+        <div class="docs-code"><pre><code>&lt;div class="callout primary"&gt;&lt;p&gt;Primary callout&lt;/p&gt;&lt;/div&gt;
+&lt;div class="callout alert"&gt;&lt;p&gt;Something went wrong&lt;/p&gt;&lt;/div&gt;</code></pre></div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Закрываемый callout</h2>
+        <p>Нужен флаг <code>scripts.dismiss</code>. Кнопка <code>[data-close]</code> удаляет ближайший <code>[data-closable]</code> или <code>.callout</code>.</p>
+        <div class="docs-demo">
+          <div class="callout warning" data-closable>
+            <button class="close-button" type="button" data-close aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <p>Можно закрыть крестиком.</p>
+          </div>
+        </div>
+        <div class="docs-code"><pre><code>&lt;div class="callout warning" data-closable&gt;
+  &lt;button class="close-button" type="button" data-close aria-label="Close"&gt;
+    &lt;span aria-hidden="true"&gt;&times;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;p&gt;Можно закрыть крестиком.&lt;/p&gt;
+&lt;/div&gt;</code></pre></div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Card</h2>
+        <div class="docs-demo">
+          <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+              <div class="card">
+                <div class="card-divider">Header</div>
+                <div class="card-section">
+                  <h4>Card title</h4>
+                  <p>Card body text.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="docs-code"><pre><code>&lt;div class="card"&gt;
+  &lt;div class="card-divider"&gt;Header&lt;/div&gt;
+  &lt;div class="card-section"&gt;
+    &lt;h4&gt;Card title&lt;/h4&gt;
+    &lt;p&gt;Card body text.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+      </section>
+    </main>
+    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

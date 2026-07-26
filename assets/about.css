@@ -1,0 +1,288 @@
+/* About page chrome — uses about-bundle components (button, callout, card, grid) */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --about-ink: #0f2f24;
+  --about-muted: #4d6b5f;
+  --about-line: #c5d9cf;
+  --about-paper: #f4f8f5;
+  --about-accent: #1a7a5c;
+  --about-accent-soft: rgba(26, 122, 92, 0.12);
+  --about-deep: #0b3d2e;
+  --about-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body.about-body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Manrope', 'Helvetica Neue', sans-serif;
+  color: var(--about-ink);
+  background:
+    radial-gradient(980px 520px at 8% -10%, rgba(26, 122, 92, 0.18), transparent 55%),
+    radial-gradient(720px 420px at 100% 0%, rgba(11, 61, 46, 0.1), transparent 48%),
+    linear-gradient(180deg, #e8f2ec 0%, var(--about-paper) 32%, #fff 100%);
+  background-attachment: fixed;
+}
+
+body.about-body h1,
+body.about-body h2,
+body.about-body .about-brand {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.about-shell {
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+/* —— Top bar —— */
+.about-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  padding-block: 1.15rem;
+  animation: about-rise 0.7s var(--about-ease) both;
+}
+
+.about-top-link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--about-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.about-top-link:hover,
+.about-top-link:focus {
+  color: var(--about-accent);
+}
+
+.about-top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+
+/* —— Hero —— */
+.about-hero {
+  position: relative;
+  min-height: min(72vh, 36rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.5rem 0 3.25rem;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0 -8% auto auto;
+  width: min(58vw, 34rem);
+  height: min(58vw, 34rem);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 40%, rgba(26, 122, 92, 0.28), transparent 62%),
+    conic-gradient(from 210deg, rgba(11, 61, 46, 0.08), transparent 55%, rgba(26, 122, 92, 0.12));
+  pointer-events: none;
+  animation: about-orb 14s ease-in-out infinite alternate;
+}
+
+.about-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--about-line), transparent 70%);
+}
+
+.about-brand {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.85rem;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 700;
+  line-height: 0.95;
+  color: var(--about-deep);
+  animation: about-rise 0.85s var(--about-ease) 0.08s both;
+}
+
+.about-hero-title {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.85rem;
+  max-width: 18ch;
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--about-ink);
+  animation: about-rise 0.85s var(--about-ease) 0.16s both;
+}
+
+.about-hero-lead {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+  margin: 0 0 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--about-muted);
+  animation: about-rise 0.85s var(--about-ease) 0.24s both;
+}
+
+.about-hero-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  animation: about-rise 0.85s var(--about-ease) 0.32s both;
+}
+
+.about-hero-actions .button {
+  margin: 0;
+}
+
+/* —— Content —— */
+.about-main {
+  padding-bottom: 4rem;
+}
+
+.about-section {
+  margin-bottom: 2.75rem;
+  animation: about-rise 0.8s var(--about-ease) both;
+}
+
+.about-section:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.about-section:nth-child(3) {
+  animation-delay: 0.14s;
+}
+
+.about-kicker {
+  margin: 0 0 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--about-accent);
+}
+
+.about-section h2 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--about-ink);
+}
+
+.about-section > p {
+  max-width: 40rem;
+  margin: 0 0 1.25rem;
+  color: var(--about-muted);
+  line-height: 1.55;
+}
+
+.about-callout {
+  max-width: 40rem;
+}
+
+.about-feature-list {
+  display: grid;
+  gap: 0.85rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .about-feature-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.about-feature-list li {
+  padding: 1rem 1.1rem;
+  border-left: 3px solid var(--about-accent);
+  background: linear-gradient(120deg, rgba(26, 122, 92, 0.08), transparent 70%);
+}
+
+.about-feature-list strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.95rem;
+  color: var(--about-ink);
+}
+
+.about-feature-list span {
+  font-size: 0.88rem;
+  color: var(--about-muted);
+  line-height: 1.45;
+}
+
+.about-code {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--about-deep);
+}
+
+.about-footer {
+  padding: 1.5rem 0 2.5rem;
+  border-top: 1px solid var(--about-line);
+  font-size: 0.88rem;
+  color: var(--about-muted);
+}
+
+.about-footer a {
+  color: var(--about-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.about-footer a:hover,
+.about-footer a:focus {
+  text-decoration: underline;
+}
+
+@keyframes about-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes about-orb {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-4%, 6%) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-top,
+  .about-brand,
+  .about-hero-title,
+  .about-hero-lead,
+  .about-hero-actions,
+  .about-section,
+  .about-hero::before {
+    animation: none !important;
+  }
+}

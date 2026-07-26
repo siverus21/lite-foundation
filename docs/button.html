@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button — lite-foundation docs</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+        </div>
+      </div>
+    </header>
+    <main class="docs-main grid-container">
+      <p class="docs-kicker">Component</p>
+      <h1>Button</h1>
+      <p class="docs-lead">
+        Базовый контрол действия: отправка формы, открытие modal/off-canvas, вторичные действия.
+        Только CSS — JS не требуется.
+      </p>
+      <div class="docs-flags">
+        <span class="docs-flag">styles.button</span>
+      </div>
+
+      <section class="docs-section">
+        <h2>Когда использовать</h2>
+        <div class="docs-note">
+          <strong>Подходит</strong>
+          <ul>
+            <li>CTA в hero, тулбары, подтверждения в формах</li>
+            <li>Триггеры для modal / dropdown / off-canvas (<code>type="button"</code>)</li>
+            <li>Группы переключателей визуального выбора (button-group)</li>
+          </ul>
+        </div>
+        <div class="docs-note">
+          <strong>Не подходит</strong>
+          <ul>
+            <li>Навигация по сайту — лучше <code>&lt;a&gt;</code> без класса button или обычная ссылка в меню</li>
+            <li>Переключатели on/off — см. <a href="forms.html">switch</a>; кастомные checkbox/radio — тоже на <a href="forms.html">Forms</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Варианты</h2>
+        <p class="docs-meta">Цвет = семантический статус; hollow/clear — вторичный акцент без заливки.</p>
+        <div class="docs-demo">
+          <button type="button" class="button primary">Primary</button>
+          <button type="button" class="button secondary">Secondary</button>
+          <button type="button" class="button success">Success</button>
+          <button type="button" class="button warning">Warning</button>
+          <button type="button" class="button alert">Alert</button>
+          <button type="button" class="button hollow">Hollow</button>
+          <button type="button" class="button clear">Clear</button>
+          <button type="button" class="button tiny">Tiny</button>
+          <button type="button" class="button small">Small</button>
+          <button type="button" class="button large">Large</button>
+          <button type="button" class="button expanded primary">Expanded</button>
+        </div>
+        <div class="docs-code"><pre><code>&lt;button type="button" class="button primary"&gt;Primary&lt;/button&gt;
+&lt;button type="button" class="button hollow"&gt;Hollow&lt;/button&gt;
+&lt;button type="button" class="button expanded primary"&gt;Expanded&lt;/button&gt;</code></pre></div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Button group</h2>
+        <p>Склейка кнопок в один визуальный блок (фильтры, сегменты).</p>
+        <div class="docs-demo">
+          <div class="button-group">
+            <a class="button">One</a>
+            <a class="button">Two</a>
+            <a class="button">Three</a>
+          </div>
+        </div>
+        <div class="docs-code"><pre><code>&lt;div class="button-group"&gt;
+  &lt;a class="button"&gt;One&lt;/a&gt;
+  &lt;a class="button"&gt;Two&lt;/a&gt;
+  &lt;a class="button"&gt;Three&lt;/a&gt;
+&lt;/div&gt;</code></pre></div>
+      </section>
+    </main>
+    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

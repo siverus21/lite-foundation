@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация — lite-foundation</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+          <a href="start.html">Старт</a>
+          <a href="builds.html">Builds</a>
+          <a href="tokens.html">Токены</a>
+          <a href="lifecycle.html">JS API</a>
+          <a href="../index.html">Kitchen sink</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="docs-main grid-container">
+      <div class="docs-hero">
+        <p class="docs-kicker">Docs</p>
+        <h1>lite-foundation</h1>
+        <p class="docs-lead">
+          UI-стартер в духе Foundation: Sass с cascade layers, feature-флаги, named builds
+          и vanilla JS-модули. Документация — живые примеры с разметкой для копирования.
+        </p>
+      </div>
+
+      <section class="docs-section">
+        <h2>Зачем этот репозиторий</h2>
+        <p>
+          Нужен лёгкий Foundation-подобный стек без тяжёлого <code>foundation-sites</code>:
+          сетка, формы, модалки, меню — и возможность вырезать неиспользуемое из бандла.
+        </p>
+        <div class="docs-note">
+          <strong>Типичный сценарий</strong>
+          <ul>
+            <li>Лендинг / корпоративный сайт на статике или CMS</li>
+            <li>Несколько шаблонов с разным набором компонентов (page builds)</li>
+            <li>Тяжёлые vendor-аддоны (Swiper) отдельным library-бандлом</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Начать</h2>
+        <div class="docs-grid">
+          <a class="docs-card" href="start.html">
+            <h3>Быстрый старт</h3>
+            <p>Установка, <code>npm run start</code> / <code>npm run build</code>, подключение CSS/JS.</p>
+          </a>
+          <a class="docs-card" href="builds.html">
+            <h3>Named &amp; library builds</h3>
+            <p>Как устроены <code>app.css</code>, <code>app-about</code>, <code>lib-swiper</code>.</p>
+          </a>
+          <a class="docs-card" href="tokens.html">
+            <h3>Дизайн-токены</h3>
+            <p>Переменные <code>--lf-*</code>, тема без пересборки.</p>
+          </a>
+          <a class="docs-card" href="lifecycle.html">
+            <h3>JS lifecycle</h3>
+            <p><code>init</code> / <code>destroy</code> / <code>refresh</code> после AJAX.</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Компоненты</h2>
+        <p class="docs-meta">Каждая страница: зачем нужен, когда ставить, флаги, разметка, ограничения.</p>
+        <div class="docs-grid">
+          <a class="docs-card" href="button.html"><h3>Button</h3><p>CTA, действия в формах и тулбарах.</p></a>
+          <a class="docs-card" href="forms.html"><h3>Forms</h3><p>Поля, custom checkbox/radio, switch, range-slider.</p></a>
+          <a class="docs-card" href="modal.html"><h3>Modal</h3><p>Диалоги подтверждения и формы поверх страницы.</p></a>
+          <a class="docs-card" href="tabs.html"><h3>Tabs</h3><p>Переключение панелей без смены URL.</p></a>
+          <a class="docs-card" href="accordion.html"><h3>Accordion</h3><p>FAQ, длинные блоки «показать ещё».</p></a>
+          <a class="docs-card" href="dropdown.html"><h3>Dropdown</h3><p>Всплывающие панели и tooltip.</p></a>
+          <a class="docs-card" href="offcanvas.html"><h3>Off-canvas</h3><p>Мобильное меню / боковой drawer.</p></a>
+          <a class="docs-card" href="menus.html"><h3>Menus</h3><p>Навигация: dropdown, accordion, drilldown.</p></a>
+          <a class="docs-card" href="slider.html"><h3>Slider</h3><p>Карусель через library-бандл Swiper.</p></a>
+          <a class="docs-card" href="callout-card.html"><h3>Callout &amp; Card</h3><p>Статусы, карточки контента.</p></a>
+        </div>
+      </section>
+
+      <footer class="docs-footer">
+        <p>
+          Песочница: <a href="../index.html">index.html</a> ·
+          минимальный бандл: <a href="../about.html">about.html</a>
+        </p>
+      </footer>
+    </main>
+
+    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

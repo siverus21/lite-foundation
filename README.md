@@ -19,6 +19,7 @@
   - [Feature-флаги](#feature-флаги)
   - [Named builds](#named-builds)
   - [Library builds](#library-builds)
+  - [JS lifecycle](#js-lifecycle)
 - [Дизайн-токены](#дизайн-токены)
   - [Цвета](#цвета)
   - [Z-index](#z-index)
@@ -37,6 +38,7 @@
 - [Структура репозитория](#структура-репозитория)
 - [Соглашения](#соглашения)
 - [Подключение в проект](#подключение-в-проект)
+- [Демо и документация](#демо-и-документация)
 
 ---
 
@@ -60,11 +62,12 @@
 git clone https://github.com/siverus21/lite-foundation.git
 cd lite-foundation
 npm install
-npm start
+npm run start
 ```
 
-Откроется kitchen-sink: [`index.html`](index.html) — все компоненты на одной странице, HMR для SCSS и JS.  
-Минимальный пример named build: [`about.html`](about.html) → `app-about.css` / `lib-about.js`.
+Откроется kitchen-sink: [`index.html`](index.html) — живые примеры + карта ссылок на docs у каждой секции.  
+Документация с разметкой для копирования: [`docs/`](docs/index.html).  
+Минимальный named build (отдельный UI): [`about.html`](about.html) → `app-about.css` / `lib-about.js`.
 
 Production-сборка:
 
@@ -93,8 +96,9 @@ dist/
 
 | Команда | Описание |
 |---------|----------|
-| `npm start` / `npm run dev` | Vite dev-сервер + HMR |
+| `npm run start` / `npm run dev` | Vite dev-сервер + HMR |
 | `npm run build` | Production: все named builds → `dist/app*.css` + `dist/lib*.js` |
+| `npm run test` | Vitest: core + модули + features |
 | `npm run sync:features` | Пересобрать индексы из `config/features.js` вручную |
 | `npm run lint:tokens` | Проверить хардкод цветов / z-index; напомнить про `critical/` |
 
@@ -172,20 +176,44 @@ scss/components/button/   → CSS (.button, .button-group, …)
 
 | Файл | Роль |
 |------|------|
-| [`js/builds/{name}/entry.js`](js/builds/) | GENERATED entry: vendors → boot → `initModules()` |
+| [`js/builds/{name}/entry.js`](js/builds/) | GENERATED: vendors → boot → `initModules(document)` |
 | [`js/boot.js`](js/boot.js) | Shared: в dev грузит Sass (HMR), в prod ждёт CSS |
-| [`js/lib.js`](js/lib.js) | Thin re-export `builds/full/entry.js` (BC) |
-| [`js/modules/*.js`](js/modules/) | UI-классы (`Modal`, `Tabs`, `Accordion`, …) |
+| [`js/core/`](js/core/) | `Module`, `runtime` (init/destroy/refresh/unmount), scroll-lock |
+| [`js/modules/*.js`](js/modules/) | UI-классы (`Modal`, `Tabs`, …) |
 
 В **dev** entry импортирует Sass (HMR) и отключает `<link href="dist/…">`.  
 В **production** страница подключает собранный CSS, а бандл ждёт его загрузки перед инициализацией модулей.
 
+#### JS lifecycle
+
+Публичный API (из `js/builds/{name}/modules.js`):
+
+```js
+import {
+  initModules,
+  destroyModules,
+  refreshModules,
+  unmountModules,
+} from './builds/full/modules.js';
+
+initModules(document);           // один раз (boot делает это сам)
+refreshModules(ajaxFragment);    // после AJAX-вставки разметки
+destroyModules(ajaxFragment);    // только JS teardown
+unmountModules(ajaxFragment);    // JS + очистить HTML внутри контейнера
+unmountModules(panel, { removeRoot: true }); // JS + удалить сам элемент
+```
+
+Модули наследуют [`js/core/Module.js`](js/core/Module.js): listeners через `this.on(...)` + `AbortController`, у `destroy()` снимаются хендлеры. Повторный `init` на тот же `root` идемпотентен (WeakMap registry). `unmountModules(document|body|html)` не чистит страницу — только destroy.
+
 Контракт модуля:
 
 ```js
-export class MyWidget {
+import { Module } from '../core/Module.js';
+
+export class MyWidget extends Module {
   constructor(root = document) {
-    // находит разметку, вешает обработчики
+    super(root);
+    this.on(root, 'click', (e) => { /* … */ });
   }
 }
 ```
@@ -193,9 +221,10 @@ export class MyWidget {
 ### Сборка
 
 - **Dev:** [`vite.config.js`](vite.config.js) — HMR, `featuresPlugin` синхронизирует builds.
-- **Production:** [`scripts/build.js`](scripts/build.js) — для каждого ключа в `builds` собирает JS (Vite) и CSS (Dart Sass), затем lint + отчёт размеров.
+- **Production:** [`scripts/build.js`](scripts/build.js) — `prebuild` sync → параллельные Vite (JS) + Dart Sass (CSS) → lint + отчёт размеров.
+- GENERATED (`scss/builds/`, `js/builds/`, `*/_index.scss`, …) **не коммитятся** — появляются после `npm run sync:features` / `npm run start` / `npm run build`.
 
-Почему не один multi-input Vite build: `inlineDynamicImports: true` несовместим с несколькими entry — бандлы идут последовательно.
+Почему отдельные Vite-процессы на entry: `inlineDynamicImports` даёт плоский `lib*.js` без shared chunks.
 
 ### Feature-флаги
 
@@ -219,7 +248,7 @@ export class MyWidget {
 ```js
 export default {
   vendors: {
-    cash: true,      // → window.$
+    cash: false,     // opt-in → window.$
     swiper: false,   // отдельно: builds.swiper
     animate: true,   // CSS only
   },
@@ -239,13 +268,13 @@ export default {
 
 | `kind` | CSS | JS | Содержимое |
 |--------|-----|-----|------------|
-| `page` (по умолчанию) | `app-{name}.css` (`full` → `app.css`) | `lib-{name}.js` (`full` → `lib.js`) | Полная страница: required + флаги |
+| `page` (по умолчанию) | `app-{name}.css` (`full` → `app.css`) | `lib-{name}.js` (`full` → `lib.js`) | Полная страница: required + флаги + `@layer` |
 | `library` | `lib-{name}.css` | `lib-{name}.js` | Addon: только vendors/styles/scripts, **без** base/layout/critical |
 
 | Ключ | kind | Артефакты | Назначение |
 |------|------|-----------|------------|
-| `full` | page | `app.css` / `lib.js` | Kitchen-sink (без Swiper) |
-| `about` | page | `app-about.css` / `lib-about.js` | Демо [`about.html`](about.html) |
+| `full` | page | `app.css` / `lib.js` | Kitchen-sink ([`index.html`](index.html)), без Swiper |
+| `about` | page | `app-about.css` / `lib-about.js` | Минимальная демо-страница ([`about.html`](about.html)): button, callout, card |
 | `swiper` | library | `lib-swiper.css` / `lib-swiper.js` | Swiper addon |
 
 Sparse-конфиг (не `full`) стартует с «всё выкл», затем включает перечисленные флаги:
@@ -254,7 +283,6 @@ Sparse-конфиг (не `full`) стартует с «всё выкл», за�
 export const builds = {
   full: {},
   about: {
-    vendors: { cash: true },
     utilities: true,
     styles: { button: true, callout: true, card: true },
     scripts: {},
@@ -268,16 +296,16 @@ export const builds = {
 };
 ```
 
-Генератор пишет:
+Генератор пишет (gitignored):
 
 - `js/builds/{name}/{vendors,modules,entry}.js`
 - `scss/builds/{name}/app.scss`
-- shared indexes для full (`scss/*/_index.scss`)
+- shared indexes (`scss/*/_index.scss`)
 
 Генератор: [`scripts/sync-features.js`](scripts/sync-features.js).  
 Маппинги `STYLE_FOLDERS` / `STYLE_SETTINGS` / `SCRIPT_MODULES` — сюда же добавляются новые сущности.
 
-После правок `features.js` достаточно сохранить файл при `npm start` или выполнить `npm run build` / `npm run sync:features`.
+После правок `features.js` достаточно сохранить файл при `npm run start` или выполнить `npm run build` / `npm run sync:features`.
 
 #### Library builds
 
@@ -325,8 +353,6 @@ charts: {
 <script type="module" src="/js/builds/full/entry.js"></script>
 <script type="module" src="/js/builds/swiper/entry.js"></script>
 ```
-
-(или `/js/lib.js` как alias full).
 
 ---
 
@@ -494,7 +520,7 @@ scripts: { myWidget: true }
 
 | Флаг | CSS | JS |
 |------|-----|----|
-| `vendors.cash` | — | в `lib.js`, `window.$` (cash-dom, без ajax) |
+| `vendors.cash` | — | opt-in `window.$` (cash-dom); UI на vanilla |
 | `vendors.swiper` | `scss/vendors/_swiper.scss` → `lib-swiper.css` | `scripts.slider` → `lib-swiper.js` (отдельный library build) |
 | `vendors.animate` | `scss/vendors/_animate.scss` | — |
 
@@ -558,10 +584,10 @@ npm install glightbox
 
 ```js
 vendors: {
-  cash: true,
-  swiper: true,
+  cash: false,
+  swiper: false,
   animate: true,
-  glightbox: true, // CSS либы
+  glightbox: true, // CSS либы — лучше kind: 'library'
 },
 
 scripts: {
@@ -623,7 +649,7 @@ Vite сам положит пакет в `dist/lib.js`.
 #### 6. Сборка
 
 ```bash
-npm start
+npm run start
 # или
 npm run build
 ```
@@ -652,7 +678,7 @@ scripts: { glightbox: false },
 | Флаг | Папка | Заметки |
 |------|-------|---------|
 | `button` | `components/button` | button, button-group, close-button |
-| `forms` | `components/forms` | forms, switch, range, form-slider |
+| `forms` | `components/forms` | forms, switch, **choice** (opt-in `.checkbox` / `.radio`: цвет, размер, solid/hollow), range, form-slider |
 | `menu` | `components/menu` | dropdown / accordion / drilldown menus |
 | `accordion` | `components/accordion` | `<details>` + анимация высоты |
 | `tabs` | `components/tabs` | a11y tabs |
@@ -684,6 +710,7 @@ scripts: { glightbox: false },
 | `dropdown` | `Dropdown` | `js/modules/dropdown.js` |
 | `tooltip` | `Tooltip` | `js/modules/tooltip.js` |
 | `menus` | `Menus` | `js/modules/menus.js` |
+| `dismiss` | `Dismiss` | `js/modules/dismiss.js` — `[data-close]` → удаляет `[data-closable]` / `.callout` |
 | `slider` | `Slider` | `js/modules/slider.js` (Swiper) |
 | `formSlider` | `FormSlider` | `js/modules/form-slider.js` |
 | `animations` | `Animations` | `js/modules/animations.js` (demo Animate.css) |
@@ -695,43 +722,50 @@ scripts: { glightbox: false },
 ```text
 lite-foundation/
 ├── config/
-│   └── features.js              # флаги + required + builds
+│   ├── features.js              # флаги + required + builds
+│   └── sass-options.js          # shared Sass options
 ├── js/
-│   ├── boot.js                  # shared boot (dev Sass / prod CSS wait)
-│   ├── lib.js                   # re-export full entry (BC)
-│   ├── builds/{name}/           # GENERATED entries per build
+│   ├── boot.js
+│   ├── core/                    # Module, runtime, scroll-lock
+│   ├── builds/{name}/           # GENERATED (gitignored)
 │   └── modules/
-│       ├── modal.js
-│       ├── tabs.js
-│       └── …
 ├── scss/
-│   ├── app.scss                 # full build layers
-│   ├── builds/{name}/app.scss   # GENERATED per-build entries
+│   ├── app.scss                 # re-export builds/full/app
+│   ├── builds/{name}/app.scss   # GENERATED (gitignored)
 │   ├── abstracts/
-│   ├── settings/                # токены по доменам
+│   ├── settings/
 │   ├── base/
 │   ├── vendors/
 │   ├── layout/
 │   ├── components/
 │   ├── utilities/
-│   └── critical/                # hotfix (см. README внутри)
+│   └── critical/
+├── docs/                        # HTML-документация (sidebar + TOC)
+│   ├── index.html
+│   ├── start.html · builds.html · tokens.html · lifecycle.html
+│   ├── button.html · forms.html · modal.html · …
+│   └── assets/                  # docs.css, docs.js
+├── assets/
+│   ├── kitchen-sink.css         # chrome для index.html
+│   └── about.css                # chrome для about.html
 ├── scripts/
-│   ├── build.js                 # production multi-build
-│   ├── sync-features.js         # генерация индексов / entries
-│   └── lint-tokens.js           # TOKEN / CRITICAL warnings
-├── index.html                   # kitchen-sink (full)
-├── about.html                   # demo named build
-├── vite.config.js               # dev server
+│   ├── build.js
+│   ├── sync-features.js
+│   └── lint-tokens.js
+├── tests/
+├── index.html                   # kitchen sink (full + swiper)
+├── about.html                   # минимальный page-бандл
+├── vite.config.js
 ├── package.json
-└── dist/                        # gitignored — результат build
+└── dist/                        # gitignored
 ```
 
-**GENERATED** (не редактировать вручную):
+**GENERATED** (не коммитить — создаёт `sync:features` / `prebuild` / Vite serve):
 
 - `scss/{components,settings,vendors,layout,utilities,critical}/_index.scss`
 - `scss/builds/*/app.scss`
 - `js/builds/*/{vendors,modules,entry}.js`
-- `js/modules/index.js`, `js/vendors.js`, `js/lib.js`
+- `js/modules/index.js`, `js/vendors.js`
 
 ---
 
@@ -775,6 +809,42 @@ lite-foundation/
   --lf-body-color: #f8fafc;
 }
 ```
+
+---
+
+## Демо и документация
+
+| Страница | Назначение |
+|----------|------------|
+| [`index.html`](index.html) | Kitchen sink: все компоненты full-бандла + Swiper; у секций ссылки в docs |
+| [`about.html`](about.html) | Демо минимального `builds.about` |
+| [`docs/index.html`](docs/index.html) | Обзор документации |
+
+**Начать**
+
+| Документ | О чём |
+|----------|--------|
+| [`docs/start.html`](docs/start.html) | Установка, `npm run start` / `build`, подключение |
+| [`docs/builds.html`](docs/builds.html) | Named & library builds |
+| [`docs/tokens.html`](docs/tokens.html) | `--lf-*`, темы без пересборки |
+| [`docs/lifecycle.html`](docs/lifecycle.html) | `init` / `destroy` / `refresh` / `unmount` |
+
+**Компоненты**
+
+| Документ | Флаги |
+|----------|--------|
+| [`docs/button.html`](docs/button.html) | `styles.button` |
+| [`docs/forms.html`](docs/forms.html) | `styles.forms`, `scripts.formSlider` (+ custom checkbox/radio) |
+| [`docs/modal.html`](docs/modal.html) | `styles.modal`, `scripts.modal` |
+| [`docs/tabs.html`](docs/tabs.html) | `styles.tabs`, `scripts.tabs` |
+| [`docs/accordion.html`](docs/accordion.html) | `styles.accordion`, `scripts.accordion` |
+| [`docs/dropdown.html`](docs/dropdown.html) | `styles.dropdown` / `tooltip`, scripts |
+| [`docs/offcanvas.html`](docs/offcanvas.html) | `styles.offcanvas`, `scripts.offcanvas` |
+| [`docs/menus.html`](docs/menus.html) | `styles.menu`, `scripts.menus` |
+| [`docs/slider.html`](docs/slider.html) | library `swiper` |
+| [`docs/callout-card.html`](docs/callout-card.html) | `styles.callout` / `card`, `scripts.dismiss` |
+
+Закрываемый callout: `[data-closable]` + `[data-close]` при включённом `scripts.dismiss`.
 
 ---
 

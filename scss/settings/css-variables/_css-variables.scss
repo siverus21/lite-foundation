@@ -33,32 +33,42 @@
   // Shadows
   --lf-shadow-dropdown: 0 2px 8px #{rgba($black, 0.12)};
   --lf-shadow-modal: 0 0 10px #{rgba($black, 0.25)};
-}
 
-// Z-index scale → --lf-z-*
-@each $name, $value in $z-index {
-  :root {
+  // Z-index scale → --lf-z-*
+  @each $name, $value in $z-index {
     --lf-z-#{$name}: #{$value};
   }
-}
 
-@each $name, $color in $foundation-palette {
-  :root {
+  // Palette variants (contrast / hover / hollow-hover)
+  @each $name, $color in $foundation-palette {
     --lf-color-#{$name}: #{$color};
     --lf-color-#{$name}-contrast: #{color-pick-contrast($color, ($white, $black))};
-  }
 
-  @if variable-exists(button-background-hover-lightness) {
-    :root {
+    @if variable-exists(button-background-hover-lightness) {
       --lf-color-#{$name}-hover: #{scale-color($color, $lightness: $button-background-hover-lightness)};
       --lf-color-#{$name}-hollow-hover: #{scale-color($color, $lightness: $button-hollow-hover-lightness)};
     }
   }
-}
 
-// Optional component tokens (only if their settings were imported)
-@if variable-exists(button-background) {
-  :root {
+  // Typography
+  --lf-header-color: #{$header-color};
+  --lf-header-small-color: #{$header-small-font-color};
+  --lf-anchor-color: #{$anchor-color};
+  --lf-anchor-color-hover: #{$anchor-color-hover};
+  --lf-hr-border: #{$medium-gray};
+  --lf-blockquote-color: #{$blockquote-color};
+  --lf-blockquote-border: #{$medium-gray};
+  --lf-cite-color: #{$cite-color};
+  --lf-subheader-color: #{$subheader-color};
+  --lf-keystroke-color: #{$keystroke-color};
+  --lf-keystroke-bg: #{$keystroke-background};
+  --lf-abbr-underline: #{$black};
+  --lf-code-color: #{$code-color};
+  --lf-code-bg: #{$code-background};
+  --lf-code-border: #{$medium-gray};
+
+  // Optional component tokens (only if their settings were imported)
+  @if variable-exists(button-background) {
     --lf-button-bg: #{$button-background};
     --lf-button-bg-hover: #{scale-color($button-background, $lightness: $button-background-hover-lightness)};
     --lf-button-color: #{$button-color};
@@ -69,39 +79,29 @@
     --lf-button-hollow-border-width: #{$button-hollow-border-width};
     --lf-button-opacity-disabled: #{$button-opacity-disabled};
   }
-}
 
-@if variable-exists(closebutton-color) {
-  :root {
+  @if variable-exists(closebutton-color) {
     --lf-closebutton-color: #{$closebutton-color};
     --lf-closebutton-color-hover: #{$closebutton-color-hover};
   }
-}
 
-@if variable-exists(buttongroup-margin) {
-  :root {
+  @if variable-exists(buttongroup-margin) {
     --lf-buttongroup-margin: #{$buttongroup-margin};
     --lf-buttongroup-spacing: #{$buttongroup-spacing};
   }
-}
 
-@if variable-exists(titlebar-background) {
-  :root {
+  @if variable-exists(titlebar-background) {
     --lf-titlebar-bg: #{$titlebar-background};
     --lf-titlebar-color: #{$titlebar-color};
     --lf-titlebar-icon-color: #{$titlebar-icon-color};
     --lf-titlebar-icon-color-hover: #{$titlebar-icon-color-hover};
   }
-}
 
-@if variable-exists(topbar-background) {
-  :root {
+  @if variable-exists(topbar-background) {
     --lf-topbar-bg: #{$topbar-background};
   }
-}
 
-@if variable-exists(tab-background) {
-  :root {
+  @if variable-exists(tab-background) {
     --lf-tab-bg: #{$tab-background};
     --lf-tab-color: #{$tab-color};
     --lf-tab-bg-active: #{$tab-background-active};
@@ -111,50 +111,165 @@
     --lf-tab-content-border: #{$tab-content-border};
     --lf-tab-content-color: #{$tab-content-color};
   }
-}
 
-@if variable-exists(menu-item-background-active) {
-  :root {
+  @if variable-exists(menu-item-background-active) {
     --lf-menu-item-bg-active: #{$menu-item-background-active};
     --lf-menu-item-color-active: #{$menu-item-color-active};
     --lf-menu-submenu-bg: #{$white};
     --lf-menu-submenu-border: #{$medium-gray};
   }
-}
 
-@if variable-exists(dropdown-background) {
-  :root {
+  @if variable-exists(dropdown-background) {
     --lf-dropdown-bg: #{$dropdown-background};
     --lf-dropdown-border: #{$medium-gray};
   }
-}
 
-@if variable-exists(tooltip-background-color) {
-  :root {
+  @if variable-exists(tooltip-background-color) {
     --lf-tooltip-bg: #{$tooltip-background-color};
     --lf-tooltip-color: #{$tooltip-color};
     --lf-tooltip-border: #{$dark-gray};
   }
-}
 
-@if variable-exists(offcanvas-background) {
-  :root {
+  @if variable-exists(offcanvas-background) {
     --lf-offcanvas-bg: #{$offcanvas-background};
   }
-}
 
-@if variable-exists(reveal-overlay-background) {
-  :root {
+  @if variable-exists(reveal-overlay-background) {
     --lf-modal-border: #{$medium-gray};
     --lf-modal-overlay: #{$reveal-overlay-background};
   }
-}
 
-@if variable-exists(slider-background) {
-  :root {
+  @if variable-exists(slider-background) {
     --lf-slider-bg: #{$slider-background};
     --lf-slider-fill: #{$slider-fill-background};
     --lf-slider-handle: #{$slider-handle-background};
     --lf-slider-handle-hover: #{scale-color($slider-handle-background, $lightness: -15%)};
+  }
+
+  @if variable-exists(accordion-background) {
+    --lf-accordion-bg: #{$accordion-background};
+    --lf-accordion-item-color: #{$accordion-item-color};
+    --lf-accordion-item-bg-hover: #{$accordion-item-background-hover};
+    --lf-accordion-border: #{$light-gray};
+    --lf-accordion-content-bg: #{$accordion-content-background};
+    --lf-accordion-content-color: #{$accordion-content-color};
+    --lf-accordion-content-border: #{$light-gray};
+  }
+
+  @if variable-exists(card-background) {
+    --lf-card-bg: #{$card-background};
+    --lf-card-color: #{$card-font-color};
+    --lf-card-divider-bg: #{$card-divider-background};
+    --lf-card-border: #{$light-gray};
+    --lf-card-shadow: #{$card-shadow};
+  }
+
+  @if variable-exists(callout-background) {
+    $callout-bg-faded: scale-color($callout-background, $lightness: $callout-background-fade);
+
+    --lf-callout-bg: #{$callout-bg-faded};
+    --lf-callout-color: #{color-pick-contrast($callout-bg-faded, ($callout-font-color, $callout-font-color-alt))};
+    --lf-callout-border: #{rgba($black, 0.25)};
+
+    @each $name, $color in $foundation-palette {
+      $bg: scale-color($color, $lightness: $callout-background-fade);
+
+      --lf-callout-#{$name}-bg: #{$bg};
+      --lf-callout-#{$name}-color: #{color-pick-contrast($bg, ($callout-font-color, $callout-font-color-alt))};
+    }
+  }
+
+  @if variable-exists(badge-background) {
+    --lf-badge-bg: #{$badge-background};
+    --lf-badge-color: #{$badge-color};
+    --lf-badge-color-alt: #{$badge-color-alt};
+  }
+
+  @if variable-exists(label-background) {
+    --lf-label-bg: #{$label-background};
+    --lf-label-color: #{$label-color};
+    --lf-label-color-alt: #{$label-color-alt};
+  }
+
+  @if variable-exists(table-background) {
+    --lf-table-bg: #{$table-background};
+    --lf-table-border: #{smart-scale($table-background, $table-color-scale)};
+    --lf-table-striped-bg: #{$table-striped-background};
+    --lf-table-head-bg: #{$table-head-background};
+    --lf-table-head-color: #{$table-head-font-color};
+    --lf-table-foot-bg: #{$table-foot-background};
+    --lf-table-foot-color: #{$table-foot-font-color};
+    --lf-table-row-hover: #{$table-row-hover};
+    --lf-table-row-stripe-hover: #{$table-row-stripe-hover};
+    --lf-table-head-row-hover: #{$table-head-row-hover};
+    --lf-table-foot-row-hover: #{$table-foot-row-hover};
+  }
+
+  @if variable-exists(progress-background) {
+    --lf-progress-bg: #{$progress-background};
+    --lf-progress-meter: #{$progress-meter-background};
+  }
+
+  @if variable-exists(meter-background) {
+    --lf-meter-bg: #{$meter-background};
+    --lf-meter-fill-good: #{$meter-fill-good};
+    --lf-meter-fill-medium: #{$meter-fill-medium};
+    --lf-meter-fill-bad: #{$meter-fill-bad};
+  }
+
+  @if variable-exists(pagination-item-color) {
+    --lf-pagination-item-color: #{$pagination-item-color};
+    --lf-pagination-item-bg-hover: #{$pagination-item-background-hover};
+    --lf-pagination-item-bg-current: #{$pagination-item-background-current};
+    --lf-pagination-item-color-current: #{$pagination-item-color-current};
+    --lf-pagination-item-color-disabled: #{$pagination-item-color-disabled};
+    --lf-pagination-ellipsis-color: #{$pagination-ellipsis-color};
+  }
+
+  @if variable-exists(breadcrumbs-item-color) {
+    --lf-breadcrumbs-item-color: #{$breadcrumbs-item-color};
+    --lf-breadcrumbs-item-color-current: #{$breadcrumbs-item-color-current};
+    --lf-breadcrumbs-item-color-disabled: #{$breadcrumbs-item-color-disabled};
+    --lf-breadcrumbs-separator-color: #{$breadcrumbs-item-separator-color};
+  }
+
+  @if variable-exists(input-background) {
+    --lf-input-color: #{$input-color};
+    --lf-input-placeholder: #{$input-placeholder-color};
+    --lf-input-bg: #{$input-background};
+    --lf-input-bg-focus: #{$input-background-focus};
+    --lf-input-bg-disabled: #{$input-background-disabled};
+    --lf-input-border: #{$medium-gray};
+    --lf-input-border-focus: #{$dark-gray};
+    --lf-input-shadow: #{$input-shadow};
+    --lf-input-shadow-focus: #{$input-shadow-focus};
+    --lf-input-bg-invalid: #{$input-background-invalid};
+    --lf-input-bg-invalid-soft: #{mix($input-background-invalid, $white, 10%)};
+    --lf-input-error-color: #{$input-error-color};
+    --lf-form-label-color: #{$form-label-color};
+    --lf-form-label-color-invalid: #{$form-label-color-invalid};
+    --lf-helptext-color: #{$helptext-color};
+    --lf-select-bg: #{$select-background};
+    --lf-select-triangle: #{$select-triangle-color};
+    --lf-fieldset-border: #{$medium-gray};
+    --lf-input-prefix-color: #{$input-prefix-color};
+    --lf-input-prefix-bg: #{$input-prefix-background};
+    --lf-input-prefix-border: #{$medium-gray};
+  }
+
+  @if variable-exists(switch-background) {
+    --lf-switch-bg: #{$switch-background};
+    --lf-switch-bg-focus: #{$switch-background-focus};
+    --lf-switch-bg-active: #{$switch-background-active};
+    --lf-switch-bg-active-focus: #{$switch-background-active-focus};
+    --lf-switch-paddle-bg: #{$switch-paddle-background};
+  }
+
+  @if variable-exists(choice-border) {
+    --lf-choice-border: #{$choice-border};
+    --lf-choice-bg: #{$choice-bg};
+    --lf-choice-bg-checked: #{$choice-bg-checked};
+    --lf-choice-mark: #{$choice-mark};
+    --lf-choice-focus-ring: #{$choice-focus-ring};
   }
 }

@@ -53,6 +53,8 @@ $blockquote-color: $dark-gray;
 $blockquote-padding: rem-calc(9 20 0 19);
 $blockquote-border: 1px solid $medium-gray;
 $enable-cite-block: true;
+$enable-keystroke: false;
+$enable-print-styles: false;
 $keystroke-font: $font-family-monospace;
 $keystroke-color: $black;
 $keystroke-background: $light-gray;

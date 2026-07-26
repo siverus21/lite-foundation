@@ -2,11 +2,11 @@
 // Works on both flex and CSS Grid containers.
 
 .align-left {
-  justify-content: flex-start;
+  justify-content: start;
 }
 
 .align-right {
-  justify-content: flex-end;
+  justify-content: end;
 }
 
 .align-center {
@@ -22,11 +22,11 @@
 }
 
 .align-top {
-  align-items: flex-start;
+  align-items: start;
 }
 
 .align-bottom {
-  align-items: flex-end;
+  align-items: end;
 }
 
 .align-middle {
@@ -35,22 +35,6 @@
 
 .align-stretch {
   align-items: stretch;
-}
-
-.align-self-top {
-  align-self: flex-start;
-}
-
-.align-self-bottom {
-  align-self: flex-end;
-}
-
-.align-self-middle {
-  align-self: center;
-}
-
-.align-self-stretch {
-  align-self: stretch;
 }
 
 .align-center-middle {
@@ -89,52 +73,4 @@
 
 .flex-dir-column-reverse {
   flex-direction: column-reverse;
-}
-
-@include -zf-each-breakpoint {
-  @for $i from 1 through $flex-source-ordering-count {
-    .#{$-zf-size}-order-#{$i} {
-      order: $i;
-    }
-  }
-}
-
-@if $flexbox-responsive-breakpoints {
-  @each $size in $breakpoint-classes {
-    @if $size != $-zf-zero-breakpoint {
-      @include breakpoint($size) {
-        .#{$size}-flex-container {
-          display: flex;
-        }
-
-        .#{$size}-flex-child-auto {
-          flex: 1 1 auto;
-        }
-
-        .#{$size}-flex-child-grow {
-          flex: 1 0 auto;
-        }
-
-        .#{$size}-flex-child-shrink {
-          flex: 0 1 auto;
-        }
-
-        .#{$size}-flex-dir-row {
-          flex-direction: row;
-        }
-
-        .#{$size}-flex-dir-row-reverse {
-          flex-direction: row-reverse;
-        }
-
-        .#{$size}-flex-dir-column {
-          flex-direction: column;
-        }
-
-        .#{$size}-flex-dir-column-reverse {
-          flex-direction: column-reverse;
-        }
-      }
-    }
-  }
 }

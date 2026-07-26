@@ -11,27 +11,27 @@ textarea {
   box-sizing: border-box;
   width: 100%;
   height: $input-height;
-  margin: 0 0 $form-spacing;
+  margin: 0;
   padding: $input-padding;
-  border: $input-border;
+  border: 1px solid var(--lf-input-border, #{$medium-gray});
   border-radius: $input-radius;
-  background-color: $input-background;
-  box-shadow: $input-shadow;
+  background-color: var(--lf-input-bg, #{$input-background});
+  box-shadow: var(--lf-input-shadow, #{$input-shadow});
   appearance: none;
   font-family: $input-font-family;
   font-size: $input-font-size;
   font-weight: $input-font-weight;
   line-height: $input-line-height;
-  color: $input-color;
+  color: var(--lf-input-color, #{$input-color});
   transition: $input-transition;
 }
 
 #{text-inputs()}:focus,
 textarea:focus {
   outline: none;
-  border: $input-border-focus;
-  background-color: $input-background-focus;
-  box-shadow: $input-shadow-focus;
+  border: 1px solid var(--lf-input-border-focus, #{$dark-gray});
+  background-color: var(--lf-input-bg-focus, #{$input-background-focus});
+  box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
 }
 
 textarea {
@@ -46,7 +46,7 @@ input:disabled,
 input[readonly],
 textarea:disabled,
 textarea[readonly] {
-  background-color: $input-background-disabled;
+  background-color: var(--lf-input-bg-disabled, #{$input-background-disabled});
   cursor: $input-cursor-disabled;
 }
 
@@ -73,7 +73,7 @@ input[type='search'] {
 }
 
 ::placeholder {
-  color: $input-placeholder-color;
+  color: var(--lf-input-placeholder, #{$input-placeholder-color});
 }
 
 /* Labels */
@@ -83,7 +83,7 @@ label {
   font-size: $form-label-font-size;
   font-weight: $form-label-font-weight;
   line-height: $form-label-line-height;
-  color: $form-label-color;
+  color: var(--lf-form-label-color, #{$form-label-color});
 }
 
 label.middle {
@@ -94,25 +94,25 @@ label.middle {
 
 /* Help text */
 .help-text {
-  margin-top: $form-spacing * -0.5;
+  margin-top: 0;
   font-size: $helptext-font-size;
   font-style: $helptext-font-style;
-  color: $helptext-color;
+  color: var(--lf-helptext-color, #{$helptext-color});
 }
 
 /* Checkbox / radio / file */
 [type='file'],
 [type='checkbox'],
 [type='radio'] {
-  margin: 0 0 $form-spacing;
+  margin: 0;
 }
 
 [type='checkbox'] + label,
 [type='radio'] + label {
   display: inline-block;
   vertical-align: baseline;
-  margin-left: $form-spacing * 0.5;
-  margin-right: $form-spacing;
+  margin-inline-start: $form-spacing * 0.5;
+  margin-inline-end: $form-spacing;
   margin-bottom: 0;
 }
 
@@ -123,7 +123,7 @@ label.middle {
 
 label > [type='checkbox'],
 label > [type='radio'] {
-  margin-right: $form-spacing * 0.5;
+  margin-inline-end: $form-spacing * 0.5;
 }
 
 [type='file'] {
@@ -139,35 +139,36 @@ select {
   margin: 0 0 $form-spacing;
   padding: $input-padding;
   appearance: none;
-  border: $input-border;
+  border: 1px solid var(--lf-input-border, #{$medium-gray});
   border-radius: $select-radius;
-  background-color: $select-background;
+  background-color: var(--lf-select-bg, #{$select-background});
   font-family: $input-font-family;
   font-size: $input-font-size;
   font-weight: $input-font-weight;
   line-height: $input-line-height;
-  color: $input-color;
+  color: var(--lf-input-color, #{$input-color});
   transition: $input-transition;
 
   @if $select-triangle-color != transparent {
-    padding-right: $form-spacing * 1.5;
+    padding-inline-end: $form-spacing * 1.5;
     background-origin: content-box;
     background-position: right (-$form-spacing) center;
     background-repeat: no-repeat;
     background-size: 9px 6px;
+    // Data-URI SVG fill is baked at compile time (cannot use CSS vars).
     @include background-triangle($select-triangle-color);
   }
 }
 
 select:focus {
   outline: none;
-  border: $input-border-focus;
-  background-color: $input-background-focus;
-  box-shadow: $input-shadow-focus;
+  border: 1px solid var(--lf-input-border-focus, #{$dark-gray});
+  background-color: var(--lf-input-bg-focus, #{$input-background-focus});
+  box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
 }
 
 select:disabled {
-  background-color: $input-background-disabled;
+  background-color: var(--lf-input-bg-disabled, #{$input-background-disabled});
   cursor: $input-cursor-disabled;
 }
 
@@ -200,7 +201,7 @@ legend {
 .fieldset {
   margin: $fieldset-margin;
   padding: $fieldset-padding;
-  border: $fieldset-border;
+  border: 1px solid var(--lf-fieldset-border, #{$medium-gray});
 }
 
 .fieldset legend {
@@ -217,11 +218,17 @@ legend {
 }
 
 .input-group > :first-child {
-  border-radius: $input-radius 0 0 $input-radius;
+  border-start-start-radius: $input-radius;
+  border-end-start-radius: $input-radius;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
 }
 
 .input-group > :last-child {
-  border-radius: 0 $input-radius $input-radius 0;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: $input-radius;
+  border-end-end-radius: $input-radius;
 }
 
 .input-group-label {
@@ -230,19 +237,19 @@ legend {
   align-items: center;
   margin: 0;
   padding: 0 $input-prefix-padding;
-  border: $input-prefix-border;
-  background: $input-prefix-background;
-  color: $input-prefix-color;
+  border: 1px solid var(--lf-input-prefix-border, #{$medium-gray});
+  background: var(--lf-input-prefix-bg, #{$input-prefix-background});
+  color: var(--lf-input-prefix-color, #{$input-prefix-color});
   text-align: center;
   white-space: nowrap;
 }
 
 .input-group-label:first-child {
-  border-right: 0;
+  border-inline-end: 0;
 }
 
 .input-group-label:last-child {
-  border-left: 0;
+  border-inline-start: 0;
 }
 
 .input-group-field {
@@ -278,28 +285,28 @@ legend {
 /* Abide / error */
 @if $abide-inputs {
   .is-invalid-input:not(:focus) {
-    border-color: $input-background-invalid;
-    background-color: mix($input-background-invalid, $white, 10%);
+    border-color: var(--lf-input-bg-invalid, #{$input-background-invalid});
+    background-color: var(--lf-input-bg-invalid-soft, #{mix($input-background-invalid, $white, 10%)});
   }
 
   .is-invalid-input:not(:focus)::placeholder {
-    color: $input-background-invalid;
+    color: var(--lf-input-bg-invalid, #{$input-background-invalid});
   }
 }
 
 @if $abide-labels {
   .is-invalid-label {
-    color: $form-label-color-invalid;
+    color: var(--lf-form-label-color-invalid, #{$form-label-color-invalid});
   }
 }
 
 .form-error {
   display: none;
-  margin-top: $form-spacing * -0.5;
+  margin-top: 0;
   margin-bottom: $form-spacing;
   font-size: $input-error-font-size;
   font-weight: $input-error-font-weight;
-  color: $input-error-color;
+  color: var(--lf-input-error-color, #{$input-error-color});
 }
 
 .form-error.is-visible {

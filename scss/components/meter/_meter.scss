@@ -7,7 +7,7 @@ meter {
   margin-bottom: 1rem;
   border: 0;
   border-radius: $meter-radius;
-  background: $meter-background;
+  background: var(--lf-meter-bg, #{$meter-background});
   -moz-appearance: none;
   appearance: none;
 }
@@ -15,7 +15,7 @@ meter {
 meter::-webkit-meter-bar {
   border: 0;
   border-radius: $meter-radius;
-  background: $meter-background;
+  background: var(--lf-meter-bg, #{$meter-background});
 }
 
 meter::-webkit-meter-inner-element {
@@ -24,32 +24,32 @@ meter::-webkit-meter-inner-element {
 
 meter::-webkit-meter-optimum-value {
   border-radius: $meter-radius;
-  background: $meter-fill-good;
+  background: var(--lf-meter-fill-good, #{$meter-fill-good});
 }
 
 meter::-webkit-meter-suboptimum-value {
   border-radius: $meter-radius;
-  background: $meter-fill-medium;
+  background: var(--lf-meter-fill-medium, #{$meter-fill-medium});
 }
 
 meter::-webkit-meter-even-less-good-value {
   border-radius: $meter-radius;
-  background: $meter-fill-bad;
+  background: var(--lf-meter-fill-bad, #{$meter-fill-bad});
 }
 
 meter::-moz-meter-bar {
   border-radius: $meter-radius;
-  background: $primary-color;
+  background: var(--lf-color-primary, #{$primary-color});
 }
 
 meter:-moz-meter-optimum::-moz-meter-bar {
-  background: $meter-fill-good;
+  background: var(--lf-meter-fill-good, #{$meter-fill-good});
 }
 
 meter:-moz-meter-sub-optimum::-moz-meter-bar {
-  background: $meter-fill-medium;
+  background: var(--lf-meter-fill-medium, #{$meter-fill-medium});
 }
 
 meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
-  background: $meter-fill-bad;
+  background: var(--lf-meter-fill-bad, #{$meter-fill-bad});
 }

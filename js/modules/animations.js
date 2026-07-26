@@ -1,9 +1,11 @@
 /**
- * Animate.css demo helpers (replaces Motion UI demo).
- * Fade + height collapse so the page does not jump when the box hides/shows.
+ * Animate.css demo helpers (kitchen-sink only — enable scripts.animations).
  */
-export class Animations {
+import { Module } from '../core/Module.js';
+
+export class Animations extends Module {
   constructor(root = document) {
+    super(root);
     this.box = root.getElementById?.('ks-animate-box') ?? document.getElementById('ks-animate-box');
     this.trigger =
       root.getElementById?.('ks-animate-trigger') ?? document.getElementById('ks-animate-trigger');
@@ -22,7 +24,7 @@ export class Animations {
       marginBottom: getComputedStyle(this.box).marginBottom,
     };
 
-    this.trigger.addEventListener('click', () => this.#toggle());
+    this.on(this.trigger, 'click', () => this.#toggle());
   }
 
   #toggle() {

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabs — lite-foundation docs</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+        </div>
+      </div>
+    </header>
+    <main class="docs-main grid-container">
+      <p class="docs-kicker">Component</p>
+      <h1>Tabs</h1>
+      <p class="docs-lead">
+        Переключение панелей на одной странице с ролями WAI-ARIA и навигацией стрелками.
+        URL не меняется — для deep-link лучше отдельные якоря или роутер.
+      </p>
+      <div class="docs-flags">
+        <span class="docs-flag">styles.tabs</span>
+        <span class="docs-flag">scripts.tabs</span>
+      </div>
+
+      <section class="docs-section">
+        <h2>Когда использовать</h2>
+        <div class="docs-note">
+          <strong>Подходит</strong>
+          <ul>
+            <li>Карточка товара: описание / характеристики / отзывы</li>
+            <li>Настройки с несколькими равнозначными секциями</li>
+          </ul>
+        </div>
+        <div class="docs-note">
+          <strong>Не подходит</strong>
+          <ul>
+            <li>Длинный FAQ — <a href="accordion.html">Accordion</a> читабельнее</li>
+            <li>Шаги мастера с прогрессом — отдельный wizard / отдельные URL</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Разметка</h2>
+        <p class="docs-meta">
+          Связка: <code>data-tabs</code> + <code>id</code> списка и
+          <code>data-tabs-content="тот-же-id"</code>. У tab — <code>aria-controls</code>,
+          у panel — <code>aria-labelledby</code>.
+        </p>
+        <div class="docs-demo">
+          <ul class="tabs" data-tabs id="docs-tabs" role="tablist">
+            <li class="tabs-title is-active" role="presentation">
+              <button type="button" role="tab" id="docs-tab-1" aria-controls="docs-panel-1" aria-selected="true" tabindex="0">Tab 1</button>
+            </li>
+            <li class="tabs-title" role="presentation">
+              <button type="button" role="tab" id="docs-tab-2" aria-controls="docs-panel-2" aria-selected="false" tabindex="-1">Tab 2</button>
+            </li>
+            <li class="tabs-title" role="presentation">
+              <button type="button" role="tab" id="docs-tab-3" aria-controls="docs-panel-3" aria-selected="false" tabindex="-1">Tab 3</button>
+            </li>
+          </ul>
+          <div class="tabs-content" data-tabs-content="docs-tabs">
+            <div class="tabs-panel is-active" id="docs-panel-1" role="tabpanel" aria-labelledby="docs-tab-1">
+              <p>Tab panel 1.</p>
+            </div>
+            <div class="tabs-panel" id="docs-panel-2" role="tabpanel" aria-labelledby="docs-tab-2" hidden>
+              <p>Tab panel 2.</p>
+            </div>
+            <div class="tabs-panel" id="docs-panel-3" role="tabpanel" aria-labelledby="docs-tab-3" hidden>
+              <p>Tab panel 3.</p>
+            </div>
+          </div>
+        </div>
+        <div class="docs-code"><pre><code>&lt;ul class="tabs" data-tabs id="docs-tabs" role="tablist"&gt;
+  &lt;li class="tabs-title is-active" role="presentation"&gt;
+    &lt;button type="button" role="tab" id="docs-tab-1"
+      aria-controls="docs-panel-1" aria-selected="true" tabindex="0"&gt;Tab 1&lt;/button&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="tabs-content" data-tabs-content="docs-tabs"&gt;
+  &lt;div class="tabs-panel is-active" id="docs-panel-1" role="tabpanel"
+    aria-labelledby="docs-tab-1"&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+      </section>
+    </main>
+    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

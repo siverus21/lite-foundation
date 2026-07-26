@@ -16,11 +16,11 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background: $body-background;
+  background: var(--lf-body-bg, #{$body-background});
   font-family: $body-font-family;
   font-weight: $global-weight-normal;
   line-height: $global-lineheight;
-  color: $body-font-color;
+  color: var(--lf-body-color, #{$body-font-color});
 
   @if $body-antialiased {
     -webkit-font-smoothing: antialiased;
@@ -54,7 +54,9 @@ select {
   border-radius: $global-radius;
 }
 
-button {
+// Zero-specificity reset so .button / .menu-icon borders always win,
+// even if cascade layers flatten or stylesheets load out of order.
+:where(button) {
   padding: 0;
   border: 0;
   border-radius: $global-radius;

@@ -2,30 +2,34 @@
  * Off-canvas drawer.
  * Open:  [data-offcanvas-open="panelId"]
  * Close: [data-offcanvas-close], backdrop, Esc
- *
- * Starts as display:none; opening sets display then slides in.
- * Closing slides out, then display:none after transition.
  */
-export class Offcanvas {
+import { Module } from '../core/Module.js';
+import { lockScroll, unlockScroll } from '../core/scroll-lock.js';
+
+export class Offcanvas extends Module {
   constructor(root = document) {
-    this.root = root;
+    super(root);
+    this._lastFocus = null;
     this.#ensureBackdrop();
     this.#mountPanels();
     this.#bind();
   }
 
   #ensureBackdrop() {
-    if (document.querySelector('.offcanvas-backdrop')) return;
+    if (document.querySelector('.offcanvas-backdrop[data-lf-offcanvas-backdrop]')) return;
 
     const backdrop = document.createElement('div');
     backdrop.className = 'offcanvas-backdrop';
     backdrop.setAttribute('data-offcanvas-close', '');
+    backdrop.setAttribute('data-lf-offcanvas-backdrop', '');
     backdrop.setAttribute('aria-hidden', 'true');
     document.body.appendChild(backdrop);
   }
 
   #mountPanels() {
     this.root.querySelectorAll('.offcanvas').forEach((panel) => {
+      if (!panel.hasAttribute('aria-modal')) panel.setAttribute('aria-modal', 'true');
+      if (!panel.hasAttribute('role')) panel.setAttribute('role', 'dialog');
       if (panel.parentElement !== document.body) {
         document.body.appendChild(panel);
       }
@@ -33,14 +37,15 @@ export class Offcanvas {
   }
 
   #bind() {
-    this.root.addEventListener(
+    this.on(
+      this.root,
       'click',
       (event) => {
         const openBtn = event.target.closest('[data-offcanvas-open]');
         if (openBtn) {
           event.preventDefault();
           event.stopPropagation();
-          this.open(openBtn.getAttribute('data-offcanvas-open'));
+          this.open(openBtn.getAttribute('data-offcanvas-open'), openBtn);
           return;
         }
 
@@ -58,16 +63,26 @@ export class Offcanvas {
       true,
     );
 
-    document.addEventListener('keydown', (event) => {
+    this.on(document, 'keydown', (event) => {
       if (event.key === 'Escape') this.close();
     });
   }
 
-  open(id) {
+  open(id, trigger = null) {
     const panel = document.getElementById(id);
     const backdrop = document.querySelector('.offcanvas-backdrop');
     if (!panel || !id || panel.classList.contains('is-open')) return;
 
+    this._lastFocus = trigger || document.activeElement;
+
+    document.querySelectorAll(`[data-offcanvas-open="${id}"]`).forEach((btn) => {
+      btn.setAttribute('aria-expanded', 'true');
+      btn.setAttribute('aria-controls', id);
+    });
+
+    // Lock scroll before is-offcanvas-open: that class alone must not apply
+    // position:fixed without a saved top offset (would jump the page to 0).
+    lockScroll();
     document.body.classList.add('is-offcanvas-open');
     panel.setAttribute('aria-hidden', 'false');
     panel.classList.add('is-open');
@@ -76,15 +91,17 @@ export class Offcanvas {
       backdrop.style.pointerEvents = 'none';
       backdrop.setAttribute('aria-hidden', 'false');
       window.setTimeout(() => {
-        if (backdrop.classList.contains('is-open')) {
-          backdrop.style.pointerEvents = '';
-        }
+        if (backdrop.classList.contains('is-open')) backdrop.style.pointerEvents = '';
       }, 0);
     }
 
     requestAnimationFrame(() => {
       panel.classList.add('is-visible');
       backdrop?.classList.add('is-open');
+      const focusable = panel.querySelector(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      focusable?.focus?.({ preventScroll: true });
     });
   }
 
@@ -93,6 +110,13 @@ export class Offcanvas {
     const backdrop = document.querySelector('.offcanvas-backdrop');
 
     panels.forEach((panel) => {
+      const id = panel.id;
+      if (id) {
+        document.querySelectorAll(`[data-offcanvas-open="${id}"]`).forEach((btn) => {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+
       panel.classList.remove('is-visible');
 
       const finish = () => {
@@ -117,5 +141,17 @@ export class Offcanvas {
     }
 
     document.body.classList.remove('is-offcanvas-open');
+    unlockScroll();
+
+    const restore = this._lastFocus;
+    this._lastFocus = null;
+    if (restore && typeof restore.focus === 'function') {
+      restore.focus({ preventScroll: true });
+    }
+  }
+
+  destroy() {
+    this.close();
+    super.destroy();
   }
 }

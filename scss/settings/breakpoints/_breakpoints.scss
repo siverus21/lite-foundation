@@ -1,4 +1,4 @@
-// 2. Breakpoints
+// 2. Breakpoints — single source for maps used by abstracts/_mixins.scss
 // --------------
 
 $-zf-size: null;
@@ -8,16 +8,16 @@ $breakpoints: (
   "large": 1024px,
   "xlarge": 1200px,
   "xxlarge": 1440px,
-);
+) !default;
 $breakpoints-hidpi: (
   "hidpi-1": 1,
   "hidpi-1-5": 1.5,
   "hidpi-2": 2,
   "retina": 2,
   "hidpi-3": 3
-);
-$print-breakpoint: large;
-$breakpoint-classes: (small medium large);
+) !default;
+$print-breakpoint: large !default;
+$breakpoint-classes: (small medium large) !default;
 
-$-zf-zero-breakpoint: small;
+$-zf-zero-breakpoint: small !default;
 $-zf-breakpoints-keys: map-to-list($breakpoints, 'keys');

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Off-canvas — lite-foundation docs</title>
+    <link rel="stylesheet" href="../dist/app.css">
+    <link rel="stylesheet" href="assets/docs.css">
+  </head>
+  <body class="docs-body">
+    <header class="docs-nav">
+      <div class="grid-container">
+        <div class="docs-nav-links">
+          <a class="docs-brand" href="index.html">lite-foundation</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="offcanvas position-left" id="docsOffCanvas" aria-hidden="true">
+      <button class="close-button" aria-label="Close" type="button" data-offcanvas-close>
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <ul class="vertical menu">
+        <li><a href="#top">Home</a></li>
+        <li><a href="modal.html">Modal</a></li>
+        <li><a href="tabs.html">Tabs</a></li>
+      </ul>
+    </div>
+
+    <main class="docs-main grid-container" id="top">
+      <p class="docs-kicker">Component</p>
+      <h1>Off-canvas</h1>
+      <p class="docs-lead">
+        Боковой drawer: мобильное меню, фильтры, вспомогательная панель.
+        Блокирует скролл страницы через общий <code>scroll-lock</code> (как modal).
+      </p>
+      <div class="docs-flags">
+        <span class="docs-flag">styles.offcanvas</span>
+        <span class="docs-flag">scripts.offcanvas</span>
+      </div>
+
+      <section class="docs-section">
+        <h2>Когда использовать</h2>
+        <div class="docs-note">
+          <strong>Подходит</strong>
+          <ul>
+            <li>Главная навигация на узких экранах</li>
+            <li>Корзина / фильтры каталога сбоку</li>
+          </ul>
+        </div>
+        <div class="docs-note">
+          <strong>Не подходит</strong>
+          <ul>
+            <li>Короткий confirm — <a href="modal.html">Modal</a></li>
+            <li>Маленькое меню у кнопки — <a href="dropdown.html">Dropdown</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="docs-section">
+        <h2>Разметка и API</h2>
+        <ul>
+          <li>Открыть: <code>data-offcanvas-open="panelId"</code></li>
+          <li>Закрыть: <code>data-offcanvas-close</code>, backdrop, Esc, якорная ссылка <code>#…</code> внутри панели</li>
+          <li>Панель лучше держать в конце <code>body</code> (модуль сам перенесёт)</li>
+        </ul>
+        <div class="docs-demo">
+          <button type="button" class="button primary" data-offcanvas-open="docsOffCanvas">Open off-canvas</button>
+        </div>
+        <div class="docs-code"><pre><code>&lt;button type="button" class="button" data-offcanvas-open="docsOffCanvas"&gt;Open&lt;/button&gt;
+
+&lt;div class="offcanvas position-left" id="docsOffCanvas" aria-hidden="true"&gt;
+  &lt;button class="close-button" type="button" data-offcanvas-close aria-label="Close"&gt;
+    &lt;span aria-hidden="true"&gt;&amp;times;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;ul class="vertical menu"&gt;…&lt;/ul&gt;
+&lt;/div&gt;</code></pre></div>
+      </section>
+    </main>
+    <script type="module" src="/js/builds/full/entry.js"></script>
+    <script type="module" src="assets/docs.js"></script>
+  </body>
+</html>

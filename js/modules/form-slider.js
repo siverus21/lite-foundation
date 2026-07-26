@@ -1,25 +1,28 @@
 /**
  * Lightweight range slider for .slider[data-slider] markup
- * (replaces Foundation Slider JS).
- *
- * Markup:
- *   <div class="slider" data-slider data-initial-start="50" data-end="100">
- *     <span class="slider-handle" data-slider-handle role="slider" tabindex="0"></span>
- *     <span class="slider-fill" data-slider-fill></span>
- *     <input type="hidden">
- *   </div>
  */
-export class FormSlider {
+import { Module } from '../core/Module.js';
+
+export class FormSlider extends Module {
   constructor(root = document) {
+    super(root);
+    this._controls = [];
     root.querySelectorAll('[data-slider]').forEach((el) => {
-      new FormSliderControl(el);
+      this._controls.push(new FormSliderControl(el, this));
     });
+  }
+
+  destroy() {
+    this._controls.forEach((c) => c.destroy?.());
+    this._controls = [];
+    super.destroy();
   }
 }
 
 class FormSliderControl {
-  constructor(root) {
+  constructor(root, owner) {
     this.root = root;
+    this.owner = owner;
     this.handle = root.querySelector('[data-slider-handle]');
     this.fill = root.querySelector('[data-slider-fill]');
     this.input = root.querySelector('input[type="hidden"]');
@@ -33,6 +36,7 @@ class FormSliderControl {
 
     this.handle.setAttribute('role', 'slider');
     this.handle.setAttribute('tabindex', this.handle.getAttribute('tabindex') || '0');
+    if (this.vertical) this.handle.setAttribute('aria-orientation', 'vertical');
     this.#apply(this.value, false);
     this.#bind();
   }
@@ -92,8 +96,8 @@ class FormSliderControl {
   }
 
   #bind() {
-    this.root.addEventListener('pointerdown', (event) => this.#startDrag(event));
-    this.handle.addEventListener('keydown', (event) => this.#onKeydown(event));
+    this.owner.on(this.root, 'pointerdown', (event) => this.#startDrag(event));
+    this.owner.on(this.handle, 'keydown', (event) => this.#onKeydown(event));
   }
 
   #onMove = (event) => {
@@ -125,6 +129,10 @@ class FormSliderControl {
     window.addEventListener('pointerup', this.#onUp);
     window.addEventListener('touchmove', this.#onMove, { passive: false });
     window.addEventListener('touchend', this.#onUp);
+  }
+
+  destroy() {
+    this.#onUp();
   }
 
   #onKeydown(event) {

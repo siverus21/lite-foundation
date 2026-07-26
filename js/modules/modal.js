@@ -3,9 +3,13 @@
  * Open:  [data-dialog-open="dialogId"]
  * Close: [data-dialog-close] inside dialog, Esc, click on backdrop
  */
-export class Modal {
+import { Module } from '../core/Module.js';
+import { lockScroll, unlockScroll } from '../core/scroll-lock.js';
+
+export class Modal extends Module {
   constructor(root = document) {
-    this.root = root;
+    super(root);
+    this._lastFocus = null;
     this.#mountDialogs();
     this.#bind();
   }
@@ -15,12 +19,21 @@ export class Modal {
       if (dialog.parentElement !== document.body) {
         document.body.appendChild(dialog);
       }
-      dialog.addEventListener('close', () => this.#unlockScroll());
+      this.on(dialog, 'close', () => {
+        document.body.classList.remove('is-modal-open');
+        unlockScroll();
+        const restore = this._lastFocus;
+        this._lastFocus = null;
+        // Native dialog also restores focus; re-focus with preventScroll after that.
+        requestAnimationFrame(() => {
+          restore?.focus?.({ preventScroll: true });
+        });
+      });
     });
   }
 
   #bind() {
-    this.root.addEventListener('click', (event) => this.#onClick(event));
+    this.on(this.root, 'click', (event) => this.#onClick(event));
   }
 
   #onClick(event) {
@@ -30,7 +43,9 @@ export class Modal {
       const id = openBtn.getAttribute('data-dialog-open');
       const dialog = document.getElementById(id);
       if (!dialog || typeof dialog.showModal !== 'function' || dialog.open) return;
-      this.#lockScroll();
+      this._lastFocus = openBtn;
+      lockScroll();
+      document.body.classList.add('is-modal-open');
       dialog.showModal();
       return;
     }
@@ -47,20 +62,5 @@ export class Modal {
     if (dialog && event.target === dialog) {
       dialog.close();
     }
-  }
-
-  #lockScroll() {
-    const scrollY = window.scrollY;
-    document.body.dataset.scrollY = String(scrollY);
-    document.body.classList.add('is-modal-open');
-    document.body.style.top = `-${scrollY}px`;
-  }
-
-  #unlockScroll() {
-    const scrollY = Number(document.body.dataset.scrollY || 0);
-    document.body.classList.remove('is-modal-open');
-    document.body.style.top = '';
-    delete document.body.dataset.scrollY;
-    window.scrollTo(0, scrollY);
   }
 }
