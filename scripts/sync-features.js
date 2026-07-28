@@ -45,6 +45,21 @@ export const STYLE_FOLDERS = {
   table: 'table',
   button: 'button',
   forms: 'forms',
+  avatar: 'avatar',
+  chip: 'chip',
+  spinner: 'spinner',
+  toast: 'toast',
+  stepper: 'stepper',
+  rating: 'rating',
+  segmented: 'segmented',
+  timeline: 'timeline',
+  popover: 'popover',
+  quantity: 'quantity',
+  listbox: 'listbox',
+  combobox: 'combobox',
+  tagInput: 'tag-input',
+  otp: 'otp',
+  copy: 'copy',
 };
 
 /** Map script feature → { className, file } (file rewritten to /js/modules/... for virtual entries) */
@@ -62,6 +77,22 @@ export const SCRIPT_MODULES = {
   menuAccordion: { file: '../../modules/menu-accordion.js', className: 'MenuAccordion' },
   menuDrilldown: { file: '../../modules/menu-drilldown.js', className: 'MenuDrilldown' },
   dismiss: { file: '../../modules/dismiss.js', className: 'Dismiss' },
+  toast: { file: '../../modules/toast.js', className: 'Toast' },
+  stepper: { file: '../../modules/stepper.js', className: 'Stepper' },
+  rating: { file: '../../modules/rating.js', className: 'Rating' },
+  theme: { file: '../../modules/theme.js', className: 'Theme' },
+  popover: { file: '../../modules/popover.js', className: 'Popover' },
+  quantity: { file: '../../modules/quantity.js', className: 'Quantity' },
+  combobox: { file: '../../modules/combobox.js', className: 'Combobox' },
+  tagInput: { file: '../../modules/tag-input.js', className: 'TagInput' },
+  tableSort: { file: '../../modules/table-sort.js', className: 'TableSort' },
+  otp: { file: '../../modules/otp.js', className: 'Otp' },
+  copy: { file: '../../modules/copy.js', className: 'Copy' },
+  charCounter: { file: '../../modules/char-counter.js', className: 'CharCounter' },
+  passwordStrength: {
+    file: '../../modules/password-strength.js',
+    className: 'PasswordStrength',
+  },
 };
 
 function enabledEntries(map = {}) {
@@ -302,6 +333,7 @@ export function generateBuildScssSource(features, { kind = 'page' } = {}) {
       '@layer lf-utilities {',
       loadCss('utilities/flex'),
       loadCss('utilities/visibility'),
+      loadCss('utilities/container'),
       '}',
     );
   }

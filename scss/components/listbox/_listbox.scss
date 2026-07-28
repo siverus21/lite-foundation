@@ -1,0 +1,63 @@
+@use '../../settings/vars' as *;
+// Listbox — floating `role="listbox"` used by Combobox and Tag input.
+// Enable `styles.listbox` whenever you enable either of those two.
+//
+// Positioned by the nearest `.combobox` / `.tag-input` (both are
+// `position: relative`), so no anchor positioning or top layer involved.
+
+.listbox {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(100% + 2px);
+  z-index: var(--lf-z-dropdown);
+  box-sizing: border-box;
+  max-height: var(--lf-listbox-max-height, #{$listbox-max-height});
+  margin: 0;
+  padding: 0.25rem;
+  border: 1px solid var(--lf-listbox-border, #{$listbox-border-color});
+  border-radius: var(--lf-listbox-radius, #{$listbox-radius});
+  background: var(--lf-listbox-bg, #{$listbox-background});
+  box-shadow: var(--lf-shadow-dropdown);
+  font-size: var(--lf-listbox-font-size, #{$listbox-font-size});
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.listbox-option {
+  margin: 0;
+  padding: var(--lf-listbox-option-padding, #{$listbox-option-padding});
+  border-radius: var(--lf-listbox-radius, #{$listbox-radius});
+  cursor: pointer;
+
+  // Keyboard/pointer highlight (aria-activedescendant), not selection.
+  &.is-active {
+    background: var(--lf-listbox-option-bg-active, #{$listbox-option-background-active});
+  }
+
+  &[aria-selected='true'] {
+    font-weight: $global-weight-bold;
+  }
+
+  &[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  mark {
+    padding: 0;
+    border-radius: 2px;
+    background: var(--lf-listbox-mark-bg, #{$listbox-mark-background});
+    color: inherit;
+  }
+}
+
+.listbox-empty {
+  padding: var(--lf-listbox-option-padding, #{$listbox-option-padding});
+  color: var(--lf-color-dark-gray);
+  font-size: 0.9em;
+}

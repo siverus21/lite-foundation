@@ -1,0 +1,123 @@
+@use '../../settings/vars' as *;
+// Segmented control — a radio group that reads as one control (iOS/macOS style).
+// Zero JS: the visual state comes from `input:checked + span`, so it works in
+// any browser that supports sibling selectors — no :has(), no script.
+//
+// <div class="segmented">
+//   <label class="segmented-item">
+//     <input type="radio" name="view" value="list" checked><span>Список</span>
+//   </label>
+//   …
+// </div>
+//
+// For panel switching use Tabs instead: this control holds a *value*
+// (and submits with the form) rather than revealing content.
+
+.segmented {
+  display: inline-flex;
+  gap: var(--lf-segmented-gap, #{$segmented-gap});
+  padding: var(--lf-segmented-padding, #{$segmented-padding});
+  border: 1px solid var(--lf-segmented-border, #{$segmented-border});
+  border-radius: var(--lf-segmented-radius, #{$segmented-radius});
+  background: var(--lf-segmented-bg, #{$segmented-background});
+  font-size: var(--lf-segmented-font-size, #{map-get($segmented-sizes, default)});
+  vertical-align: middle;
+  max-width: 100%;
+
+  @each $size, $value in map-remove($segmented-sizes, default) {
+    &.#{$size} {
+      font-size: $value;
+    }
+  }
+
+  // Fill the container and split the width evenly — handy on mobile.
+  &.expanded {
+    display: flex;
+    width: 100%;
+
+    .segmented-item {
+      flex: 1 1 0;
+    }
+  }
+
+  &.stack-small {
+    @include breakpoint(small only) {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+
+      .segmented-item {
+        flex: 1 1 auto;
+      }
+    }
+  }
+}
+
+.segmented-item {
+  position: relative;
+  display: flex;
+  margin: 0;
+  min-width: 0;
+  font-size: inherit;
+  line-height: 1;
+  cursor: pointer;
+
+  // Visually hidden but still focusable and form-submitting.
+  input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    clip-path: inset(50%);
+    pointer-events: none;
+  }
+
+  > span {
+    flex: 1 1 auto;
+    padding: var(--lf-segmented-item-padding, #{$segmented-item-padding});
+    border-radius: var(--lf-segmented-radius, #{$segmented-radius});
+    color: var(--lf-segmented-color, #{$segmented-color});
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: $segmented-transition;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &:hover > span {
+    color: var(--lf-segmented-color-active, #{$segmented-color-active});
+  }
+
+  input:checked + span {
+    background: var(--lf-segmented-thumb-bg, #{$segmented-thumb-background});
+    color: var(--lf-segmented-color-active, #{$segmented-color-active});
+    box-shadow: var(--lf-shadow-dropdown);
+    font-weight: $global-weight-bold;
+  }
+
+  input:focus-visible + span {
+    outline: 2px solid var(--lf-color-primary);
+    outline-offset: 2px;
+  }
+
+  input:disabled + span {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  // Accent variants recolour the active pill: .segmented-item.primary etc.
+  @each $name, $color in $foundation-palette {
+    &.#{$name} input:checked + span {
+      background: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}-contrast);
+      box-shadow: none;
+    }
+  }
+}

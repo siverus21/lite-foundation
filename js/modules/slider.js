@@ -1,18 +1,25 @@
 /**
- * Swiper slider (replaces Foundation Orbit).
+ * Swiper carousel (library build `swiper` — not the form range slider).
+ *
+ * Markup: `.swiper[data-swiper]` (or kitchen-sink `.swiper.ks-swiper`) with the
+ * usual Swiper wrapper / slide / nav / pagination children.
+ *
+ * Events / commands are not wrapped — talk to the Swiper instance if you need
+ * them. This module only owns lifecycle: create on mount, destroy on teardown.
  */
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Module } from '../core/Module.js';
 
 export class Slider extends Module {
+  static id = 'swiper';
+
   constructor(root = document) {
     super(root);
+    /** @type {import('swiper').Swiper[]} */
     this.instances = [];
 
-    this.mountAll('.swiper.ks-swiper, [data-swiper]', (el) => {
-      if (el.dataset.lfSwiperInit === '1') return;
-      el.dataset.lfSwiperInit = '1';
+    this.mountOnce('.swiper.ks-swiper, [data-swiper]', (el) => {
       this.instances.push(
         new Swiper(el, {
           modules: [Navigation, Pagination],
@@ -39,9 +46,6 @@ export class Slider extends Module {
       }
     });
     this.instances = [];
-    this.root.querySelectorAll('[data-lf-swiper-init]').forEach((el) => {
-      delete el.dataset.lfSwiperInit;
-    });
     super.destroy();
   }
 }

@@ -1,0 +1,10 @@
+@use '../foundation' as *;
+// Tag input / multiselect on chips (new)
+
+$taginput-background: $white;
+$taginput-border-color: $medium-gray;
+$taginput-radius: $global-radius;
+$taginput-padding: 0.3rem 0.4rem;
+$taginput-gap: 0.3rem;
+$taginput-field-min-width: 7rem;
+$taginput-font-size: 1rem;

@@ -1,0 +1,10 @@
+@use '../foundation' as *;
+// OTP / PIN input (new)
+
+$otp-background: $white;
+$otp-border-color: $medium-gray;
+$otp-color: $black;
+$otp-radius: $global-radius;
+$otp-field-size: 2.75rem;
+$otp-font-size: 1.25rem;
+$otp-gap: 0.5rem;

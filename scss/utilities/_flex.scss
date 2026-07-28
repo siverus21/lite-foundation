@@ -75,3 +75,21 @@
 .flex-dir-column-reverse {
   flex-direction: column-reverse;
 }
+
+// Gap scale (0.25rem step) — works on both flex and CSS Grid containers.
+// Replaces ad-hoc inline `style="gap: …"` / `margin` in demos and app code.
+$flex-gaps: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.5rem,
+  6: 2rem,
+);
+
+@each $step, $value in $flex-gaps {
+  .gap-#{$step} {
+    gap: $value;
+  }
+}

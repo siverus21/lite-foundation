@@ -1,0 +1,10 @@
+@use '../foundation' as *;
+// Stepper (new — not in Foundation)
+
+$stepper-marker-size: 2rem;
+$stepper-line-thickness: 2px;
+$stepper-line-color: $medium-gray;
+$stepper-inactive-color: $medium-gray;
+$stepper-active-color: $primary-color;
+$stepper-complete-color: $success-color;
+$stepper-label-color: $body-font-color;

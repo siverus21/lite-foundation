@@ -1,0 +1,18 @@
+@use '../foundation' as *;
+// Segmented control (new — not in Foundation)
+
+$segmented-background: $light-gray;
+$segmented-color: $dark-gray;
+$segmented-color-active: $black;
+$segmented-thumb-background: $white;
+$segmented-border: $medium-gray;
+$segmented-padding: 0.25rem;
+$segmented-item-padding: 0.4rem 0.9rem;
+$segmented-radius: 100em;
+$segmented-gap: 0.15rem;
+$segmented-sizes: (
+  small: 0.78rem,
+  default: 0.88rem,
+  large: 1rem,
+);
+$segmented-transition: background-color 0.15s ease, color 0.15s ease;

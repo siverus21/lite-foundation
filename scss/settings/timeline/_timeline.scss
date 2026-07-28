@@ -1,0 +1,13 @@
+@use '../foundation' as *;
+// Timeline (new — not in Foundation)
+
+$timeline-line-color: $light-gray;
+$timeline-line-width: 2px;
+$timeline-dot-size: 0.85rem;
+$timeline-dot-background: $white;
+$timeline-dot-color: $medium-gray;
+$timeline-gutter: 1.75rem;
+$timeline-item-spacing: 1.35rem;
+$timeline-meta-color: $dark-gray;
+$timeline-meta-font-size: 0.8rem;
+$timeline-palette: $foundation-palette;

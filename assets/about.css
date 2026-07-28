@@ -1,16 +1,41 @@
 /* About page chrome — uses about-bundle components (button, callout, card, grid) */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap');
+/* Fonts loaded from about.html (Syne / Outfit / IBM Plex Mono) */
 
 :root {
-  --about-ink: #0f2f24;
-  --about-muted: #4d6b5f;
-  --about-line: #c5d9cf;
-  --about-paper: #f4f8f5;
-  --about-accent: #1a7a5c;
-  --about-accent-soft: rgba(26, 122, 92, 0.12);
-  --about-deep: #0b3d2e;
+  --about-ink: #0f1f33;
+  --about-muted: #5a6e84;
+  --about-line: #d5dde8;
+  --about-paper: #f5f8fc;
+  --about-accent: #1769aa;
+  --about-accent-soft: rgba(23, 105, 170, 0.12);
+  --about-deep: #0b1a2e;
   --about-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --about-surface: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --about-ink: #e6ebf3;
+    --about-muted: #9aa6b8;
+    --about-line: #262b36;
+    --about-paper: #0a0c11;
+    --about-accent: #7eb8f0;
+    --about-accent-soft: rgba(126, 184, 240, 0.14);
+    --about-deep: #06080c;
+    --about-surface: #12151c;
+  }
+}
+
+[data-theme='dark'] {
+  --about-ink: #e6ebf3;
+  --about-muted: #9aa6b8;
+  --about-line: #262b36;
+  --about-paper: #0a0c11;
+  --about-accent: #7eb8f0;
+  --about-accent-soft: rgba(126, 184, 240, 0.14);
+  --about-deep: #06080c;
+  --about-surface: #12151c;
 }
 
 html {
@@ -20,19 +45,19 @@ html {
 body.about-body {
   margin: 0;
   min-height: 100vh;
-  font-family: 'Manrope', 'Helvetica Neue', sans-serif;
+  font-family: 'Outfit', 'Helvetica Neue', sans-serif;
   color: var(--about-ink);
   background:
-    radial-gradient(980px 520px at 8% -10%, rgba(26, 122, 92, 0.18), transparent 55%),
-    radial-gradient(720px 420px at 100% 0%, rgba(11, 61, 46, 0.1), transparent 48%),
-    linear-gradient(180deg, #e8f2ec 0%, var(--about-paper) 32%, #fff 100%);
+    radial-gradient(980px 520px at 8% -10%, var(--about-accent-soft), transparent 55%),
+    radial-gradient(720px 420px at 100% 0%, color-mix(in srgb, var(--about-deep) 35%, transparent), transparent 48%),
+    var(--about-paper);
   background-attachment: fixed;
 }
 
 body.about-body h1,
 body.about-body h2,
 body.about-body .about-brand {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Syne', 'Outfit', sans-serif;
   letter-spacing: -0.02em;
 }
 

@@ -1,0 +1,24 @@
+// Container query helpers.
+//
+// Put `.query-container` on the wrapper that owns the available width — a grid
+// cell, a sidebar, a modal body — and the components inside can respond to *it*
+// instead of the viewport. That is what makes a card reusable: the same markup
+// stacks in a narrow sidebar and goes horizontal in a wide main column, with no
+// breakpoint bookkeeping.
+//
+// Components query the nearest unnamed container (see `.card.adaptive` in
+// components/card and `.media-object.stack-narrow` in components/media-object).
+//
+// Support: Chrome/Edge 105+, Safari 16+, Firefox 110+ (Baseline 2023). Where it
+// is missing, `container-type` is ignored and every `@container` block is
+// dropped, so components keep their default (stacked) layout.
+
+.query-container {
+  container-type: inline-size;
+}
+
+// Also queryable by height. Needs an explicit size on the element, otherwise
+// the contents can't be laid out — use it for fixed-height panels only.
+.query-container-size {
+  container-type: size;
+}

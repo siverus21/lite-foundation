@@ -1,112 +1,25 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Быстрый старт — lite-foundation docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../dist/app.css">
     <link rel="stylesheet" href="assets/docs.css">
   </head>
   <body class="docs-body">
-    <header class="docs-nav">
-      <div class="grid-container">
-        <div class="docs-nav-links">
-          <a class="docs-brand" href="index.html">lite-foundation</a>
-          <a href="start.html">Старт</a>
-          <a href="builds.html">Builds</a>
-          <a href="tokens.html">Токены</a>
-          <a href="lifecycle.html">JS API</a>
-          <a href="testing.html">Тесты</a>
-          <a href="../index.html">Kitchen sink</a>
-        </div>
-      </div>
-    </header>
-
-    <main class="docs-main grid-container">
-      <p class="docs-kicker">Guide</p>
-      <h1>Быстрый старт</h1>
-      <p class="docs-lead">
-        Поднять локально, собрать <code>dist/</code> и подключить бандлы на своей странице.
-        Без Vite-сервера абсолютные пути <code>/js/load-build.js</code> не заработают — открывай через
-        <code>npm run start</code>.
-      </p>
-
-      <section class="docs-section">
-        <h2>Установка</h2>
-        <p>Нужны Node.js 18+ и npm. Индексы SCSS появляются при старте / sync / build.
-          CSS/JS entry — virtual (<code>virtual:lf-scss/…</code>, <code>virtual:lf-entry/…</code>) через
-          <code>/js/load-build.js?build=…</code>.</p>
-        <div class="docs-code"><pre><code>git clone https://github.com/siverus21/lite-foundation.git
-cd lite-foundation
-npm install
-npm run start</code></pre></div>
-        <div class="docs-note">
-          <strong>Что откроется</strong>
-          <ul>
-            <li>Kitchen-sink: <code>http://localhost:5173/</code> (<code>index.html</code>)</li>
-            <li>Документация: <code>/docs/</code></li>
-            <li>Production-артефакты: <code>npm run build</code> → плоский <code>dist/</code></li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Подключение (production)</h2>
-        <p>
-          После <code>npm run build</code> копируй нужные файлы из <code>dist/</code> в свой проект
-          (или ссылайся на них с CDN/static-сервера). Page-бандл обязателен; library — по необходимости.
-        </p>
-        <div class="docs-code"><pre><code>&lt;link rel="stylesheet" href="path/to/dist/app.css"&gt;
-&lt;script type="module" src="path/to/dist/lib.js"&gt;&lt;/script&gt;
-
-&lt;!-- опционально: Swiper (library build) --&gt;
-&lt;link rel="stylesheet" href="path/to/dist/lib-swiper.css"&gt;
-&lt;script type="module" src="path/to/dist/lib-swiper.js"&gt;&lt;/script&gt;</code></pre></div>
-        <p class="docs-aside">
-          Порядок: сначала page CSS/JS, потом library. Иначе addon-слой может перекрыть базовый
-          неправильно или модули инициализируются до DOM, который они ждут.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Подключение (dev / Vite)</h2>
-        <p>
-          В HTML оставляй <code>&lt;link&gt;</code> на собранный <code>dist/*.css</code> —
-          он render-blocking и даёт стили с первого кадра. Entry дополнительно
-          импортирует Sass только для HMR и <strong>не</strong> отключает dist-link.
-        </p>
-        <div class="docs-code"><pre><code>&lt;link rel="stylesheet" href="dist/app.css"&gt;
-&lt;script type="module" src="/js/load-build.js?build=full"&gt;&lt;/script&gt;</code></pre></div>
-        <p class="docs-aside">
-          После правок SCSS в DEV сработает HMR; для production снова
-          <code>npm run build</code>, чтобы обновить <code>dist/</code>.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Feature-флаги</h2>
-        <p>
-          Единый источник правды — <code>config/features.js</code>. Выключенный флаг не попадает
-          в SCSS/JS entry соответствующего билда. Меняешь флаги → <code>npm run sync:features</code>
-          или просто <code>npm run start</code> (плагин синхронизирует сам).
-        </p>
-        <div class="docs-code"><pre><code>export default {
-  vendors: { cash: false, swiper: false, animate: true },
-  styles: { modal: true, button: true /* … */ },
-  scripts: { modal: true, tabs: true /* … */ },
-};</code></pre></div>
-        <div class="docs-note">
-          <strong>Правило</strong>
-          <ul>
-            <li>Стили и скрипты включай парами, если компоненту нужен JS (modal, tabs, offcanvas…)</li>
-            <li>Чисто презентационные (button, callout, card) — только <code>styles.*</code></li>
-            <li>Тяжёлые vendors лучше выносить в <code>builds.*.kind: 'library'</code> — см. <a href="builds.html">Builds</a></li>
-          </ul>
-        </div>
-      </section>
-    </main>
-
-    <script type="module" src="/js/load-build.js?build=full"></script>
-    <script type="module" src="assets/docs.js"></script>
+    <div id="app"></div>
+    <script type="module" src="./src/entries/start.jsx"></script>
   </body>
 </html>

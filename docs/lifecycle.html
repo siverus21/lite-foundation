@@ -1,211 +1,25 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JS lifecycle — lite-foundation docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../dist/app.css">
     <link rel="stylesheet" href="assets/docs.css">
   </head>
   <body class="docs-body">
-    <header class="docs-nav">
-      <div class="grid-container">
-        <div class="docs-nav-links">
-          <a class="docs-brand" href="index.html">lite-foundation</a>
-          <a href="start.html">Старт</a>
-          <a href="builds.html">Builds</a>
-          <a href="tokens.html">Токены</a>
-          <a href="lifecycle.html">JS API</a>
-          <a href="testing.html">Тесты</a>
-          <a href="../index.html">Kitchen sink</a>
-        </div>
-      </div>
-    </header>
-
-    <main class="docs-main grid-container">
-      <p class="docs-kicker">JavaScript</p>
-      <h1>Lifecycle API</h1>
-      <p class="docs-lead">
-        Модули поднимаются через <code>initModules(root)</code>.
-        После AJAX-вставки HTML вызывай <code>refreshModules(root)</code> — без дублирования listeners.
-      </p>
-
-      <section class="docs-section">
-        <h2>Зачем отдельный lifecycle</h2>
-        <div class="docs-note">
-          <strong>Нужен, когда</strong>
-          <ul>
-            <li>Контент подгружается fetch/Turbo/PJAX и внутри есть tabs / accordion / dropdown</li>
-            <li>Нужно безопасно снять обработчики при уходе со страницы (SPA-фрагмент)</li>
-            <li>Пишешь свой виджет в том же стиле, что и built-in модули</li>
-          </ul>
-        </div>
-        <p class="docs-aside">
-          На обычной статической странице достаточно подключить <code>entry.js</code> /
-          <code>lib.js</code> — <code>boot</code> сам вызовет <code>initModules(document)</code>.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Публичный API</h2>
-        <div class="docs-code"><pre><code>import {
-  initModules,
-  destroyModules,
-  refreshModules,
-  unmountModules,
-} from 'virtual:lf-modules/full';
-// production: from 'dist/lib.js' (re-export) or свой entry
-
-initModules(document);              // boot делает это сам
-refreshModules(ajaxContainer);      // после вставки HTML
-destroyModules(ajaxContainer);      // только JS teardown
-unmountModules(ajaxContainer);      // JS + очистить HTML внутри контейнера
-unmountModules(panel, { removeRoot: true }); // JS + удалить сам элемент</code></pre></div>
-        <ul>
-          <li><code>initModules(root)</code> — создать инстансы модулей в пределах <code>root</code></li>
-          <li><code>destroyModules(root)</code> — снять listeners/инстансы (HTML <strong>не</strong> удаляет)</li>
-          <li><code>refreshModules(root)</code> — destroy + init для поддерева (удобно после AJAX)</li>
-          <li><code>unmountModules(root)</code> — destroy + <code>replaceChildren()</code> (контейнер остаётся)</li>
-          <li><code>unmountModules(root, { removeRoot: true })</code> — destroy + <code>root.remove()</code></li>
-        </ul>
-        <p class="docs-aside">
-          <code>unmountModules(document)</code> / <code>body</code> / <code>html</code> только делает
-          destroy — страницу не очищает.
-        </p>
-        <p class="docs-aside">
-          Ленивый init: добавь <code>data-lf-lazy</code> на корень компонента
-          (например <code>&lt;ul data-tabs data-lf-lazy&gt;</code>) — модуль поднимется при приближении к viewport.
-        </p>
-        <p class="docs-aside">
-          ⚠️ Не вешай <code>data-lf-lazy</code> на корень, который скрыт по умолчанию
-          (<code>&lt;dialog&gt;</code>, <code>.offcanvas</code>-панель, что-то внутри неактивной
-          вкладки/аккордеона) — <code>IntersectionObserver</code> не сработает для
-          <code>display: none</code> элемента, поэтому модуль всё равно поднимется сразу
-          (без ленивой отсрочки), но лучше просто не размечать такие корни лениво.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Свой модуль</h2>
-        <p>
-          Наследуй <code>Module</code>, вешай события через <code>this.on(…)</code> —
-          тогда <code>destroy()</code> снимет их автоматически.
-        </p>
-        <div class="docs-code"><pre><code>import { Module } from '../core/Module.js';
-
-export class MyWidget extends Module {
-  constructor(root = document) {
-    super(root);
-    this.on(root, 'click', (event) => {
-      if (event.target.closest('[data-my-widget]')) {
-        // …
-      }
-    });
-  }
-}</code></pre></div>
-        <p class="docs-aside">
-          Зарегистрируй класс в <code>scripts/sync-features.js</code> (карта модулей) и включи
-          флаг в <code>config/features.js</code>.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Живой пример: refresh после «AJAX»</h2>
-        <p class="docs-meta">
-          1) Вставить HTML → native <code>&lt;details&gt;</code>.<br>
-          2) <code>refreshModules(#mount)</code> — JS-анимация.<br>
-          3) <code>destroyModules(#mount)</code> — только JS, HTML остаётся.<br>
-          4) <code>unmountModules(#mount)</code> — JS + очистка разметки внутри mount.
-        </p>
-        <div class="docs-demo">
-          <p>
-            <button type="button" class="button primary" id="docs-inject">Вставить accordion</button>
-            <button type="button" class="button secondary" id="docs-refresh">refreshModules(#mount)</button>
-            <button type="button" class="button hollow" id="docs-destroy">destroyModules(#mount)</button>
-            <button type="button" class="button alert" id="docs-unmount">unmountModules(#mount)</button>
-          </p>
-          <p class="docs-aside" id="docs-lifecycle-status">Статус: mount пуст.</p>
-          <div id="docs-mount"></div>
-        </div>
-        <div class="docs-code"><pre><code>const mount = document.getElementById('docs-mount');
-mount.insertAdjacentHTML('beforeend', accordionHtml);
-refreshModules(mount);
-
-destroyModules(mount);  // JS off, HTML на месте
-unmountModules(mount);  // JS off + mount пустой (контейнер остаётся)
-
-// убрать сам узел:
-unmountModules(panel, { removeRoot: true });</code></pre></div>
-        <div class="docs-note">
-          <strong>Важно</strong>
-          <ul>
-            <li><code>destroyModules</code> — только listeners; <code>unmountModules</code> — ещё и HTML</li>
-            <li>Оба работают только если раньше был <code>init</code>/<code>refresh</code> с тем же
-              <code>root</code></li>
-            <li>Глобальный <code>initModules(document)</code> не видит узлы, вставленные позже —
-              для AJAX всегда <code>refreshModules(container)</code></li>
-          </ul>
-        </div>
-      </section>
-    </main>
-
-    <script type="module" src="/js/load-build.js?build=full"></script>
-    <script type="module">
-      import { refreshModules, destroyModules, unmountModules } from 'virtual:lf-modules/full';
-
-      const mount = document.getElementById('docs-mount');
-      const status = document.getElementById('docs-lifecycle-status');
-      const detailsSample = `
-<div class="accordion" data-accordion>
-  <details class="accordion-item" open>
-    <summary class="accordion-title">Injected panel</summary>
-    <div class="accordion-content">
-      <p>Динамический accordion. После refresh — JS; после destroy — native.</p>
-    </div>
-  </details>
-  <details class="accordion-item">
-    <summary class="accordion-title">Ещё один</summary>
-    <div class="accordion-content">
-      <p>Второй item.</p>
-    </div>
-  </details>
-</div>`;
-
-      function setStatus(text) {
-        status.textContent = `Статус: ${text}`;
-      }
-
-      document.getElementById('docs-inject').addEventListener('click', () => {
-        mount.insertAdjacentHTML('beforeend', detailsSample);
-        setStatus('HTML вставлен (native details). Нажми refreshModules.');
-      });
-      document.getElementById('docs-refresh').addEventListener('click', () => {
-        if (!mount.querySelector('[data-accordion]')) {
-          setStatus('Сначала вставь accordion.');
-          return;
-        }
-        refreshModules(mount);
-        const enhanced = mount.querySelectorAll('[data-lf-enhanced]').length;
-        setStatus(`refreshModules — enhanced групп: ${enhanced}.`);
-      });
-      document.getElementById('docs-destroy').addEventListener('click', () => {
-        destroyModules(mount);
-        const enhanced = mount.querySelectorAll('[data-lf-enhanced]').length;
-        setStatus(
-          enhanced === 0
-            ? 'destroyModules — JS снят, HTML на месте (native details).'
-            : `destroyModules вызван, но enhanced ещё: ${enhanced} (не было init на mount?).`,
-        );
-      });
-      document.getElementById('docs-unmount').addEventListener('click', () => {
-        unmountModules(mount);
-        setStatus(
-          mount.childNodes.length === 0
-            ? 'unmountModules — JS снят, HTML внутри mount очищен.'
-            : 'unmountModules вызван, но mount не пуст.',
-        );
-      });
-    </script>
-    <script type="module" src="assets/docs.js"></script>
+    <div id="app"></div>
+    <script type="module" src="./src/entries/lifecycle.jsx"></script>
   </body>
 </html>

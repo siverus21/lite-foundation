@@ -1,0 +1,29 @@
+@use '../../settings/vars' as *;
+// Copy to clipboard — the button is a plain `.button`; only the feedback needs
+// styling. js/modules/copy.js injects `.copy-status` and toggles `.is-visible`.
+
+.copy-status {
+  margin-inline-start: 0.5rem;
+  color: var(--lf-copy-status-color, #{$copy-status-color});
+  font-size: var(--lf-copy-status-font-size, #{$copy-status-font-size});
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  &.is-visible {
+    opacity: 1;
+  }
+
+  &.is-error {
+    color: var(--lf-color-alert);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.copy-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}

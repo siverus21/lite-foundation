@@ -1,132 +1,25 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Builds — lite-foundation docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../dist/app.css">
     <link rel="stylesheet" href="assets/docs.css">
   </head>
   <body class="docs-body">
-    <header class="docs-nav">
-      <div class="grid-container">
-        <div class="docs-nav-links">
-          <a class="docs-brand" href="index.html">lite-foundation</a>
-          <a href="start.html">Старт</a>
-          <a href="builds.html">Builds</a>
-          <a href="tokens.html">Токены</a>
-          <a href="lifecycle.html">JS API</a>
-          <a href="testing.html">Тесты</a>
-          <a href="../index.html">Kitchen sink</a>
-        </div>
-      </div>
-    </header>
-
-    <main class="docs-main grid-container">
-      <p class="docs-kicker">Architecture</p>
-      <h1>Named &amp; library builds</h1>
-      <p class="docs-lead">
-        Объект <code>builds</code> в <code>config/features.js</code> описывает отдельные CSS/JS-бандлы.
-        Так один репозиторий отдаёт полный kitchen-sink, урезанную «about»-страницу и тяжёлые аддоны
-        без раздувания основного <code>app.css</code>.
-      </p>
-
-      <section class="docs-section">
-        <h2>Зачем несколько бандлов</h2>
-        <div class="docs-note">
-          <strong>Page (<code>kind: 'page'</code>, по умолчанию)</strong>
-          <ul>
-            <li>Полная страница: reset, tokens, core, components, utilities, critical</li>
-            <li>Имена: <code>app.css</code> / <code>lib.js</code> для <code>full</code>; иначе <code>app-{name}.css</code> / <code>lib-{name}.js</code></li>
-            <li>Когда: шаблон сайта, отдельный лендинг с урезанным набором</li>
-          </ul>
-        </div>
-        <div class="docs-note">
-          <strong>Library (<code>kind: 'library'</code>)</strong>
-          <ul>
-            <li>Только addon: vendor + связанные components, без core/critical</li>
-            <li>Имена: <code>lib-{name}.css</code> / <code>lib-{name}.js</code></li>
-            <li>Когда: Swiper, редкий виджет — грузить только на страницах, где нужен</li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Артефакты после <code>npm run build</code></h2>
-        <div class="docs-demo">
-          <table>
-            <thead>
-              <tr><th>Ключ</th><th>kind</th><th>CSS</th><th>JS</th><th>Назначение</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>full</code></td>
-                <td>page</td>
-                <td><code>app.css</code></td>
-                <td><code>lib.js</code></td>
-                <td>Полный набор (kitchen-sink)</td>
-              </tr>
-              <tr>
-                <td><code>about</code></td>
-                <td>page</td>
-                <td><code>app-about.css</code></td>
-                <td><code>lib-about.js</code></td>
-                <td>Минимальная демо-страница</td>
-              </tr>
-              <tr>
-                <td><code>swiper</code></td>
-                <td>library</td>
-                <td><code>lib-swiper.css</code></td>
-                <td><code>lib-swiper.js</code></td>
-                <td>Карусель поверх page-бандла</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="docs-aside">
-          Демо page: <a href="../about.html">about.html</a>.
-          Демо library: <a href="slider.html">slider.html</a> / секция Orbit в kitchen-sink.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Свой library build</h2>
-        <p>Добавь ключ в <code>builds</code>, укажи <code>kind: 'library'</code> и только нужные флаги.</p>
-        <div class="docs-code"><pre><code>// config/features.js
-export const builds = {
-  full: {},
-  swiper: {
-    kind: 'library',
-    vendors: { swiper: true },
-    styles: { slider: true },
-    scripts: { slider: true },
-  },
-};</code></pre></div>
-        <div class="docs-code"><pre><code>&lt;link rel="stylesheet" href="dist/app.css"&gt;
-&lt;link rel="stylesheet" href="dist/lib-swiper.css"&gt;
-&lt;script type="module" src="dist/lib.js"&gt;&lt;/script&gt;
-&lt;script type="module" src="dist/lib-swiper.js"&gt;&lt;/script&gt;</code></pre></div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Минимальная page-сборка</h2>
-        <p>
-          Урезай <code>styles</code>/<code>scripts</code> для страниц без интерактива.
-          Required-слой (global, grid, typography, css-variables) всё равно попадёт в page-бандл.
-        </p>
-        <div class="docs-code"><pre><code>about: {
-  utilities: true,
-  styles: { button: true, callout: true, card: true },
-  scripts: {},
-},</code></pre></div>
-        <div class="docs-demo">
-          <p class="callout primary">Так выглядит callout из about-набора.</p>
-          <a class="button primary" href="../about.html">Открыть about.html</a>
-        </div>
-      </section>
-    </main>
-
-    <script type="module" src="/js/load-build.js?build=full"></script>
-    <script type="module" src="assets/docs.js"></script>
+    <div id="app"></div>
+    <script type="module" src="./src/entries/builds.jsx"></script>
   </body>
 </html>

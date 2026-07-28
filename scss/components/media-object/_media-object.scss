@@ -48,3 +48,18 @@
     }
   }
 }
+
+// `stack-for-small` reacts to the viewport; `stack-narrow` reacts to the
+// container it sits in — the same media object stacks in a sidebar and stays
+// inline in a wide column. Needs a `.query-container` ancestor.
+@container (max-width: 26rem) {
+  .media-object.stack-narrow {
+    flex-wrap: wrap;
+
+    > .media-object-section {
+      flex-basis: 100%;
+      max-width: 100%;
+      padding: 0 0 $mediaobject-section-padding;
+    }
+  }
+}

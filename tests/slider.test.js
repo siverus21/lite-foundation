@@ -32,20 +32,20 @@ describe('Slider', () => {
     vi.resetModules();
   });
 
-  it('constructs Swiper for each carousel and marks init', async () => {
+  it('constructs Swiper for each carousel and marks ready', async () => {
     const { Slider } = await import('../js/modules/slider.js');
     const slider = new Slider(document);
     const el = document.querySelector('[data-swiper]');
 
     expect(SwiperMock).toHaveBeenCalledTimes(1);
-    expect(el.dataset.lfSwiperInit).toBe('1');
+    expect(el.hasAttribute('data-swiper-ready')).toBe(true);
 
-    // second pass skips already-inited nodes
+    // second pass skips already-mounted nodes
     new Slider(document).destroy();
     expect(SwiperMock).toHaveBeenCalledTimes(1);
 
     slider.destroy();
     expect(destroySpy).toHaveBeenCalled();
-    expect(el.dataset.lfSwiperInit).toBeUndefined();
+    expect(el.hasAttribute('data-swiper-ready')).toBe(false);
   });
 });

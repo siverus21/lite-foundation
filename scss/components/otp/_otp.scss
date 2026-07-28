@@ -1,0 +1,57 @@
+@use '../../settings/vars' as *;
+// OTP / PIN input — one box per character, built by js/modules/otp.js.
+
+.otp {
+  display: flex;
+  gap: var(--lf-otp-gap, #{$otp-gap});
+  margin-bottom: $global-margin;
+}
+
+.otp-field {
+  box-sizing: border-box;
+  width: var(--lf-otp-field-size, #{$otp-field-size});
+  height: var(--lf-otp-field-size, #{$otp-field-size});
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--lf-otp-border, #{$otp-border-color});
+  border-radius: var(--lf-otp-radius, #{$otp-radius});
+  background: var(--lf-otp-bg, #{$otp-background});
+  color: var(--lf-otp-color, #{$otp-color});
+  font-size: var(--lf-otp-font-size, #{$otp-font-size});
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  appearance: textfield;
+
+  &:focus {
+    border-color: var(--lf-input-border-focus);
+    box-shadow: var(--lf-input-shadow-focus);
+    outline: none;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+}
+
+// `lf:otp:invalid` marks the whole group — a wrong code is one error, not six.
+.otp[data-invalid] .otp-field {
+  border-color: var(--lf-color-alert);
+  animation: lf-otp-shake 0.25s ease-in-out;
+}
+
+@keyframes lf-otp-shake {
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .otp[data-invalid] .otp-field {
+    animation: none;
+  }
+}

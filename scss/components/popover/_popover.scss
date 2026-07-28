@@ -1,0 +1,116 @@
+@use '../../settings/vars' as *;
+// Popover — panel anchored to its trigger, built on the platform:
+//
+//   <button class="button" popovertarget="userMenu">Аккаунт</button>
+//   <div class="popover" id="userMenu" popover data-popover>…</div>
+//
+// Three tiers, in order of how modern the browser is:
+//   1. `popover` attribute (Baseline 2024) gives top layer, light dismiss and
+//      Escape for free — no JS.
+//   2. CSS anchor positioning (Chrome/Edge 125+, Safari 26+, Firefox 147+)
+//      places the panel next to its invoker, again with no JS. `popovertarget`
+//      makes the trigger the panel's *implicit* anchor, so no anchor-name
+//      plumbing is needed.
+//   3. Older browsers: js/modules/popover.js positions the panel (and, before
+//      Chrome 114 / Safari 17 / Firefox 125, emulates open/close entirely).
+//
+// See docs/popover.html for the support table.
+
+.popover {
+  box-sizing: border-box;
+  width: max-content;
+  max-width: var(--lf-popover-max-width, #{$popover-max-width});
+  margin: 0;
+  padding: var(--lf-popover-padding, #{$popover-padding});
+  border: 1px solid var(--lf-popover-border, #{$popover-border-color});
+  border-radius: var(--lf-popover-radius, #{$popover-radius});
+  background: var(--lf-popover-bg, #{$popover-background});
+  color: var(--lf-popover-color, #{$popover-color});
+  box-shadow: var(--lf-shadow-dropdown);
+
+  // A popover in the top layer has no containing block to be `absolute` inside,
+  // so JS-positioned tiers use `fixed` + explicit inset written by the module.
+  &[data-popover-placed] {
+    position: fixed;
+    inset: auto;
+  }
+
+  // Tier 3 only: no native `popover` support, so visibility is ours to manage.
+  &[data-popover-fallback] {
+    display: none;
+    z-index: var(--lf-z-popover);
+
+    &.is-open {
+      display: block;
+    }
+  }
+}
+
+// Tier 2: let CSS do the positioning. Everything here is inert in browsers
+// without anchor positioning, which fall back to tier 3.
+@supports (position-area: block-end) {
+  .popover:popover-open {
+    position: fixed;
+    position-anchor: auto;
+    position-area: block-end span-inline-end;
+    // Applied on every side so the gap survives a flip.
+    margin: var(--lf-popover-offset, #{$popover-offset});
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+
+    &.top {
+      position-area: block-start span-inline-end;
+    }
+
+    &.center {
+      position-area: block-end;
+    }
+
+    &.inline-end {
+      position-area: inline-end span-block-end;
+    }
+
+    &.inline-start {
+      position-area: inline-start span-block-end;
+    }
+
+    // Panel follows the anchor's width — useful for combobox listboxes.
+    &.match-anchor {
+      width: anchor-size(width);
+      max-width: none;
+    }
+  }
+}
+
+// Menu inside a popover: the markup any dropdown-menu would use.
+.popover-menu {
+  margin: calc(var(--lf-popover-padding, #{$popover-padding}) * -1);
+  padding: 0.3rem;
+  list-style: none;
+
+  a,
+  button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: var(--lf-popover-menu-item-padding, #{$popover-menu-item-padding});
+    border: 0;
+    border-radius: var(--lf-popover-radius, #{$popover-radius});
+    background: transparent;
+    color: inherit;
+    font-size: 0.9rem;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--lf-overlay-soft);
+    }
+  }
+}
+
+.popover-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: $global-weight-bold;
+}

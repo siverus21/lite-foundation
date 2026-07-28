@@ -1,37 +1,11 @@
 /**
- * Docs chrome: sidebar between pages, in-page TOC, prev/next pager, copy buttons.
+ * Docs chrome: sidebar between pages, in-page TOC, prev/next pager, copy buttons,
+ * browser-support block (data in assets/support-data.js).
+ *
+ * JSX pages under docs/src/ ship their own chrome via DocsPage — skip this file there.
  */
-
-const NAV = [
-  {
-    group: 'Начать',
-    items: [
-      { href: 'index.html', title: 'Обзор' },
-      { href: 'start.html', title: 'Быстрый старт' },
-      { href: 'builds.html', title: 'Builds' },
-      { href: 'tokens.html', title: 'Токены' },
-      { href: 'lifecycle.html', title: 'JS API' },
-      { href: 'testing.html', title: 'Тесты' },
-    ],
-  },
-  {
-    group: 'Компоненты',
-    items: [
-      { href: 'button.html', title: 'Button' },
-      { href: 'forms.html', title: 'Forms' },
-      { href: 'modal.html', title: 'Modal' },
-      { href: 'tabs.html', title: 'Tabs' },
-      { href: 'accordion.html', title: 'Accordion' },
-      { href: 'dropdown.html', title: 'Dropdown' },
-      { href: 'offcanvas.html', title: 'Off-canvas' },
-      { href: 'menus.html', title: 'Menus' },
-      { href: 'slider.html', title: 'Slider' },
-      { href: 'callout-card.html', title: 'Callout & Card' },
-    ],
-  },
-];
-
-const FLAT = NAV.flatMap((g) => g.items);
+import { FEATURES, PAGE_FEATURES, STATUS_LABELS } from './support-data.js';
+import { FLAT, NAV, TOP_NAV } from '../src/nav.js';
 
 function currentFile() {
   return location.pathname.split('/').pop() || 'index.html';
@@ -61,7 +35,12 @@ function ensureIds(main) {
   });
 }
 
-function buildSidebar(file) {
+/**
+ * Sidebar is `position: sticky`, so nesting the current page's section anchors
+ * under its active link gives a jump-menu that stays on screen while scrolling
+ * long pages (e.g. ui-kit.html) — unlike the in-flow `.docs-toc` above `<main>`.
+ */
+function buildSidebar(file, headings) {
   const aside = document.createElement('aside');
   aside.className = 'docs-sidebar';
   aside.setAttribute('aria-label', 'Навигация по документации');
@@ -81,13 +60,29 @@ function buildSidebar(file) {
     const list = document.createElement('ul');
     list.className = 'docs-sidebar-list';
     group.items.forEach((item) => {
+      const isActive = item.href === file;
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = item.href;
       a.textContent = item.title;
-      if (item.href === file) a.classList.add('is-active');
-      a.setAttribute('aria-current', item.href === file ? 'page' : 'false');
+      if (isActive) a.classList.add('is-active');
+      a.setAttribute('aria-current', isActive ? 'page' : 'false');
       li.appendChild(a);
+
+      if (isActive && headings && headings.length) {
+        const sub = document.createElement('ul');
+        sub.className = 'docs-sidebar-toc';
+        headings.forEach((h2) => {
+          const subLi = document.createElement('li');
+          const subA = document.createElement('a');
+          subA.href = `#${h2.id}`;
+          subA.textContent = h2.textContent;
+          subLi.appendChild(subA);
+          sub.appendChild(subLi);
+        });
+        li.appendChild(sub);
+      }
+
       list.appendChild(li);
     });
     aside.appendChild(list);
@@ -167,6 +162,7 @@ function wrapLayout(file) {
   if (!main || main.closest('.docs-shell')) return;
 
   ensureIds(main);
+  const headings = [...main.querySelectorAll('.docs-section > h2')];
 
   const shell = document.createElement('div');
   // Do not add grid-container: its `> * { grid-column: 1 }` stacks sidebar + content.
@@ -177,7 +173,7 @@ function wrapLayout(file) {
 
   main.classList.remove('grid-container');
   main.parentNode.insertBefore(shell, main);
-  shell.appendChild(buildSidebar(file));
+  shell.appendChild(buildSidebar(file, headings.length >= 2 ? headings : null));
   shell.appendChild(content);
 
   const toc = buildToc(main);
@@ -207,11 +203,7 @@ function enhanceTopNav(file) {
   toggle.textContent = 'Меню';
   links.appendChild(toggle);
 
-  FLAT.filter((p) =>
-    ['start.html', 'builds.html', 'tokens.html', 'lifecycle.html', 'testing.html'].includes(
-      p.href,
-    ),
-  ).forEach((item) => {
+  FLAT.filter((p) => TOP_NAV.includes(p.href)).forEach((item) => {
     const a = document.createElement('a');
     a.href = item.href;
     a.textContent = item.title;
@@ -230,6 +222,99 @@ function enhanceTopNav(file) {
     const open = document.body.classList.toggle('docs-nav-open');
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
+}
+
+/**
+ * Support block for the current page. Rendered as a `<details>` so it never
+ * pushes the actual documentation below the fold, and placed right after the
+ * lead paragraph / feature flags — the place where "can I ship this?" is asked.
+ *
+ * A page can pin the block elsewhere with `<div data-docs-support></div>`.
+ */
+function buildSupport(file) {
+  const ids = (PAGE_FEATURES[file] || []).filter((id) => FEATURES[id]);
+  if (!ids.length) return null;
+
+  const worst = ids.reduce((acc, id) => {
+    const rank = { widely: 0, newly: 1, limited: 2 };
+    return rank[FEATURES[id].status] > rank[acc] ? FEATURES[id].status : acc;
+  }, 'widely');
+
+  const box = document.createElement('details');
+  box.className = `docs-support is-${worst}`;
+  // Anything with a caveat is worth reading before copying the markup.
+  if (worst !== 'widely') box.open = true;
+
+  const summary = document.createElement('summary');
+  summary.className = 'docs-support-summary';
+  summary.innerHTML =
+    `<span>Поддержка браузерами</span>` +
+    `<span class="docs-support-badge">${STATUS_LABELS[worst]}</span>`;
+  box.appendChild(summary);
+
+  const table = document.createElement('table');
+  table.className = 'table docs-support-table';
+  table.innerHTML =
+    '<thead><tr><th>Возможность</th><th>Chrome / Edge</th><th>Safari</th><th>Firefox</th><th>Статус</th></tr></thead>';
+
+  const tbody = document.createElement('tbody');
+  ids.forEach((id) => {
+    const f = FEATURES[id];
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td data-label="Возможность"><a href="${f.caniuse}" target="_blank" rel="noopener">${f.title}</a></td>` +
+      `<td data-label="Chrome / Edge">${f.chrome}</td>` +
+      `<td data-label="Safari">${f.safari}</td>` +
+      `<td data-label="Firefox">${f.firefox}</td>` +
+      `<td data-label="Статус"><span class="label ${f.status === 'widely' ? 'success' : f.status === 'newly' ? 'primary' : 'warning'}">${STATUS_LABELS[f.status]}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  const scroll = document.createElement('div');
+  scroll.className = 'table-scroll';
+  scroll.appendChild(table);
+  box.appendChild(scroll);
+
+  const notes = document.createElement('ul');
+  notes.className = 'docs-support-notes';
+  ids.forEach((id) => {
+    const f = FEATURES[id];
+    if (!f.note && !f.fallback) return;
+    const li = document.createElement('li');
+    li.innerHTML =
+      `<strong>${f.title}.</strong> ${f.note || ''}` +
+      (f.fallback ? ` <em>Фолбэк:</em> ${f.fallback}` : '');
+    notes.appendChild(li);
+  });
+  if (notes.children.length) box.appendChild(notes);
+
+  const foot = document.createElement('p');
+  foot.className = 'docs-support-foot';
+  foot.innerHTML =
+    'Версии сверены с caniuse в июле 2026 — актуальные смотрите по ссылкам. ' +
+    'Полная таблица: <a href="support.html">поддержка браузеров</a>.';
+  box.appendChild(foot);
+
+  return box;
+}
+
+function insertSupport(file) {
+  const main = document.querySelector('.docs-main');
+  if (!main || main.querySelector('.docs-support')) return;
+
+  const box = buildSupport(file);
+  if (!box) return;
+
+  const slot = main.querySelector('[data-docs-support]');
+  if (slot) {
+    slot.replaceWith(box);
+    return;
+  }
+
+  const anchor = main.querySelector('.docs-flags') || main.querySelector('.docs-lead');
+  if (anchor) anchor.after(box);
+  else main.prepend(box);
 }
 
 function setupCopyButtons() {
@@ -261,6 +346,12 @@ function setupCopyButtons() {
 }
 
 const file = currentFile();
-enhanceTopNav(file);
-wrapLayout(file);
-setupCopyButtons();
+// JSX docs pages render their own chrome into #app — don't double-wrap.
+if (document.getElementById('app') && !document.querySelector('.docs-main')) {
+  // page still booting Preact; nothing to enhance yet
+} else if (!document.getElementById('app')) {
+  enhanceTopNav(file);
+  insertSupport(file);
+  wrapLayout(file);
+  setupCopyButtons();
+}

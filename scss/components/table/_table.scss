@@ -159,10 +159,81 @@ table {
       td {
         border-top: 0;
       }
+
+      // Stacked rows lose the header, so each cell carries its own label:
+      // <td data-label="Статус">Оплачен</td>
+      td[data-label]::before {
+        content: attr(data-label) ': ';
+        font-weight: $global-weight-bold;
+      }
+
+      tbody tr + tr {
+        border-top: 2px solid var(--lf-table-border);
+      }
     }
+  }
+
+  // Header that stays put while the body scrolls. Works page-level and inside
+  // `.table-scroll` with a max-height. Offset for a fixed site header:
+  // `--lf-table-sticky-offset: 3.5rem`.
+  &.sticky-head thead th {
+    position: sticky;
+    inset-block-start: var(--lf-table-sticky-offset, 0);
+    z-index: var(--lf-z-sticky);
+    background: var(--lf-table-head-bg, #{$table-head-background});
+  }
+
+  // Sort affordance. js/modules/table-sort.js wraps the header label in a
+  // button and keeps `aria-sort` in sync; the arrow is driven by that attribute
+  // alone, so a server-rendered sort needs no JS at all.
+  th[data-sort] {
+    padding: 0;
+    white-space: nowrap;
+  }
+
+  th[data-sort] .table-sort-button {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: $table-padding;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: $global-weight-bold;
+    text-align: start;
+    cursor: pointer;
+
+    &::after {
+      content: '↕';
+      opacity: 0.35;
+      font-size: 0.85em;
+    }
+
+    &:hover::after {
+      opacity: 0.7;
+    }
+  }
+
+  th[aria-sort='ascending'] .table-sort-button::after {
+    content: '↑';
+    opacity: 1;
+  }
+
+  th[aria-sort='descending'] .table-sort-button::after {
+    content: '↓';
+    opacity: 1;
   }
 }
 
 .table-scroll {
   overflow-x: auto;
+
+  // Opt-in vertical window so `.sticky-head` has something to stick inside.
+  &.limited {
+    max-height: var(--lf-table-scroll-height, 22rem);
+    overflow-y: auto;
+  }
 }

@@ -1,9 +1,26 @@
 /**
- * Drilldown menu (data-menu="drilldown").
+ * Drilldown menu (`data-menu="drilldown"`) — nested menus slide in one level at a
+ * time, the pattern mobile navigation uses when the tree is too deep for an
+ * accordion.
+ *
+ * Each submenu gets a generated "back" item. Its label comes from
+ * `data-drilldown-back` on the menu root and defaults to "Назад".
+ *
+ * The wrapper's height animates to the visible panel, so the surrounding layout
+ * doesn't jump — that measurement is why this module is heavier than its siblings.
+ *
+ * Events on the submenu panel: `opened.lf.menu-drilldown` /
+ * `closed.lf.menu-drilldown`, detail `{ menu, submenu }`.
  */
 import { Module } from '../core/Module.js';
+import { afterTransition } from '../core/transition.js';
+import { str } from '../core/attrs.js';
+
+const DEFAULT_BACK_LABEL = 'Назад';
 
 export class MenuDrilldown extends Module {
+  static id = 'menu-drilldown';
+
   constructor(root = document) {
     super(root);
     this._instances = [];
@@ -59,7 +76,7 @@ class DrilldownMenu {
       );
       submenu.setAttribute('data-submenu', '');
       submenu.setAttribute('aria-hidden', 'true');
-      ensureBackLink(submenu);
+      ensureBackLink(submenu, str(this.menu, 'data-drilldown-back') || DEFAULT_BACK_LABEL);
     });
   }
 
@@ -82,8 +99,13 @@ class DrilldownMenu {
   #bindMeasure() {
     this.#scheduleHeight(this.menu);
 
+    // Web fonts change line heights after first paint, so re-measure once they
+    // land — but not if the module was destroyed in the meantime.
     if (document.fonts?.ready) {
-      document.fonts.ready.then(this.#remeasureActive);
+      document.fonts.ready.then(() => {
+        if (this.owner.signal.aborted) return;
+        this.#remeasureActive();
+      });
     }
     this.owner.on(window, 'load', this.#remeasureActive, { once: true });
 
@@ -131,6 +153,7 @@ class DrilldownMenu {
     submenu.setAttribute('aria-hidden', 'false');
     submenu.parentElement?.setAttribute('aria-expanded', 'true');
     this.#scheduleHeight(submenu);
+    this.owner.emit(submenu, 'opened', { menu: this.menu, submenu });
   }
 
   #hideSubmenu(submenu) {
@@ -143,24 +166,16 @@ class DrilldownMenu {
     submenu.classList.add('is-closing');
 
     this.#scheduleHeight(parentMenu ?? this.menu);
+    this.owner.emit(submenu, 'closed', { menu: this.menu, submenu });
 
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      submenu.classList.remove('is-active', 'is-closing');
-      submenu.classList.add('invisible');
-      submenu.removeEventListener('transitionend', onEnd);
-    };
-
-    const onEnd = (event) => {
-      if (event.target !== submenu) return;
-      if (event.propertyName && event.propertyName !== 'transform') return;
-      finish();
-    };
-
-    submenu.addEventListener('transitionend', onEnd);
-    window.setTimeout(finish, 200);
+    afterTransition(
+      submenu,
+      () => {
+        submenu.classList.remove('is-active', 'is-closing');
+        submenu.classList.add('invisible');
+      },
+      { property: 'transform', fallback: 200, signal: this.owner.signal },
+    );
   }
 
   destroy() {
@@ -168,12 +183,16 @@ class DrilldownMenu {
   }
 }
 
-function ensureBackLink(submenu) {
+function ensureBackLink(submenu, label) {
   if (submenu.querySelector(':scope > .js-drilldown-back')) return;
 
   const back = document.createElement('li');
   back.className = 'js-drilldown-back';
-  back.innerHTML = '<a href="#" tabindex="0">Back</a>';
+  const link = document.createElement('a');
+  link.href = '#';
+  link.tabIndex = 0;
+  link.textContent = label;
+  back.appendChild(link);
   submenu.insertBefore(back, submenu.firstChild);
 }
 

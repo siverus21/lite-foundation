@@ -1,20 +1,49 @@
 /* Kitchen-sink chrome only — not part of the design system */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Sora:wght@400;500;600;700&display=swap');
+/* Fonts from index.html (Syne / Outfit / IBM Plex Mono) */
 
 :root {
-  --ks-ink: #102a43;
-  --ks-muted: #627d98;
-  --ks-line: #d9e2ec;
-  --ks-surface: #f0f4f8;
-  --ks-accent: #0b6e99;
-  --ks-accent-soft: rgba(11, 110, 153, 0.12);
-  --ks-nav: #102a43;
-  --ks-paper: #f7fafc;
-  --ks-demo: #d9e2ec;
-  --ks-radius: 0.35rem;
+  --ks-ink: #0f1f33;
+  --ks-muted: #5a6e84;
+  --ks-line: #d5dde8;
+  --ks-surface: #eef2f8;
+  --ks-accent: #1769aa;
+  --ks-accent-soft: rgba(23, 105, 170, 0.12);
+  --ks-nav: #0b1a2e;
+  --ks-paper: #f5f8fc;
+  --ks-demo: #d5dde8;
+  --ks-radius: 0.75rem;
   --ks-nav-h: 3.75rem;
   --ks-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ks-raised: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ks-ink: #e6ebf3;
+    --ks-muted: #9aa6b8;
+    --ks-line: #262b36;
+    --ks-surface: #12151c;
+    --ks-accent: #7eb8f0;
+    --ks-accent-soft: rgba(126, 184, 240, 0.14);
+    --ks-nav: #06080c;
+    --ks-paper: #0a0c11;
+    --ks-demo: #262b36;
+    --ks-raised: #1a1e27;
+  }
+}
+
+[data-theme='dark'] {
+  --ks-ink: #e6ebf3;
+  --ks-muted: #9aa6b8;
+  --ks-line: #262b36;
+  --ks-surface: #12151c;
+  --ks-accent: #7eb8f0;
+  --ks-accent-soft: rgba(126, 184, 240, 0.14);
+  --ks-nav: #06080c;
+  --ks-paper: #0a0c11;
+  --ks-demo: #262b36;
+  --ks-raised: #1a1e27;
 }
 
 html {
@@ -24,12 +53,12 @@ html {
 body.ks-body {
   margin: 0;
   min-height: 100vh;
-  font-family: 'Sora', 'Helvetica Neue', sans-serif;
+  font-family: 'Outfit', 'Helvetica Neue', sans-serif;
   color: var(--ks-ink);
   background:
-    radial-gradient(900px 420px at 12% -8%, rgba(11, 110, 153, 0.14), transparent 55%),
-    radial-gradient(700px 380px at 92% 8%, rgba(16, 42, 67, 0.08), transparent 50%),
-    linear-gradient(180deg, #eef4f8 0%, var(--ks-paper) 28%, #fff 100%);
+    radial-gradient(900px 420px at 12% -8%, var(--ks-accent-soft), transparent 55%),
+    radial-gradient(700px 380px at 92% 8%, color-mix(in srgb, var(--ks-nav) 25%, transparent), transparent 50%),
+    var(--ks-paper);
   background-attachment: fixed;
 }
 
@@ -38,7 +67,7 @@ body.ks-body h2,
 body.ks-body h3,
 body.ks-body .ks-brand,
 body.ks-body .ks-hero-title {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Syne', 'Outfit', sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -308,7 +337,7 @@ body.ks-body .ks-hero-title {
   padding: 0.35rem 0.65rem;
   border: 1px solid color-mix(in srgb, var(--ks-accent) 35%, var(--ks-line));
   border-radius: var(--ks-radius);
-  background: color-mix(in srgb, var(--ks-accent-soft) 70%, #fff);
+  background: var(--ks-raised);
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
@@ -345,7 +374,7 @@ body.ks-body .ks-hero-title {
 /* —— Demo surfaces —— */
 .ks-demo-box {
   background:
-    linear-gradient(160deg, #fff 0%, var(--ks-surface) 100%);
+    linear-gradient(160deg, var(--ks-raised) 0%, var(--ks-surface) 100%);
   border: 1px solid var(--ks-line);
   padding: 1rem;
   margin-bottom: 0.5rem;

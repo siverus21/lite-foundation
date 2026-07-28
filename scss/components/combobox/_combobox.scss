@@ -1,0 +1,87 @@
+@use '../../settings/vars' as *;
+// Combobox / autocomplete. Needs `styles.listbox` for the option list and
+// `scripts.combobox` for behaviour. Progressive enhancement: put
+// `data-combobox` on a real <select> and the native control keeps working
+// (and submitting) if the JS never arrives.
+
+.combobox {
+  position: relative;
+  display: block;
+
+  // The <select> the widget was built from stays in the DOM as the form field.
+  select[data-combobox-source] {
+    display: none;
+  }
+}
+
+.combobox-input {
+  // Room for the clear button / spinner on the trailing edge.
+  padding-inline-end: var(--lf-combobox-inline-padding, #{$combobox-inline-padding});
+}
+
+.combobox-clear {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lf-combobox-clear-size, #{$combobox-clear-size});
+  height: var(--lf-combobox-clear-size, #{$combobox-clear-size});
+  margin: 0;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--lf-color-dark-gray);
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--lf-overlay-soft);
+    color: var(--lf-body-color);
+  }
+
+  &::before {
+    content: '×';
+    font-size: 1.1rem;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// `lf:combobox:loading` sets this while an async source is in flight.
+.combobox[data-loading] .combobox-clear {
+  visibility: hidden;
+}
+
+.combobox[data-loading]::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 0.75rem;
+  width: var(--lf-combobox-spinner-size, #{$combobox-spinner-size});
+  height: var(--lf-combobox-spinner-size, #{$combobox-spinner-size});
+  box-sizing: border-box;
+  transform: translateY(-50%);
+  border: 2px solid var(--lf-spinner-track);
+  border-top-color: var(--lf-spinner-color, var(--lf-color-primary));
+  border-radius: 50%;
+  animation: lf-combobox-spin 0.7s linear infinite;
+}
+
+@keyframes lf-combobox-spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combobox[data-loading]::after {
+    animation-duration: 2s;
+  }
+}

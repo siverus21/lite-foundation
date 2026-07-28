@@ -1,1 +1,4 @@
 @forward 'css-variables';
+// Loaded after the light tokens on purpose: the prefers-color-scheme block has
+// the same specificity as the `:root` above, so source order decides.
+@forward 'dark';

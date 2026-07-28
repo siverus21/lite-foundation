@@ -1,87 +1,25 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accordion — lite-foundation docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../dist/app.css">
     <link rel="stylesheet" href="assets/docs.css">
   </head>
   <body class="docs-body">
-    <header class="docs-nav">
-      <div class="grid-container">
-        <div class="docs-nav-links">
-          <a class="docs-brand" href="index.html">lite-foundation</a>
-        </div>
-      </div>
-    </header>
-    <main class="docs-main grid-container">
-      <p class="docs-kicker">Component</p>
-      <h1>Accordion</h1>
-      <p class="docs-lead">
-        Раскрывающиеся секции на native <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code>.
-        Работает даже без JS; модуль добавляет режим «только одна панель» и единообразие a11y.
-      </p>
-      <div class="docs-flags">
-        <span class="docs-flag">styles.accordion</span>
-        <span class="docs-flag">scripts.accordion</span>
-      </div>
-
-      <section class="docs-section">
-        <h2>Когда использовать</h2>
-        <div class="docs-note">
-          <strong>Подходит</strong>
-          <ul>
-            <li>FAQ, длинные описания, «показать детали»</li>
-            <li>Когда важно, чтобы контент индексировался и работал без JS</li>
-          </ul>
-        </div>
-        <div class="docs-note">
-          <strong>Не путать с</strong>
-          <ul>
-            <li><a href="menus.html">Accordion menu</a> — навигация, не контентные панели</li>
-            <li><a href="tabs.html">Tabs</a> — взаимоисключающие панели на одном уровне просмотра</li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Пример</h2>
-        <p class="docs-meta">
-          По умолчанию открыта одна панель. Несколько сразу:
-          <code>data-multi-expand="true"</code> на корне.
-        </p>
-        <div class="docs-demo">
-          <div class="accordion" data-accordion>
-            <details class="accordion-item" open>
-              <summary class="accordion-title">Accordion 1</summary>
-              <div class="accordion-content"><p>Panel 1 content.</p></div>
-            </details>
-            <details class="accordion-item">
-              <summary class="accordion-title">Accordion 2</summary>
-              <div class="accordion-content"><p>Panel 2 content.</p></div>
-            </details>
-            <details class="accordion-item">
-              <summary class="accordion-title">Accordion 3</summary>
-              <div class="accordion-content"><p>Panel 3 content.</p></div>
-            </details>
-          </div>
-        </div>
-        <div class="docs-code"><pre><code>&lt;div class="accordion" data-accordion&gt;
-  &lt;details class="accordion-item" open&gt;
-    &lt;summary class="accordion-title"&gt;Accordion 1&lt;/summary&gt;
-    &lt;div class="accordion-content"&gt;&lt;p&gt;Panel 1&lt;/p&gt;&lt;/div&gt;
-  &lt;/details&gt;
-  &lt;details class="accordion-item"&gt;
-    &lt;summary class="accordion-title"&gt;Accordion 2&lt;/summary&gt;
-    &lt;div class="accordion-content"&gt;&lt;p&gt;Panel 2&lt;/p&gt;&lt;/div&gt;
-  &lt;/details&gt;
-&lt;/div&gt;
-
-&lt;!-- несколько открытых: data-multi-expand="true" --&gt;</code></pre></div>
-      </section>
-    </main>
-    <script type="module" src="/js/load-build.js?build=full"></script>
-    <script type="module" src="assets/docs.js"></script>
+    <div id="app"></div>
+    <script type="module" src="./src/entries/accordion.jsx"></script>
   </body>
 </html>

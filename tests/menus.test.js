@@ -58,6 +58,23 @@ describe('MenuDropdown', () => {
 
     menus.destroy();
   });
+
+  it('emits opened.lf.menu-dropdown / closed.lf.menu-dropdown', () => {
+    const menus = new MenuDropdown(document);
+    const parent = document.querySelector('[data-menu="dropdown"] li:nth-child(2)');
+    const opened = [];
+    const closed = [];
+    parent.addEventListener('opened.lf.menu-dropdown', () => opened.push(1));
+    parent.addEventListener('closed.lf.menu-dropdown', () => closed.push(1));
+
+    parent.querySelector(':scope > a').click();
+    expect(opened).toEqual([1]);
+
+    document.getElementById('outside').click();
+    expect(closed).toEqual([1]);
+
+    menus.destroy();
+  });
 });
 
 describe('MenuAccordion', () => {

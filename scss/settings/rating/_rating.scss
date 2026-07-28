@@ -1,0 +1,8 @@
+@use '../foundation' as *;
+// Rating (new — not in Foundation)
+
+$rating-size: 1.4rem;
+$rating-gap: 0.15em;
+$rating-empty-color: $medium-gray;
+$rating-fill-color: $warning-color;
+$rating-hover-color: scale-color($warning-color, $lightness: 20%);

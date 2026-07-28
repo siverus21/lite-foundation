@@ -174,6 +174,142 @@
     }
   }
 
+  @if variable-exists(avatar-background) {
+    --lf-avatar-bg: #{$avatar-background};
+    --lf-avatar-color: #{$avatar-color};
+    --lf-avatar-size: #{map-get($avatar-sizes, default)};
+    --lf-avatar-ring-color: #{$white};
+    --lf-avatar-status-ring: #{$white};
+
+    @each $name, $color in $avatar-status-palette {
+      --lf-avatar-status-#{$name}: #{$color};
+    }
+  }
+
+  @if variable-exists(chip-background) {
+    --lf-chip-bg: #{$chip-background};
+    --lf-chip-color: #{$chip-color};
+  }
+
+  @if variable-exists(spinner-color) {
+    --lf-spinner-track: #{$spinner-track-color};
+    --lf-spinner-color: #{$spinner-color};
+    --lf-skeleton-bg: #{$skeleton-background};
+    --lf-skeleton-highlight: #{$skeleton-highlight};
+
+    @each $name, $color in $foundation-palette {
+      --lf-color-#{$name}-track: #{scale-color($color, $lightness: 70%)};
+    }
+  }
+
+  @if variable-exists(toast-background) {
+    --lf-toast-bg: #{$toast-background};
+    --lf-toast-color: #{$toast-color};
+    --lf-toast-accent: #{$primary-color};
+  }
+
+  @if variable-exists(stepper-active-color) {
+    --lf-stepper-line: #{$stepper-line-color};
+    --lf-stepper-inactive: #{$stepper-inactive-color};
+    --lf-stepper-active: #{$stepper-active-color};
+    --lf-stepper-complete: #{$stepper-complete-color};
+    --lf-stepper-label: #{$stepper-label-color};
+  }
+
+  @if variable-exists(rating-fill-color) {
+    --lf-rating-empty: #{$rating-empty-color};
+    --lf-rating-fill: #{$rating-fill-color};
+    --lf-rating-hover: #{$rating-hover-color};
+  }
+
+  @if variable-exists(segmented-background) {
+    --lf-segmented-bg: #{$segmented-background};
+    --lf-segmented-color: #{$segmented-color};
+    --lf-segmented-color-active: #{$segmented-color-active};
+    --lf-segmented-thumb-bg: #{$segmented-thumb-background};
+    --lf-segmented-border: #{$segmented-border};
+    --lf-segmented-radius: #{$segmented-radius};
+    --lf-segmented-padding: #{$segmented-padding};
+    --lf-segmented-item-padding: #{$segmented-item-padding};
+    --lf-segmented-gap: #{$segmented-gap};
+    --lf-segmented-font-size: #{map-get($segmented-sizes, default)};
+  }
+
+  @if variable-exists(timeline-line-color) {
+    --lf-timeline-line: #{$timeline-line-color};
+    --lf-timeline-line-width: #{$timeline-line-width};
+    --lf-timeline-dot-size: #{$timeline-dot-size};
+    --lf-timeline-dot-bg: #{$timeline-dot-background};
+    --lf-timeline-dot-color: #{$timeline-dot-color};
+    --lf-timeline-gutter: #{$timeline-gutter};
+    --lf-timeline-item-spacing: #{$timeline-item-spacing};
+    --lf-timeline-meta-color: #{$timeline-meta-color};
+    --lf-timeline-meta-font-size: #{$timeline-meta-font-size};
+  }
+
+  @if variable-exists(popover-background) {
+    --lf-popover-bg: #{$popover-background};
+    --lf-popover-color: #{$popover-color};
+    --lf-popover-border: #{$popover-border-color};
+    --lf-popover-radius: #{$popover-radius};
+    --lf-popover-padding: #{$popover-padding};
+    --lf-popover-max-width: #{$popover-max-width};
+    --lf-popover-offset: #{$popover-offset};
+    --lf-popover-menu-item-padding: #{$popover-menu-item-padding};
+  }
+
+  @if variable-exists(listbox-background) {
+    --lf-listbox-bg: #{$listbox-background};
+    --lf-listbox-border: #{$listbox-border-color};
+    --lf-listbox-radius: #{$listbox-radius};
+    --lf-listbox-max-height: #{$listbox-max-height};
+    --lf-listbox-option-padding: #{$listbox-option-padding};
+    --lf-listbox-option-bg-active: #{$listbox-option-background-active};
+    --lf-listbox-mark-bg: #{$listbox-mark-background};
+    --lf-listbox-font-size: #{$listbox-font-size};
+  }
+
+  @if variable-exists(combobox-clear-size) {
+    --lf-combobox-clear-size: #{$combobox-clear-size};
+    --lf-combobox-spinner-size: #{$combobox-spinner-size};
+    --lf-combobox-inline-padding: #{$combobox-inline-padding};
+  }
+
+  @if variable-exists(taginput-background) {
+    --lf-taginput-bg: #{$taginput-background};
+    --lf-taginput-border: #{$taginput-border-color};
+    --lf-taginput-radius: #{$taginput-radius};
+    --lf-taginput-padding: #{$taginput-padding};
+    --lf-taginput-gap: #{$taginput-gap};
+    --lf-taginput-field-min-width: #{$taginput-field-min-width};
+    --lf-taginput-font-size: #{$taginput-font-size};
+  }
+
+  @if variable-exists(quantity-background) {
+    --lf-quantity-bg: #{$quantity-background};
+    --lf-quantity-border: #{$quantity-border-color};
+    --lf-quantity-radius: #{$quantity-radius};
+    --lf-quantity-button-color: #{$quantity-button-color};
+    --lf-quantity-button-bg-hover: #{$quantity-button-background-hover};
+    --lf-quantity-field-width: #{$quantity-field-width};
+    --lf-quantity-font-size: #{$quantity-font-size};
+  }
+
+  @if variable-exists(otp-background) {
+    --lf-otp-bg: #{$otp-background};
+    --lf-otp-border: #{$otp-border-color};
+    --lf-otp-color: #{$otp-color};
+    --lf-otp-radius: #{$otp-radius};
+    --lf-otp-field-size: #{$otp-field-size};
+    --lf-otp-font-size: #{$otp-font-size};
+    --lf-otp-gap: #{$otp-gap};
+  }
+
+  @if variable-exists(copy-status-color) {
+    --lf-copy-status-color: #{$copy-status-color};
+    --lf-copy-status-font-size: #{$copy-status-font-size};
+  }
+
   @if variable-exists(badge-background) {
     --lf-badge-bg: #{$badge-background};
     --lf-badge-color: #{$badge-color};

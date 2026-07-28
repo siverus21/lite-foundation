@@ -1,218 +1,25 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forms — lite-foundation docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../dist/app.css">
     <link rel="stylesheet" href="assets/docs.css">
   </head>
   <body class="docs-body">
-    <header class="docs-nav">
-      <div class="grid-container">
-        <div class="docs-nav-links">
-          <a class="docs-brand" href="index.html">lite-foundation</a>
-        </div>
-      </div>
-    </header>
-    <main class="docs-main grid-container">
-      <p class="docs-kicker">Component</p>
-      <h1>Forms</h1>
-      <p class="docs-lead">
-        Стили полей ввода и контролов. Большинство работает без JS; кастомный range
-        (<code>data-slider</code>) требует модуль FormSlider. Кастомные
-        <code>.checkbox</code> / <code>.radio</code> — opt-in внутри <code>styles.forms</code>.
-      </p>
-      <div class="docs-flags">
-        <span class="docs-flag">styles.forms</span>
-        <span class="docs-flag">scripts.formSlider</span>
-      </div>
-
-      <section class="docs-section">
-        <h2>Когда использовать</h2>
-        <div class="docs-note">
-          <strong>Подходит</strong>
-          <ul>
-            <li>Любые формы регистрации, фильтры, настройки</li>
-            <li>Кастомные checkbox/radio — брендированный UI с цветами/размерами</li>
-            <li>Switch — бинарный выбор вместо чекбокса «в стиле UI»</li>
-            <li>Form slider — визуальный range с handle (цена, процент)</li>
-          </ul>
-        </div>
-        <p class="docs-aside">
-          Для native <code>&lt;input type="range"&gt;</code> JS не нужен — form-slider это отдельный
-          Foundation-подобный виджет. Нативные checkbox/radio без классов остаются браузерными.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Поля</h2>
-        <div class="docs-demo">
-          <label>Input
-            <input type="text" placeholder="Type here">
-          </label>
-          <label>Select
-            <select><option>One</option><option>Two</option></select>
-          </label>
-          <label>Textarea
-            <textarea rows="3"></textarea>
-          </label>
-          <div class="switch">
-            <input class="switch-input" id="docs-switch" type="checkbox">
-            <label class="switch-paddle" for="docs-switch"><span class="show-for-sr">Switch</span></label>
-          </div>
-        </div>
-        <div class="docs-code"><pre><code>&lt;label&gt;Input
-  &lt;input type="text" placeholder="Type here"&gt;
-&lt;/label&gt;
-
-&lt;div class="switch"&gt;
-  &lt;input class="switch-input" id="exampleSwitch" type="checkbox"&gt;
-  &lt;label class="switch-paddle" for="exampleSwitch"&gt;
-    &lt;span class="show-for-sr"&gt;Switch&lt;/span&gt;
-  &lt;/label&gt;
-&lt;/div&gt;</code></pre></div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Checkbox &amp; Radio</h2>
-        <p>
-          Opt-in кастом: класс <code>.checkbox</code> / <code>.radio</code> на <code>&lt;label&gt;</code>.
-          Без него инпуты остаются нативными. JS не нужен.
-        </p>
-        <div class="docs-note">
-          <strong>Вариации (классы на label)</strong>
-          <ul>
-            <li>Цвет: <code>primary</code> (дефолт), <code>secondary</code>, <code>success</code>, <code>warning</code>, <code>alert</code></li>
-            <li>Размер: <code>tiny</code>, <code>small</code>, <code>large</code> (без класса — базовый)</li>
-            <li>Стиль: <code>solid</code> (дефолт) или <code>hollow</code></li>
-          </ul>
-        </div>
-
-        <h3>Цвета и стили</h3>
-        <div class="docs-demo">
-          <label class="checkbox primary">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Primary solid
-          </label>
-          <label class="checkbox success hollow">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Success hollow
-          </label>
-          <label class="checkbox warning">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Warning
-          </label>
-          <label class="checkbox alert hollow">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Alert hollow
-          </label>
-          <label class="checkbox secondary">
-            <input class="checkbox-input" type="checkbox" checked disabled>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Disabled
-          </label>
-        </div>
-
-        <h3>Размеры</h3>
-        <div class="docs-demo">
-          <label class="checkbox primary tiny">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Tiny
-          </label>
-          <label class="checkbox primary small">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Small
-          </label>
-          <label class="checkbox primary">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Default
-          </label>
-          <label class="checkbox primary large">
-            <input class="checkbox-input" type="checkbox" checked>
-            <span class="checkbox-control" aria-hidden="true"></span>
-            Large
-          </label>
-        </div>
-
-        <h3>Radio</h3>
-        <div class="docs-demo">
-          <label class="radio primary">
-            <input class="radio-input" type="radio" name="docs-plan" checked>
-            <span class="radio-control" aria-hidden="true"></span>
-            Primary
-          </label>
-          <label class="radio warning hollow">
-            <input class="radio-input" type="radio" name="docs-plan">
-            <span class="radio-control" aria-hidden="true"></span>
-            Warning hollow
-          </label>
-          <label class="radio secondary small">
-            <input class="radio-input" type="radio" name="docs-plan">
-            <span class="radio-control" aria-hidden="true"></span>
-            Small
-          </label>
-          <label class="radio success large">
-            <input class="radio-input" type="radio" name="docs-plan">
-            <span class="radio-control" aria-hidden="true"></span>
-            Large
-          </label>
-        </div>
-
-        <div class="docs-code"><pre><code>&lt;label class="checkbox primary"&gt;
-  &lt;input class="checkbox-input" type="checkbox"&gt;
-  &lt;span class="checkbox-control" aria-hidden="true"&gt;&lt;/span&gt;
-  Remember me
-&lt;/label&gt;
-
-&lt;label class="radio success large hollow"&gt;
-  &lt;input class="radio-input" type="radio" name="plan"&gt;
-  &lt;span class="radio-control" aria-hidden="true"&gt;&lt;/span&gt;
-  Pro
-&lt;/label&gt;
-
-&lt;!-- disabled — атрибут на input, размер как у соседних --&gt;
-&lt;label class="checkbox secondary"&gt;
-  &lt;input class="checkbox-input" type="checkbox" checked disabled&gt;
-  &lt;span class="checkbox-control" aria-hidden="true"&gt;&lt;/span&gt;
-  Disabled
-&lt;/label&gt;</code></pre></div>
-
-        <h3>Настройки (SCSS)</h3>
-        <p>
-          Файл <code>scss/settings/forms/_choice.scss</code>. CSS-переменные:
-          <code>--lf-choice-border</code>, <code>--lf-choice-bg</code>,
-          <code>--lf-choice-bg-checked</code>, <code>--lf-choice-mark</code>,
-          <code>--lf-choice-focus-ring</code>. Цвет акцента на вариантах —
-          через <code>--lf-color-*</code>.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Form slider</h2>
-        <p>Нужны <code>styles.forms</code> + <code>scripts.formSlider</code>. Значение пишется в hidden input.</p>
-        <div class="docs-demo">
-          <div class="slider" data-slider data-initial-start="50" data-end="100">
-            <span class="slider-handle" data-slider-handle tabindex="0"></span>
-            <span class="slider-fill" data-slider-fill></span>
-            <input type="hidden">
-          </div>
-        </div>
-        <div class="docs-code"><pre><code>&lt;div class="slider" data-slider data-initial-start="50" data-end="100"&gt;
-  &lt;span class="slider-handle" data-slider-handle tabindex="0"&gt;&lt;/span&gt;
-  &lt;span class="slider-fill" data-slider-fill&gt;&lt;/span&gt;
-  &lt;input type="hidden"&gt;
-&lt;/div&gt;</code></pre></div>
-      </section>
-    </main>
-    <script type="module" src="/js/load-build.js?build=full"></script>
-    <script type="module" src="assets/docs.js"></script>
+    <div id="app"></div>
+    <script type="module" src="./src/entries/forms.jsx"></script>
   </body>
 </html>

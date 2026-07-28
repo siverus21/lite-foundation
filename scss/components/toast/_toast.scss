@@ -1,0 +1,100 @@
+@use '../../settings/vars' as *;
+// Toast / Notification (new — not in Foundation). `.toast-stack` is created
+// lazily by js/modules/toast.js on first use, then reused for every toast.
+
+.toast-stack {
+  position: fixed;
+  z-index: var(--lf-z-toast);
+  top: $global-position;
+  right: $global-position;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lf-toast-gap, #{$toast-gap});
+  width: var(--lf-toast-width, #{$toast-width});
+  max-width: calc(100vw - #{$toast-gap} * 2);
+  pointer-events: none;
+}
+
+.toast {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--lf-toast-padding, #{$toast-padding});
+  border-inline-start: 4px solid var(--lf-toast-accent, #{$primary-color});
+  border-radius: var(--lf-toast-radius, #{$toast-border-radius});
+  background: var(--lf-toast-bg, #{$toast-background});
+  color: var(--lf-toast-color, #{$toast-color});
+  box-shadow: var(--lf-toast-shadow, #{$toast-shadow});
+  opacity: 0;
+  transform: translateX(1.5rem);
+  transition: opacity var(--lf-toast-transition, #{$toast-transition-duration}) ease-out,
+    transform var(--lf-toast-transition, #{$toast-transition-duration}) ease-out;
+  pointer-events: auto;
+
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @each $name, $color in $toast-palette {
+    &.#{$name} {
+      border-inline-start-color: var(--lf-color-#{$name}, #{$color});
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.toast-title {
+  margin-bottom: 0.15rem;
+  font-weight: $global-weight-bold;
+}
+
+.toast-message {
+  font-size: 0.9rem;
+}
+
+.toast-action {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lf-toast-accent, #{$primary-color});
+  font-weight: $global-weight-bold;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.toast-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: currentColor;
+  opacity: 0.5;
+  cursor: pointer;
+  line-height: 1;
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
+
+  &::before {
+    content: '×';
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,27 @@
+/* Scoped theme preview — tokens apply only inside this box */
+.docs-theme-preview {
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  background: var(--lf-body-bg, #fefefe);
+  color: var(--lf-body-color, #0a0a0a);
+  border: 1px solid var(--docs-line, #e2e8f0);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.docs-theme-preview .callout {
+  margin-bottom: 0.75rem;
+}
+
+.docs-theme-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+}
+
+.docs-theme-swatch {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+}

@@ -4,6 +4,8 @@
 import { Module } from '../core/Module.js';
 
 export class Animations extends Module {
+  static id = 'animations';
+
   constructor(root = document) {
     super(root);
     this.box = root.getElementById?.('ks-animate-box') ?? document.getElementById('ks-animate-box');

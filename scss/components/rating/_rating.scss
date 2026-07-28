@@ -1,0 +1,63 @@
+@use '../../settings/vars' as *;
+// Rating (new — not in Foundation).
+//
+// Interactive (default): js/modules/rating.js builds a role="radiogroup" of
+// role="radio" star buttons; `.is-filled`/`.is-hover` classes drive the fill.
+// Readonly (`data-readonly`): pure CSS via the `--lf-rating-value` percentage
+// custom property + `content: attr(data-stars)` overlay — no JS at all.
+
+.rating {
+  position: relative;
+  display: inline-flex;
+  gap: var(--lf-rating-gap, #{$rating-gap});
+  color: var(--lf-rating-empty, #{$rating-empty-color});
+  font-size: var(--lf-rating-size, #{$rating-size});
+  line-height: 1;
+}
+
+.rating-star {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  line-height: 1;
+  cursor: pointer;
+
+  &::before {
+    content: '☆';
+  }
+
+  &.is-filled::before,
+  &.is-hover::before {
+    content: '★';
+  }
+
+  &.is-filled,
+  &.is-hover {
+    color: var(--lf-rating-fill, #{$rating-fill-color});
+  }
+
+  &.is-hover {
+    color: var(--lf-rating-hover, #{$rating-hover-color});
+  }
+}
+
+.rating[data-readonly] {
+  display: inline-block;
+  cursor: default;
+
+  &::before {
+    content: attr(data-stars);
+  }
+
+  &::after {
+    content: attr(data-stars);
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    overflow: hidden;
+    width: var(--lf-rating-value, 0%);
+    color: var(--lf-rating-fill, #{$rating-fill-color});
+    white-space: nowrap;
+  }
+}

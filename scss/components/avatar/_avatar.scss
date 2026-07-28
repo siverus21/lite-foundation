@@ -1,0 +1,84 @@
+@use '../../settings/vars' as *;
+// Avatar (new — not in Foundation). Round/square profile image with a pure-CSS
+// initials fallback (content: attr(data-initials) — no JS/onerror needed).
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: var(--lf-avatar-size, #{map-get($avatar-sizes, default)});
+  height: var(--lf-avatar-size, #{map-get($avatar-sizes, default)});
+  border-radius: var(--lf-avatar-radius, #{$avatar-radius});
+  background: var(--lf-avatar-bg, #{$avatar-background});
+  color: var(--lf-avatar-color, #{$avatar-color});
+  font-weight: $avatar-font-weight;
+  font-size: 0.85em;
+  line-height: 1;
+  vertical-align: middle;
+  user-select: none;
+  flex: 0 0 auto;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.square {
+    border-radius: var(--lf-global-radius, #{$global-radius});
+  }
+
+  &.bordered {
+    box-shadow: 0 0 0 2px var(--lf-avatar-ring-color, #{$white});
+  }
+
+  @each $name, $size in map-remove($avatar-sizes, default) {
+    &.#{$name} {
+      width: var(--lf-avatar-size-#{$name}, #{$size});
+      height: var(--lf-avatar-size-#{$name}, #{$size});
+    }
+  }
+}
+
+.avatar-initials::before {
+  content: attr(data-initials);
+}
+
+.avatar-status {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  box-sizing: content-box;
+  width: var(--lf-avatar-status-size, #{$avatar-status-size});
+  height: var(--lf-avatar-status-size, #{$avatar-status-size});
+  border: 2px solid var(--lf-avatar-status-ring, #{$white});
+  border-radius: 50%;
+  background: var(--lf-avatar-status-offline, #{map-get($avatar-status-palette, offline)});
+
+  &[data-status='online'] {
+    background: var(--lf-avatar-status-online, #{map-get($avatar-status-palette, online)});
+  }
+
+  &[data-status='busy'] {
+    background: var(--lf-avatar-status-busy, #{map-get($avatar-status-palette, busy)});
+  }
+
+  &[data-status='offline'] {
+    background: var(--lf-avatar-status-offline, #{map-get($avatar-status-palette, offline)});
+  }
+}
+
+.avatar-group {
+  display: inline-flex;
+
+  .avatar {
+    box-shadow: 0 0 0 2px var(--lf-avatar-ring-color, #{$white});
+
+    &:not(:first-child) {
+      margin-inline-start: -0.6em;
+    }
+  }
+}

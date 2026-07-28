@@ -1,149 +1,25 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menus — lite-foundation docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../dist/app.css">
     <link rel="stylesheet" href="assets/docs.css">
   </head>
   <body class="docs-body">
-    <header class="docs-nav">
-      <div class="grid-container">
-        <div class="docs-nav-links">
-          <a class="docs-brand" href="index.html">lite-foundation</a>
-        </div>
-      </div>
-    </header>
-    <main class="docs-main grid-container">
-      <p class="docs-kicker">Component</p>
-      <h1>Menus</h1>
-      <p class="docs-lead">
-        Навигационные списки с вложенностью. Тип задаётся
-        <code>data-menu="dropdown|accordion|drilldown"</code> — отдельные JS-флаги на каждый паттерн.
-      </p>
-      <div class="docs-flags">
-        <span class="docs-flag">styles.menu</span>
-        <span class="docs-flag">scripts.menuDropdown</span>
-        <span class="docs-flag">scripts.menuAccordion</span>
-        <span class="docs-flag">scripts.menuDrilldown</span>
-      </div>
-
-      <section class="docs-section">
-        <h2>Какой тип выбрать</h2>
-        <div class="docs-note">
-          <strong>dropdown</strong> — горизонтальный top-bar, десктопные подменю по клику/ховеру.
-        </div>
-        <div class="docs-note">
-          <strong>accordion</strong> — вертикальное меню в сайдбаре / off-canvas: вложенность раскрывается на месте.
-        </div>
-        <div class="docs-note">
-          <strong>drilldown</strong> — мобильный паттерн «провалиться в уровень» с кнопкой назад (узкая колонка).
-        </div>
-        <p class="docs-aside">
-          Не путать с контентным <a href="accordion.html">Accordion</a> и панельным
-          <a href="dropdown.html">Dropdown</a>.
-        </p>
-      </section>
-
-      <section class="docs-section">
-        <h2>Dropdown menu</h2>
-        <div class="docs-demo">
-          <ul class="dropdown menu" data-menu="dropdown">
-            <li><a href="#">Item 1</a></li>
-            <li>
-              <a href="#">Item 2</a>
-              <ul class="menu">
-                <li><a href="#">Item 2A</a></li>
-                <li><a href="#">Item 2B</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Item 3</a></li>
-          </ul>
-        </div>
-        <div class="docs-code"><pre><code>&lt;ul class="dropdown menu" data-menu="dropdown"&gt;
-  &lt;li&gt;&lt;a href="#"&gt;Item 1&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;
-    &lt;a href="#"&gt;Item 2&lt;/a&gt;
-    &lt;ul class="menu"&gt;
-      &lt;li&gt;&lt;a href="#"&gt;Item 2A&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</code></pre></div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Accordion menu</h2>
-        <div class="docs-demo" style="max-width: 16rem;">
-          <ul class="vertical menu accordion-menu" data-menu="accordion">
-            <li><a href="#">Item 1</a></li>
-            <li>
-              <a href="#">Item 2</a>
-              <ul class="menu vertical nested">
-                <li><a href="#">Item 2A</a></li>
-                <li><a href="#">Item 2B</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class="docs-code"><pre><code>&lt;ul class="vertical menu accordion-menu" data-menu="accordion"&gt;
-  &lt;li&gt;&lt;a href="#"&gt;Item 1&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;
-    &lt;a href="#"&gt;Item 2&lt;/a&gt;
-    &lt;ul class="menu vertical nested"&gt;…&lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</code></pre></div>
-      </section>
-
-      <section class="docs-section">
-        <h2>Drilldown menu</h2>
-        <p>
-          Нужен флаг <code>scripts.menuDrilldown</code>. JS оборачивает список в
-          <code>.is-drilldown</code>, помечает уровни и вставляет пункт
-          <code>.js-drilldown-back</code> («Back») в каждое вложенное меню.
-        </p>
-        <div class="docs-demo" style="max-width: 16rem;">
-          <ul class="vertical menu drilldown" data-menu="drilldown">
-            <li>
-              <a href="#">Item 1</a>
-              <ul class="menu vertical nested">
-                <li><a href="#">Item 1A</a></li>
-                <li>
-                  <a href="#">Item 1B</a>
-                  <ul class="menu vertical nested">
-                    <li><a href="#">Item 1B i</a></li>
-                    <li><a href="#">Item 1B ii</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li><a href="#">Item 2</a></li>
-          </ul>
-        </div>
-        <div class="docs-code"><pre><code>&lt;ul class="vertical menu drilldown" data-menu="drilldown"&gt;
-  &lt;li&gt;
-    &lt;a href="#"&gt;Item 1&lt;/a&gt;
-    &lt;ul class="menu vertical nested"&gt;
-      &lt;li&gt;&lt;a href="#"&gt;Item 1A&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;
-        &lt;a href="#"&gt;Item 1B&lt;/a&gt;
-        &lt;ul class="menu vertical nested"&gt;
-          &lt;li&gt;&lt;a href="#"&gt;Item 1B i&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href="#"&gt;Item 1B ii&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href="#"&gt;Item 2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</code></pre></div>
-        <div class="docs-aside">
-          Фиксируй ширину контейнера (например <code>max-width: 16rem</code>) —
-          высота панели считается от ширины wrapper. Клик по родителю с подменю
-          сдвигает уровень влево; «Back» возвращает.
-        </div>
-      </section>
-    </main>
-    <script type="module" src="/js/load-build.js?build=full"></script>
-    <script type="module" src="assets/docs.js"></script>
+    <div id="app"></div>
+    <script type="module" src="./src/entries/menus.jsx"></script>
   </body>
 </html>

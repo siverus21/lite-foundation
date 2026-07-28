@@ -1,0 +1,115 @@
+@use '../../settings/vars' as *;
+// Stepper (new — not in Foundation). Numbers render via `content: attr(data-index)`
+// on the marker; `.is-complete` swaps that for a check mark — pure CSS, no JS text sync.
+// js/modules/stepper.js only toggles is-active/is-complete + aria-current.
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepper-step {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: calc(#{$stepper-marker-size} / 2);
+    left: -50%;
+    z-index: var(--lf-z-behind);
+    width: 100%;
+    height: var(--lf-stepper-line-thickness, #{$stepper-line-thickness});
+    background: var(--lf-stepper-line, #{$stepper-line-color});
+    transform: translateY(-50%);
+  }
+
+  &.is-complete::before,
+  &.is-active::before {
+    background: var(--lf-stepper-complete, #{$stepper-complete-color});
+  }
+}
+
+.stepper-step-marker {
+  position: relative;
+  z-index: var(--lf-z-content);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lf-stepper-marker-size, #{$stepper-marker-size});
+  height: var(--lf-stepper-marker-size, #{$stepper-marker-size});
+  margin-bottom: 0.4rem;
+  border: 2px solid var(--lf-stepper-inactive, #{$stepper-inactive-color});
+  border-radius: 50%;
+  background: $white;
+  color: var(--lf-stepper-inactive, #{$stepper-inactive-color});
+  font-weight: $global-weight-bold;
+
+  &::before {
+    content: attr(data-index);
+  }
+}
+
+.stepper-step-label {
+  font-size: 0.85rem;
+  color: var(--lf-stepper-label, #{$stepper-label-color});
+}
+
+.stepper-step.is-active {
+  .stepper-step-marker {
+    border-color: var(--lf-stepper-active, #{$stepper-active-color});
+    color: var(--lf-stepper-active, #{$stepper-active-color});
+  }
+
+  .stepper-step-label {
+    color: var(--lf-stepper-active, #{$stepper-active-color});
+    font-weight: $global-weight-bold;
+  }
+}
+
+.stepper-step.is-complete {
+  .stepper-step-marker {
+    border-color: var(--lf-stepper-complete, #{$stepper-complete-color});
+    background: var(--lf-stepper-complete, #{$stepper-complete-color});
+    color: $white;
+
+    &::before {
+      content: '✓';
+    }
+  }
+}
+
+.stepper[data-clickable] .stepper-step {
+  cursor: pointer;
+}
+
+.stepper.vertical {
+  flex-direction: column;
+
+  .stepper-step {
+    flex-direction: row;
+    align-items: flex-start;
+    padding-bottom: 1.5rem;
+    text-align: left;
+
+    &:not(:first-child)::before {
+      top: -1.5rem;
+      left: calc((#{$stepper-marker-size} - var(--lf-stepper-line-thickness, #{$stepper-line-thickness})) / 2);
+      width: var(--lf-stepper-line-thickness, #{$stepper-line-thickness});
+      height: 1.5rem;
+      transform: none;
+    }
+  }
+
+  .stepper-step-marker {
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+  }
+}

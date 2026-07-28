@@ -1,0 +1,70 @@
+@use '../../settings/vars' as *;
+// Chip / Tag (new — not in Foundation). Removable chip works for free via the
+// existing js/modules/dismiss.js: `<span class="chip" data-closable>… <button
+// class="chip-close" data-close></button></span>` — no new JS needed.
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: var(--lf-chip-padding, #{$chip-padding});
+  border: 1px solid transparent;
+  border-radius: var(--lf-chip-radius, #{$chip-radius});
+  background: var(--lf-chip-bg, #{$chip-background});
+  color: var(--lf-chip-color, #{$chip-color});
+  font-size: var(--lf-chip-font-size, #{map-get($chip-sizes, default)});
+  line-height: 1.4;
+  white-space: nowrap;
+
+  &.hollow {
+    border-color: var(--lf-chip-bg, #{$chip-background});
+    background: transparent;
+    color: var(--lf-chip-bg, #{$chip-background});
+  }
+
+  @each $size, $value in map-remove($chip-sizes, default) {
+    &.#{$size} {
+      font-size: $value;
+    }
+  }
+
+  @each $name, $color in $chip-palette {
+    &.#{$name} {
+      background: var(--lf-color-#{$name}, #{$color});
+      color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($chip-color-alt, $chip-color))});
+
+      &.hollow {
+        border-color: var(--lf-color-#{$name}, #{$color});
+        background: transparent;
+        color: var(--lf-color-#{$name}, #{$color});
+      }
+    }
+  }
+}
+
+.chip-close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: $chip-close-size;
+  height: $chip-close-size;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: currentColor;
+  opacity: 0.6;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+    background: rgba($black, 0.08);
+  }
+
+  &::before {
+    content: '×';
+    line-height: 1;
+  }
+}

@@ -1,0 +1,96 @@
+@use '../../settings/vars' as *;
+// Quantity input — «− 1 +» control around a real <input type="number">, so the
+// value submits with the form and mobile gets a numeric keypad.
+// Buttons are built by js/modules/quantity.js when they are absent from markup.
+
+.quantity {
+  display: inline-flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  border: 1px solid var(--lf-quantity-border, #{$quantity-border-color});
+  border-radius: var(--lf-quantity-radius, #{$quantity-radius});
+  background: var(--lf-quantity-bg, #{$quantity-background});
+  overflow: hidden;
+  vertical-align: middle;
+  --lf-quantity-control-size: #{map-get($quantity-sizes, default)};
+
+  @each $size, $value in map-remove($quantity-sizes, default) {
+    &.#{$size} {
+      --lf-quantity-control-size: #{$value};
+    }
+  }
+
+  &.expanded {
+    display: flex;
+    width: 100%;
+  }
+
+  // Set by the module while the app is confirming the value with a server
+  // (`lf:quantity:busy`) — see docs/quantity.html.
+  &[data-busy] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.quantity-button {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--lf-quantity-control-size);
+  min-height: var(--lf-quantity-control-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lf-quantity-button-color, #{$quantity-button-color});
+  font-size: 1.1em;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover:not(:disabled) {
+    background: var(--lf-quantity-button-bg-hover, #{$quantity-button-background-hover});
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--lf-color-primary);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.quantity-input {
+  flex: 1 1 auto;
+  width: var(--lf-quantity-field-width, #{$quantity-field-width});
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0 0.25rem;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: var(--lf-input-color);
+  font-size: var(--lf-quantity-font-size, #{$quantity-font-size});
+  text-align: center;
+  appearance: textfield;
+
+  &:focus {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  // Native spinners would duplicate the − / + buttons.
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+}

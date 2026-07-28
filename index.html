@@ -1,15 +1,27 @@
 <!doctype html>
 <html class="no-js" lang="ru">
   <head>
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('lf-theme');
+          if (m === 'dark' || m === 'light') document.documentElement.setAttribute('data-theme', m);
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Sink — lite-foundation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="dist/app.css">
     <link rel="stylesheet" href="dist/lib-swiper.css">
     <link rel="stylesheet" href="assets/kitchen-sink.css">
   </head>
   <body class="ks-body">
+    <div class="scroll-progress primary" aria-hidden="true"></div>
     <aside
       class="offcanvas"
       id="offCanvas"
@@ -24,6 +36,9 @@
         <li><a href="#typography">Typography</a></li>
         <li><a href="#buttons">Buttons</a></li>
         <li><a href="#forms">Forms</a></li>
+        <li><a href="#theme">Theme</a></li>
+        <li><a href="#uikit-inputs">Quantity / Combobox</a></li>
+        <li><a href="#popover">Popover</a></li>
         <li><a href="#callouts">Callouts</a></li>
         <li><a href="#navigation">Navigation</a></li>
         <li><a href="#accordion">Accordion</a></li>
@@ -50,12 +65,25 @@
               <li><a href="#grid">Grid</a></li>
               <li><a href="#buttons">Buttons</a></li>
               <li><a href="#forms">Forms</a></li>
+              <li><a href="#theme">Theme</a></li>
+              <li><a href="#uikit-inputs">Inputs</a></li>
               <li><a href="#accordion">Accordion</a></li>
               <li><a href="#tabs">Tabs</a></li>
-              <li><a href="#orbit">Slider</a></li>
               <li><a href="#reveal">Dialog</a></li>
               <li><a href="docs/index.html">Docs</a></li>
               <li><a href="about.html">About</a></li>
+              <li>
+                <button
+                  type="button"
+                  class="button tiny hollow"
+                  data-theme-toggle
+                  data-theme-label-light="Тёмная"
+                  data-theme-label-dark="Светлая"
+                  aria-label="Переключить тему"
+                >
+                  Тема
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -87,7 +115,9 @@
               <li><a href="docs/start.html">Быстрый старт</a></li>
               <li><a href="docs/builds.html">Builds</a></li>
               <li><a href="docs/tokens.html">Токены</a></li>
+              <li><a href="docs/dark-mode.html">Тёмная тема</a></li>
               <li><a href="docs/lifecycle.html">JS API</a></li>
+              <li><a href="docs/support.html">Поддержка браузеров</a></li>
             </ul>
           </div>
           <div class="ks-docs-map-group">
@@ -96,13 +126,12 @@
               <li><a href="docs/button.html">Button</a></li>
               <li><a href="docs/forms.html">Forms</a></li>
               <li><a href="docs/modal.html">Modal</a></li>
-              <li><a href="docs/tabs.html">Tabs</a></li>
-              <li><a href="docs/accordion.html">Accordion</a></li>
-              <li><a href="docs/dropdown.html">Dropdown</a></li>
-              <li><a href="docs/offcanvas.html">Off-canvas</a></li>
-              <li><a href="docs/menus.html">Menus</a></li>
-              <li><a href="docs/slider.html">Slider</a></li>
-              <li><a href="docs/callout-card.html">Callout &amp; Card</a></li>
+              <li><a href="docs/popover.html">Popover</a></li>
+              <li><a href="docs/quantity.html">Quantity</a></li>
+              <li><a href="docs/combobox.html">Combobox</a></li>
+              <li><a href="docs/tag-input.html">Tag input</a></li>
+              <li><a href="docs/table.html">Table</a></li>
+              <li><a href="docs/ui-kit.html">UI Kit</a></li>
             </ul>
           </div>
         </div>
@@ -376,35 +405,42 @@
           <section class="ks-section" id="table">
             <div class="ks-section-head">
               <h2>Table</h2>
-              <a class="ks-docs-link" href="docs/index.html">Docs</a>
+              <a class="ks-docs-link" href="docs/table.html">Docs</a>
             </div>
-            <p class="ks-meta">Своя table: <code>striped</code>, <code>hover</code>, <code>stack</code></p>
-            <table class="striped hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Anna</td>
-                  <td>Design</td>
-                  <td><span class="success label">Active</span></td>
-                </tr>
-                <tr>
-                  <td>Boris</td>
-                  <td>Dev</td>
-                  <td><span class="warning label">Away</span></td>
-                </tr>
-                <tr>
-                  <td>Clara</td>
-                  <td>QA</td>
-                  <td><span class="alert label">Blocked</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <p class="ks-meta">Сортировка <code>data-table-sort</code>, липкий заголовок <code>sticky-head</code>, стек на мобильных</p>
+            <div class="table-scroll limited" style="--lf-table-scroll-height: 14rem;">
+              <table class="striped hover sticky-head" data-table-sort>
+                <thead>
+                  <tr>
+                    <th data-sort="text">Name</th>
+                    <th data-sort="text">Role</th>
+                    <th data-sort="number" data-sort-default="desc">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="Name">Anna</td>
+                    <td data-label="Role">Design</td>
+                    <td data-label="Score" data-sort-value="92">92</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Name">Boris</td>
+                    <td data-label="Role">Dev</td>
+                    <td data-label="Score" data-sort-value="78">78</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Name">Clara</td>
+                    <td data-label="Role">QA</td>
+                    <td data-label="Score" data-sort-value="85">85</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Name">Ёлкин</td>
+                    <td data-label="Role">Dev</td>
+                    <td data-label="Score" data-sort-value="61">61</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
 
           <!-- Navigation -->
@@ -769,6 +805,178 @@
             <p><button type="button" class="button" data-offcanvas-open="offCanvas">Open off-canvas</button></p>
           </section>
 
+          <!-- Theme -->
+          <section class="ks-section" id="theme">
+            <div class="ks-section-head">
+              <h2>Theme</h2>
+              <a class="ks-docs-link" href="docs/dark-mode.html">Docs</a>
+            </div>
+            <p class="ks-meta"><code>scripts.theme</code> — светлая / тёмная / авто; токены <code>--lf-*</code></p>
+            <p>
+              <button class="button" type="button" data-theme-toggle
+                      data-theme-label-light="Тёмная тема" data-theme-label-dark="Светлая тема">
+                Тёмная тема
+              </button>
+              <button class="button hollow" type="button" data-theme-set="auto">Как в системе</button>
+            </p>
+          </section>
+
+          <!-- Segmented + Timeline -->
+          <section class="ks-section" id="segmented-timeline">
+            <div class="ks-section-head">
+              <h2>Segmented &amp; Timeline</h2>
+              <a class="ks-docs-link" href="docs/segmented.html">Segmented</a>
+            </div>
+            <p class="ks-meta">Чистый CSS: радиогруппа как один контрол; хронология без JS</p>
+            <div class="segmented" style="margin-bottom: 1rem;">
+              <label class="segmented-item"><input type="radio" name="ksView" checked><span>Список</span></label>
+              <label class="segmented-item"><input type="radio" name="ksView"><span>Плитка</span></label>
+              <label class="segmented-item"><input type="radio" name="ksView"><span>Карта</span></label>
+            </div>
+            <ol class="timeline" style="max-width: 22rem;">
+              <li class="timeline-item is-complete">
+                <p class="timeline-meta">12 июля</p>
+                <h4 class="timeline-title">Заказ оформлен</h4>
+              </li>
+              <li class="timeline-item is-current">
+                <p class="timeline-meta">13 июля</p>
+                <h4 class="timeline-title">В доставке</h4>
+              </li>
+              <li class="timeline-item">
+                <p class="timeline-meta">Ожидается</p>
+                <h4 class="timeline-title">Доставлен</h4>
+              </li>
+            </ol>
+            <p class="ks-meta"><a href="docs/timeline.html">Timeline docs →</a></p>
+          </section>
+
+          <!-- Popover -->
+          <section class="ks-section" id="popover">
+            <div class="ks-section-head">
+              <h2>Popover</h2>
+              <a class="ks-docs-link" href="docs/popover.html">Docs</a>
+            </div>
+            <p class="ks-meta">Нативный <code>popover</code> + JS-фолбэк позиционирования</p>
+            <button class="button" type="button" popovertarget="ksPopover">Аккаунт ▾</button>
+            <div class="popover" id="ksPopover" popover data-popover>
+              <ul class="popover-menu">
+                <li><a href="#theme">Тема</a></li>
+                <li><a href="docs/popover.html">Документация</a></li>
+                <li><button type="button">Выйти</button></li>
+              </ul>
+            </div>
+            <button class="button secondary" type="button" popovertarget="ksPopoverTop" style="margin-inline-start: 0.5rem;">Сверху</button>
+            <div class="popover top" id="ksPopoverTop" popover data-popover>
+              <p class="popover-title">Подсказка</p>
+              <p style="margin:0;">class="top"</p>
+            </div>
+          </section>
+
+          <!-- Quantity / Combobox / Tag input -->
+          <section class="ks-section" id="uikit-inputs">
+            <div class="ks-section-head">
+              <h2>Quantity, Combobox, Tag input</h2>
+              <a class="ks-docs-link" href="docs/quantity.html">Quantity</a>
+            </div>
+            <p class="ks-meta">Форменные контролы с событиями <code>*.lf.*</code> и командами <code>lf:*:*</code></p>
+
+            <h5>Quantity</h5>
+            <div class="quantity" data-quantity data-quantity-hold data-quantity-debounce="300" data-quantity-max="20">
+              <input class="quantity-input" type="number" name="ksQty" value="1" min="0">
+            </div>
+            <p class="ks-meta" id="ksQtyStatus" style="margin-top: 0.5rem;"></p>
+
+            <h5>Combobox</h5>
+            <div style="max-width: 18rem;">
+              <select name="ksCity" data-combobox>
+                <option value="">— город —</option>
+                <option value="msk">Москва</option>
+                <option value="spb">Санкт-Петербург</option>
+                <option value="nsk">Новосибирск</option>
+                <option value="kzn">Казань</option>
+              </select>
+            </div>
+
+            <h5>Tag input</h5>
+            <div style="max-width: 26rem;">
+              <div class="tag-input" data-tag-input
+                   data-tag-input-name="ksTags[]"
+                   data-tag-input-value="css, a11y"
+                   data-tag-input-max="5"
+                   data-tag-input-suggestions="javascript, css, a11y, testing">
+                <input class="tag-input-field" type="text" placeholder="Добавить тег…">
+              </div>
+            </div>
+            <p class="ks-meta">
+              <a href="docs/combobox.html">Combobox →</a> ·
+              <a href="docs/tag-input.html">Tag input →</a>
+            </p>
+          </section>
+
+          <!-- OTP / feedback / copy -->
+          <section class="ks-section" id="field-extras">
+            <div class="ks-section-head">
+              <h2>OTP, счётчик, пароль, copy</h2>
+              <a class="ks-docs-link" href="docs/field-extras.html">Docs</a>
+            </div>
+            <p class="ks-meta">Мелкие модули поверх нативных элементов</p>
+
+            <h5>OTP</h5>
+            <div class="otp" data-otp data-otp-length="4" data-otp-name="ksCode"></div>
+
+            <div class="grid-x grid-padding-x">
+              <div class="medium-6 cell">
+                <label>Заголовок
+                  <input class="input" type="text" data-char-counter maxlength="40" placeholder="До 40 символов">
+                </label>
+              </div>
+              <div class="medium-6 cell">
+                <label>Пароль
+                  <input class="input" type="password" data-password-strength data-password-strength-min="3">
+                </label>
+              </div>
+            </div>
+
+            <p>
+              <code id="ksSnippet">npm i lite-foundation</code>
+              <button class="button tiny" type="button" data-copy="#ksSnippet" data-copy-label="Скопировано!">Копировать</button>
+            </p>
+          </section>
+
+          <!-- Avatar / Chip / Toast / Stepper / Rating (compact) -->
+          <section class="ks-section" id="uikit-misc">
+            <div class="ks-section-head">
+              <h2>Avatar, Chip, Toast, Stepper, Rating</h2>
+              <a class="ks-docs-link" href="docs/ui-kit.html">UI Kit</a>
+            </div>
+            <p class="ks-meta">Краткая витрина — полные варианты на <a href="docs/ui-kit.html">ui-kit.html</a></p>
+            <p>
+              <span class="avatar avatar-initials" data-initials="АИ"></span>
+              <span class="chip primary">Tag</span>
+              <span class="chip success hollow">Hollow</span>
+            </p>
+            <p>
+              <button class="button tiny success" type="button" data-toast-trigger
+                      data-toast-variant="success" data-toast-title="Готово"
+                      data-toast-message="Kitchen sink toast">Toast</button>
+            </p>
+            <ol class="stepper" data-stepper style="margin-bottom: 1rem;">
+              <li class="stepper-step is-complete" data-stepper-step>
+                <span class="stepper-step-marker" data-index="1"></span>
+                <span class="stepper-step-label">Корзина</span>
+              </li>
+              <li class="stepper-step is-active" data-stepper-step>
+                <span class="stepper-step-marker" data-index="2"></span>
+                <span class="stepper-step-label">Доставка</span>
+              </li>
+              <li class="stepper-step" data-stepper-step>
+                <span class="stepper-step-marker" data-index="3"></span>
+                <span class="stepper-step-label">Оплата</span>
+              </li>
+            </ol>
+            <div class="rating" data-rating data-rating-value="4" data-rating-max="5"></div>
+          </section>
+
       <footer class="ks-footer">
         <p>
           lite-foundation kitchen sink ·
@@ -782,6 +990,17 @@
     <script type="module" src="/js/load-build.js?build=full"></script>
     <script type="module" src="/js/load-build.js?build=swiper"></script>
     <script type="module">
+      const qty = document.querySelector('#uikit-inputs [data-quantity]');
+      const qtyStatus = document.getElementById('ksQtyStatus');
+      if (qty && qtyStatus) {
+        qty.addEventListener('changed.lf.quantity', (event) => {
+          qtyStatus.textContent = `changed.lf.quantity → ${event.detail.value} (${event.detail.reason})`;
+        });
+        qty.addEventListener('committed.lf.quantity', (event) => {
+          qtyStatus.textContent += ` · committed → ${event.detail.value}`;
+        });
+      }
+
       const sections = [...document.querySelectorAll('.ks-section')];
       if ('IntersectionObserver' in window) {
         const io = new IntersectionObserver(

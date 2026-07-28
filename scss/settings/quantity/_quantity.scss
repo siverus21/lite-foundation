@@ -1,0 +1,16 @@
+@use '../foundation' as *;
+// Quantity input (new — stepper for numbers: cart, filters, forms)
+
+$quantity-background: $white;
+$quantity-border-color: $medium-gray;
+$quantity-radius: $global-radius;
+$quantity-button-size: 2.25rem;
+$quantity-button-color: $black;
+$quantity-button-background-hover: $light-gray;
+$quantity-field-width: 3.25rem;
+$quantity-font-size: 1rem;
+$quantity-sizes: (
+  small: 1.85rem,
+  default: 2.25rem,
+  large: 2.75rem,
+);

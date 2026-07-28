@@ -1,0 +1,20 @@
+@use '../foundation' as *;
+// Avatar (new — not in Foundation)
+
+$avatar-sizes: (
+  tiny: 1.5rem,
+  small: 2rem,
+  default: 2.5rem,
+  large: 3.5rem,
+);
+$avatar-background: $medium-gray;
+$avatar-color: $white;
+$avatar-color-alt: $black;
+$avatar-radius: 50%;
+$avatar-font-weight: $global-weight-bold;
+$avatar-status-size: 0.65em;
+$avatar-status-palette: (
+  online: $success-color,
+  busy: $alert-color,
+  offline: $medium-gray,
+);

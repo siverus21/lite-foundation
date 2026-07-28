@@ -39,6 +39,55 @@
   }
 }
 
+/**
+ * Reading-progress bar driven by scroll position.
+ *
+ *   <div class="scroll-progress" role="presentation"></div>
+ *
+ * Two ways to feed it, in the same rule set:
+ *   • `animation-timeline: scroll()` — no JS, runs off the main thread
+ *     (Chrome/Edge 115+, Safari 26+; Firefox only from 155).
+ *   • `--lf-scroll-progress` (0…1) — set it from a scroll listener where the
+ *     timeline is missing. The CSS animation wins over the base `transform`
+ *     wherever it is supported, so both can be wired up at once.
+ *
+ * With neither, the bar sits at scaleX(0): invisible instead of broken.
+ */
+.scroll-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: var(--lf-z-sticky);
+  height: var(--lf-scroll-progress-height, 3px);
+  transform: scaleX(var(--lf-scroll-progress, 0));
+  transform-origin: 0 50%;
+  background: var(--lf-progress-meter, #{$progress-meter-background});
+  pointer-events: none;
+
+  @each $name, $color in $foundation-palette {
+    &.#{$name} {
+      background: var(--lf-color-#{$name}, #{$color});
+    }
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: lf-scroll-progress 1s linear;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes lf-scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Native <progress> */
 progress {
   display: block;

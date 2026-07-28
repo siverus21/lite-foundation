@@ -1,0 +1,89 @@
+@use '../../settings/vars' as *;
+// Timeline — chronology of events (order tracking, audit log, changelog).
+// Pure CSS, no JS. Stepper is the sibling component for *process* progress:
+// a stepper has a current step you can navigate, a timeline is history.
+//
+// <ol class="timeline">
+//   <li class="timeline-item success">
+//     <p class="timeline-meta">12 июля, 10:24</p>
+//     <h4 class="timeline-title">Заказ собран</h4>
+//     <p>Ждёт курьера.</p>
+//   </li>
+// </ol>
+
+.timeline {
+  margin: 0 0 $global-margin;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline-item {
+  position: relative;
+  padding-inline-start: var(--lf-timeline-gutter, #{$timeline-gutter});
+  padding-block-end: var(--lf-timeline-item-spacing, #{$timeline-item-spacing});
+
+  // The connector: a border on the item itself, so it always spans exactly the
+  // item's height — no magic numbers, no absolutely positioned rails.
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--lf-timeline-dot-size, #{$timeline-dot-size}) / 2);
+    width: var(--lf-timeline-line-width, #{$timeline-line-width});
+    transform: translateX(-50%);
+    background: var(--lf-timeline-line, #{$timeline-line-color});
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 0.35em;
+    inset-inline-start: 0;
+    width: var(--lf-timeline-dot-size, #{$timeline-dot-size});
+    height: var(--lf-timeline-dot-size, #{$timeline-dot-size});
+    box-sizing: border-box;
+    border: var(--lf-timeline-line-width, #{$timeline-line-width}) solid
+      var(--lf-timeline-dot-color, #{$timeline-dot-color});
+    border-radius: 50%;
+    background: var(--lf-timeline-dot-bg, #{$timeline-dot-background});
+  }
+
+  &:last-child {
+    padding-block-end: 0;
+
+    &::before {
+      content: none;
+    }
+  }
+
+  // Filled dot — the event happened.
+  &.is-complete::after {
+    border-color: var(--lf-timeline-dot-color-complete, var(--lf-color-success));
+    background: var(--lf-timeline-dot-color-complete, var(--lf-color-success));
+  }
+
+  // Ring — the event is happening now.
+  &.is-current::after {
+    border-color: var(--lf-color-primary);
+    box-shadow: 0 0 0 3px var(--lf-color-primary-track, var(--lf-overlay-soft));
+  }
+
+  @each $name, $color in $timeline-palette {
+    &.#{$name}::after {
+      border-color: var(--lf-color-#{$name}, #{$color});
+      background: var(--lf-color-#{$name}, #{$color});
+    }
+  }
+}
+
+.timeline-meta {
+  margin: 0;
+  color: var(--lf-timeline-meta-color, #{$timeline-meta-color});
+  font-size: var(--lf-timeline-meta-font-size, #{$timeline-meta-font-size});
+}
+
+.timeline-title {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  line-height: 1.35;
+}

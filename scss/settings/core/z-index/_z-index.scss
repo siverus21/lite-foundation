@@ -7,10 +7,14 @@ $z-index: (
   sticky: 2,
   closebutton: 10,
   dropdown: 20,
+  // Only used by the non-native popover fallback — native popovers live in the
+  // top layer, which is above every z-index in this scale.
+  popover: 25,
   tooltip: 30,
   tooltip-nub: 31,
   offcanvas-backdrop: 1001,
   offcanvas: 1002,
+  toast: 1100,
 ) !default;
 
 @function z($name) {

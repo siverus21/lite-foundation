@@ -1,0 +1,19 @@
+@use '../foundation' as *;
+// Spinner + Skeleton (new — not in Foundation)
+
+$spinner-size: 1.5rem;
+$spinner-sizes: (
+  tiny: 0.85rem,
+  small: 1.15rem,
+  default: 1.5rem,
+  large: 2.5rem,
+);
+$spinner-track-color: $light-gray;
+$spinner-color: $primary-color;
+$spinner-thickness: 2px;
+$spinner-duration: 0.7s;
+
+$skeleton-background: $light-gray;
+$skeleton-highlight: $white;
+$skeleton-radius: $global-radius;
+$skeleton-duration: 1.5s;

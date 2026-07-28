@@ -1,0 +1,16 @@
+@use '../foundation' as *;
+// Chip / Tag (new — not in Foundation)
+
+$chip-background: $light-gray;
+$chip-color: $black;
+$chip-color-alt: $white;
+$chip-palette: $foundation-palette;
+$chip-padding: 0.3em 0.85em;
+$chip-font-size: 0.8rem;
+$chip-radius: 100em;
+$chip-sizes: (
+  small: 0.7rem,
+  default: 0.8rem,
+  large: 0.95rem,
+);
+$chip-close-size: 1.1em;

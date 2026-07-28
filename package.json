@@ -23,8 +23,10 @@
     "swiper": "^11.2.10"
   },
   "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
     "@vitest/coverage-v8": "^4.1.10",
     "happy-dom": "^20.11.1",
+    "preact": "^10.29.7",
     "sass": "^1.79.3",
     "vite": "^6.0.0",
     "vitest": "^4.1.10"

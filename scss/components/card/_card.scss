@@ -41,3 +41,23 @@
     min-height: 1px;
   }
 }
+
+// Container-query variant: `.card.adaptive` stacks by default and turns
+// horizontal once *its container* (not the viewport) is wide enough. Wrap it in
+// `.query-container` (scss/utilities/_container.scss) to enable the query.
+@container (min-width: 26rem) {
+  .card.adaptive {
+    flex-direction: row;
+    align-items: stretch;
+
+    > .card-image {
+      flex: 0 0 40%;
+      max-width: 40%;
+      object-fit: cover;
+    }
+
+    > .card-section {
+      flex: 1 1 auto;
+    }
+  }
+}

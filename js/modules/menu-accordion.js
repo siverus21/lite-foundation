@@ -1,5 +1,8 @@
 /**
  * Accordion menu (data-menu="accordion").
+ *
+ * Events on the toggled `<li>`: `opened.lf.menu-accordion` /
+ * `closed.lf.menu-accordion`, detail `{ menu, item }`.
  */
 import { Module } from '../core/Module.js';
 import { markSubmenus } from './menu-utils.js';
@@ -17,6 +20,8 @@ function wrapAccordionPanels(menu) {
 }
 
 export class MenuAccordion extends Module {
+  static id = 'menu-accordion';
+
   constructor(root = document) {
     super(root);
     if (!root.querySelector('[data-menu="accordion"]')) return;
@@ -35,6 +40,7 @@ export class MenuAccordion extends Module {
         event.preventDefault();
         const open = item.classList.toggle('is-open');
         item.setAttribute('aria-expanded', open ? 'true' : 'false');
+        this.emit(item, open ? 'opened' : 'closed', { menu, item });
       });
     });
   }

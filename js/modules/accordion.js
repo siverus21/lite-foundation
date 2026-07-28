@@ -1,11 +1,33 @@
 /**
  * Accordion on native <details>/<summary> with smooth height animation.
+ *
+ * The markup works without JS — `<details>` opens and closes on its own. This
+ * module only adds the height transition, single-open behaviour and events, so
+ * `destroy()` leaves a plain working accordion behind.
+ *
+ * Settings (attributes on the root):
+ *   data-accordion                 required marker
+ *   data-multi-expand="true"       allow several open panels at once
+ *
+ * Events on the item (<details>), bubbling:
+ *   opened.lf.accordion  detail { index }
+ *   closed.lf.accordion  detail { index }
+ *
+ * Command events on the root:
+ *   lf:accordion:open    { index }
+ *   lf:accordion:close   { index }
+ *   lf:accordion:toggle  { index }
  */
 import { Module } from '../core/Module.js';
+import { animateHeight } from '../core/transition.js';
+import { bool } from '../core/attrs.js';
 
 export class Accordion extends Module {
+  static id = 'accordion';
+
   constructor(root = document) {
     super(root);
+    /** @type {AccordionGroup[]} */
     this._groups = [];
     this.mountAll('[data-accordion]', (el) => {
       this._groups.push(new AccordionGroup(el, this));
@@ -20,10 +42,12 @@ export class Accordion extends Module {
 }
 
 class AccordionGroup {
+  /** @param {Element} root @param {Accordion} owner */
   constructor(root, owner) {
     this.root = root;
     this.owner = owner;
-    this.multi = root.getAttribute('data-multi-expand') === 'true';
+    this.multi = bool(root, 'data-multi-expand');
+    /** Serialises animations so two clicks can't fight over the same height. */
     this.queue = Promise.resolve();
     this.root.setAttribute('data-lf-enhanced', '');
     this.#ensureContentWrappers();
@@ -32,13 +56,25 @@ class AccordionGroup {
 
   destroy() {
     this.root.removeAttribute('data-lf-enhanced');
-    this.root.querySelectorAll('details.accordion-item').forEach((item) => {
-      const content = item.querySelector(':scope > .accordion-content');
+    this.#items().forEach((item) => {
+      const content = this.#contentOf(item);
       if (content) content.style.height = '';
       item.classList.toggle('is-open', item.open);
     });
   }
 
+  #items() {
+    return [...this.root.querySelectorAll('details.accordion-item')];
+  }
+
+  #contentOf(item) {
+    return item.querySelector(':scope > .accordion-content');
+  }
+
+  /**
+   * The animated element needs a child of its own: transitioning the height of a
+   * box whose padding lives on the same element makes the content jump.
+   */
   #ensureContentWrappers() {
     this.root.querySelectorAll('.accordion-content').forEach((content) => {
       if (content.querySelector(':scope > .accordion-content-inner')) return;
@@ -50,39 +86,60 @@ class AccordionGroup {
   }
 
   #bind() {
-    this.root.querySelectorAll('details.accordion-item').forEach((item) => {
+    this.#items().forEach((item) => {
       const summary = item.querySelector(':scope > summary.accordion-title');
-      const content = item.querySelector(':scope > .accordion-content');
+      const content = this.#contentOf(item);
       if (!summary || !content) return;
 
-      if (item.open) {
-        content.style.height = 'auto';
-        item.classList.add('is-open');
-      } else {
-        content.style.height = '0px';
-        item.classList.remove('is-open');
-      }
+      // Sync the starting state: `open` in the markup must not animate on load.
+      content.style.height = item.open ? 'auto' : '0px';
+      item.classList.toggle('is-open', item.open);
 
       this.owner.on(summary, 'click', (event) => {
         event.preventDefault();
-        this.queue = this.queue.then(() => this.#toggle(item, content));
+        this.enqueue(() => this.#toggle(item));
       });
+    });
+
+    this.owner.commands(this.root, {
+      open: (event) => this.enqueue(() => this.#openAt(event.detail?.index)),
+      close: (event) => this.enqueue(() => this.#closeAt(event.detail?.index)),
+      toggle: (event) => {
+        const item = this.#items()[event.detail?.index];
+        if (item) this.enqueue(() => this.#toggle(item));
+      },
     });
   }
 
-  async #toggle(item, content) {
-    const isOpen = item.open && item.classList.contains('is-open');
+  /** @param {() => Promise<void>} task */
+  enqueue(task) {
+    this.queue = this.queue.then(task).catch(() => {});
+    return this.queue;
+  }
 
-    if (isOpen) {
+  async #openAt(index) {
+    const item = this.#items()[index];
+    if (item && !item.open) await this.#toggle(item);
+  }
+
+  async #closeAt(index) {
+    const item = this.#items()[index];
+    if (item && item.open) await this.#toggle(item);
+  }
+
+  async #toggle(item) {
+    const content = this.#contentOf(item);
+    if (!content) return;
+
+    if (item.open && item.classList.contains('is-open')) {
       await this.#close(item, content);
       return;
     }
 
     if (!this.multi) {
-      const openItems = [...this.root.querySelectorAll('details.accordion-item.is-open')];
-      for (const other of openItems) {
+      for (const other of [...this.root.querySelectorAll('details.accordion-item.is-open')]) {
         if (other === item) continue;
-        const otherContent = other.querySelector(':scope > .accordion-content');
+        const otherContent = this.#contentOf(other);
         if (otherContent) await this.#close(other, otherContent);
       }
     }
@@ -90,64 +147,26 @@ class AccordionGroup {
     await this.#open(item, content);
   }
 
-  #open(item, content) {
-    return new Promise((resolve) => {
-      item.open = true;
-      item.classList.add('is-open');
+  async #open(item, content) {
+    item.open = true;
+    item.classList.add('is-open');
 
-      content.style.height = '0px';
-      void content.offsetHeight;
-
-      const inner = content.querySelector('.accordion-content-inner');
-      const target = inner ? inner.offsetHeight : content.scrollHeight;
-      content.style.height = `${target}px`;
-
-      const finish = () => {
-        content.removeEventListener('transitionend', onEnd);
-        content.style.height = 'auto';
-        resolve();
-      };
-
-      const onEnd = (event) => {
-        if (event.target !== content || event.propertyName !== 'height') return;
-        finish();
-      };
-
-      content.addEventListener('transitionend', onEnd);
-      window.setTimeout(finish, 500);
+    const inner = content.querySelector('.accordion-content-inner');
+    await animateHeight(content, 'open', {
+      signal: this.owner.signal,
+      measure: () => (inner ? inner.offsetHeight : content.scrollHeight),
     });
+
+    this.owner.emit(item, 'opened', { index: this.#items().indexOf(item) });
   }
 
-  #close(item, content) {
-    return new Promise((resolve) => {
-      if (!item.open) {
-        resolve();
-        return;
-      }
+  async #close(item, content) {
+    if (!item.open) return;
 
-      const current =
-        content.style.height === 'auto' || !content.style.height
-          ? content.scrollHeight
-          : content.offsetHeight;
+    item.classList.remove('is-open');
+    await animateHeight(content, 'close', { signal: this.owner.signal });
+    item.open = false;
 
-      content.style.height = `${current}px`;
-      void content.offsetHeight;
-      item.classList.remove('is-open');
-      content.style.height = '0px';
-
-      const finish = () => {
-        content.removeEventListener('transitionend', onEnd);
-        item.open = false;
-        resolve();
-      };
-
-      const onEnd = (event) => {
-        if (event.target !== content || event.propertyName !== 'height') return;
-        finish();
-      };
-
-      content.addEventListener('transitionend', onEnd);
-      window.setTimeout(finish, 500);
-    });
+    this.owner.emit(item, 'closed', { index: this.#items().indexOf(item) });
   }
 }

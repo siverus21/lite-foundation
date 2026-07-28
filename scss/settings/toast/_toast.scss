@@ -1,0 +1,12 @@
+@use '../foundation' as *;
+// Toast / Notification (new — not in Foundation)
+
+$toast-background: $white;
+$toast-color: $body-font-color;
+$toast-palette: $foundation-palette;
+$toast-border-radius: $global-radius;
+$toast-padding: 0.85rem 2.25rem 0.85rem 1rem;
+$toast-width: 20rem;
+$toast-gap: 0.75rem;
+$toast-shadow: 0 4px 12px rgba($black, 0.15);
+$toast-transition-duration: 0.25s;

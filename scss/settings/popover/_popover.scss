@@ -1,0 +1,11 @@
+@use '../foundation' as *;
+// Popover (new — built on the native `popover` attribute)
+
+$popover-background: $white;
+$popover-color: $black;
+$popover-border-color: $medium-gray;
+$popover-radius: $global-radius;
+$popover-padding: 0.85rem 1rem;
+$popover-max-width: 20rem;
+$popover-offset: 0.4rem;
+$popover-menu-item-padding: 0.5rem 0.9rem;

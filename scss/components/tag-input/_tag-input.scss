@@ -1,0 +1,62 @@
+@use '../../settings/vars' as *;
+// Tag input — chips + a text field that behaves like one form control.
+// Needs `styles.chip` (the tags are plain `.chip` elements), `styles.listbox`
+// for suggestions, and `scripts.tagInput`.
+
+.tag-input {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lf-taginput-gap, #{$taginput-gap});
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: $global-margin;
+  padding: var(--lf-taginput-padding, #{$taginput-padding});
+  border: 1px solid var(--lf-taginput-border, #{$taginput-border-color});
+  border-radius: var(--lf-taginput-radius, #{$taginput-radius});
+  background: var(--lf-taginput-bg, #{$taginput-background});
+  box-shadow: var(--lf-input-shadow);
+  cursor: text;
+
+  &:focus-within {
+    border-color: var(--lf-input-border-focus);
+    box-shadow: var(--lf-input-shadow-focus);
+  }
+
+  // Set by the module when data-tag-input-max is reached.
+  &[data-full] .tag-input-field {
+    display: none;
+  }
+}
+
+.tag-input-field {
+  flex: 1 1 var(--lf-taginput-field-min-width, #{$taginput-field-min-width});
+  min-width: var(--lf-taginput-field-min-width, #{$taginput-field-min-width});
+  height: auto;
+  margin: 0;
+  padding: 0.15rem 0.25rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--lf-input-color);
+  font-size: var(--lf-taginput-font-size, #{$taginput-font-size});
+
+  &:focus {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.tag-input-hint {
+  flex: 0 0 100%;
+  margin: 0.1rem 0 0;
+  color: var(--lf-helptext-color);
+  font-size: 0.8rem;
+
+  &[hidden] {
+    display: none;
+  }
+}

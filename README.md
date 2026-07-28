@@ -45,8 +45,22 @@ Page-бандл собирается in-memory (`sass.compileString` / `virtual:
 Не вешай его на корень, скрытый по умолчанию (`<dialog>`, `.offcanvas`, что-то внутри неактивной вкладки/аккордеона) —
 `IntersectionObserver` не сработает для `display: none`, поэтому `Module.mount()` в этом случае просто инициализирует сразу, без отсрочки.
 
-Escape для «закрывающихся» компонентов (`Offcanvas`, `Dropdown`, `MenuDropdown`) — через общий диспетчер
-[`js/core/global-events.js`](js/core/global-events.js) (`onEscape`), один `document`-листенер на всех, а не по одному на модуль.
+Escape для «закрывающихся» компонентов (`Offcanvas`, `Dropdown`, `MenuDropdown`, JS-фолбэк `Popover`) — через общий
+диспетчер [`js/core/global-events.js`](js/core/global-events.js) (`onEscape`), один `document`-листенер на всех,
+а не по одному на модуль.
+
+## Тема и поддержка браузеров
+
+Тёмная схема — переопределение тех же `--lf-*` токенов (`scss/settings/css-variables/_dark.scss`) по
+`prefers-color-scheme: dark` и по `[data-theme='dark']`. Без JS. Модуль `scripts.theme` нужен только для ручного
+переключателя: пишет атрибут на `<html>`, помнит выбор в `localStorage`, шлёт `changed.lf.theme`.
+
+Минимальные версии браузеров для каждой используемой возможности платформы лежат в одном файле —
+[`docs/assets/support-data.js`](docs/assets/support-data.js). Из него собираются и блок «Поддержка браузерами» на
+страницах компонентов, и сводная таблица [`docs/support.html`](docs/support.html). Фолбэк нужен трём вещам:
+`popover` и anchor positioning (берёт на себя `scripts.popover`), `animation-timeline: scroll()` (полоса
+`.scroll-progress` просто не видна) и `navigator.clipboard` (нужен https, иначе `scripts.copy` уходит в
+`execCommand`).
 
 ## Feature flags
 
@@ -96,7 +110,8 @@ Vitest + `happy-dom`. Юнит-тесты лежат рядом по темам 
 ## Документация
 
 - Kitchen sink: [`index.html`](index.html)
-- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `lifecycle`, `testing`, компоненты)
+- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `dark-mode`, `lifecycle`, `support`, `testing`, компоненты)
+- Витрина всех компонентов: [`docs/ui-kit.html`](docs/ui-kit.html)
 - Demo: [`about.html`](about.html)
 
 ## Структура

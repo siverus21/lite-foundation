@@ -1,0 +1,11 @@
+@use '../foundation' as *;
+// Listbox (new) — the option list shared by Combobox and Tag input
+
+$listbox-background: $white;
+$listbox-border-color: $medium-gray;
+$listbox-radius: $global-radius;
+$listbox-max-height: 15rem;
+$listbox-option-padding: 0.45rem 0.75rem;
+$listbox-option-background-active: $light-gray;
+$listbox-mark-background: scale-color(map-get($foundation-palette, primary), $lightness: 70%);
+$listbox-font-size: 0.95rem;

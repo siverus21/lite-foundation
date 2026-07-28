@@ -3,6 +3,10 @@
 // Swiper carousel styles: _slider.scss
 
 .slider {
+  // Published by js/modules/form-slider.js — the only thing the JS writes, so
+  // both orientations are positioned here instead of by inline styles.
+  --lf-slider-percent: 0%;
+
   position: relative;
   height: $slider-height;
   margin-top: 1.25rem;
@@ -17,6 +21,7 @@
     top: 0;
     left: 0;
     display: inline-block;
+    width: var(--lf-slider-percent);
     max-width: 100%;
     height: $slider-height;
     background-color: var(--lf-slider-fill, #{$slider-fill-background});
@@ -30,7 +35,7 @@
   &-handle {
     position: absolute;
     top: 50%;
-    left: 0;
+    left: var(--lf-slider-percent);
     z-index: var(--lf-z-content);
     display: inline-block;
     width: $slider-handle-width;
@@ -58,6 +63,7 @@
     cursor: not-allowed;
   }
 
+  // Flipped so a growing height/top reads bottom-up, the way a vertical slider does.
   &.vertical {
     display: inline-block;
     width: $slider-width-vertical;
@@ -68,15 +74,16 @@
     .slider-fill {
       top: 0;
       width: $slider-width-vertical;
+      height: var(--lf-slider-percent);
       max-height: 100%;
     }
 
     .slider-handle {
-      top: 0;
+      top: var(--lf-slider-percent);
       left: 50%;
       width: $slider-handle-height;
       height: $slider-handle-width;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
     }
   }
 }

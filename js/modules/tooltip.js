@@ -5,6 +5,8 @@
 import { Module } from '../core/Module.js';
 
 export class Tooltip extends Module {
+  static id = 'tooltip';
+
   constructor(root = document) {
     super(root);
     this.mountAll('.has-tip[data-tip]', (el) => {

@@ -1,0 +1,243 @@
+@use '../vars' as *;
+
+// Dark colour scheme — overrides the --lf-* tokens from _css-variables.scss.
+//
+// Two entry points:
+//   1. OS preference (`prefers-color-scheme: dark`), unless the document opted
+//      out with [data-theme='light'] — that attribute is how js/modules/theme.js
+//      pins the light scheme.
+//   2. Explicit [data-theme='dark'] on any element (usually <html>).
+//
+// Only surface / ink / border tokens flip. The palette (--lf-color-primary …)
+// and its computed -contrast variants stay put so buttons, badges and callouts
+// keep their brand colours in both schemes.
+
+$dark-bg: #0a0c11; // page background (deeper than before)
+$dark-surface: #12151c; // cards, dropdowns, toasts, panels
+$dark-surface-raised: #1a1e27; // striped rows, hover, input prefixes
+$dark-field: #080a0e; // form controls (reads as inset)
+$dark-line: #262b36; // hairlines, dividers
+$dark-line-strong: #3a4250; // control borders
+$dark-ink: #e6ebf3; // body text
+$dark-ink-muted: #9aa6b8; // secondary text, placeholders
+$dark-anchor: #7eb8f0; // links (primary, lightened for contrast on dark)
+
+@mixin dark-tokens {
+  color-scheme: dark;
+
+  // Neutrals — remapped so components that reference the gray scale for
+  // borders/muted text follow the scheme without any component-level change.
+  --lf-color-light-gray: #{$dark-line};
+  --lf-color-medium-gray: #{$dark-line-strong};
+  --lf-color-dark-gray: #{$dark-ink-muted};
+
+  // Body
+  --lf-body-bg: #{$dark-bg};
+  --lf-body-color: #{$dark-ink};
+
+  // Overlays / shadows — heavier, since a translucent black over a dark page
+  // barely registers at light-theme opacities.
+  --lf-overlay: #{rgba(#000, 0.6)};
+  --lf-overlay-strong: #{rgba(#000, 0.7)};
+  --lf-overlay-soft: #{rgba(#fff, 0.08)};
+  --lf-overlay-muted: #{rgba(#000, 0.4)};
+  --lf-shadow-dropdown: 0 4px 14px #{rgba(#000, 0.55)};
+  --lf-shadow-modal: 0 10px 40px #{rgba(#000, 0.65)};
+
+  // Typography
+  --lf-header-color: #{$dark-ink};
+  --lf-header-small-color: #{$dark-ink-muted};
+  --lf-anchor-color: #{$dark-anchor};
+  --lf-anchor-color-hover: #{scale-color($dark-anchor, $lightness: 15%)};
+  --lf-hr-border: #{$dark-line};
+  --lf-blockquote-color: #{$dark-ink-muted};
+  --lf-blockquote-border: #{$dark-line};
+  --lf-cite-color: #{$dark-ink-muted};
+  --lf-subheader-color: #{$dark-ink-muted};
+  --lf-keystroke-color: #{$dark-ink};
+  --lf-keystroke-bg: #{$dark-surface-raised};
+  --lf-abbr-underline: #{$dark-ink-muted};
+  --lf-code-color: #{$dark-ink};
+  --lf-code-bg: #{$dark-field};
+  --lf-code-border: #{$dark-line};
+
+  // Buttons keep palette backgrounds; only the neutral default shifts.
+  --lf-closebutton-color: #{$dark-ink-muted};
+  --lf-closebutton-color-hover: #{$dark-ink};
+
+  // Layout chrome
+  --lf-titlebar-bg: #{$dark-surface};
+  --lf-titlebar-color: #{$dark-ink};
+  --lf-titlebar-icon-color: #{$dark-ink};
+  --lf-titlebar-icon-color-hover: #{$dark-ink-muted};
+  --lf-topbar-bg: #{$dark-surface};
+
+  // Tabs
+  --lf-tab-bg: #{$dark-surface};
+  --lf-tab-color: #{$dark-ink};
+  --lf-tab-bg-active: #{$dark-surface-raised};
+  --lf-tab-color-active: #{$dark-anchor};
+  --lf-tab-item-bg-hover: #{$dark-surface-raised};
+  --lf-tab-content-bg: #{$dark-surface};
+  --lf-tab-content-border: #{$dark-line};
+  --lf-tab-content-color: #{$dark-ink};
+
+  // Menus / dropdowns / tooltips
+  --lf-menu-submenu-bg: #{$dark-surface};
+  --lf-menu-submenu-border: #{$dark-line};
+  --lf-dropdown-bg: #{$dark-surface};
+  --lf-dropdown-border: #{$dark-line};
+  --lf-tooltip-bg: #{$dark-surface-raised};
+  --lf-tooltip-color: #{$dark-ink};
+  --lf-tooltip-border: #{$dark-line-strong};
+
+  // Overlays / panels
+  --lf-offcanvas-bg: #{$dark-surface};
+  --lf-modal-border: #{$dark-line};
+  --lf-modal-overlay: #{rgba(#000, 0.7)};
+  --lf-popover-bg: #{$dark-surface};
+  --lf-popover-color: #{$dark-ink};
+  --lf-popover-border: #{$dark-line};
+
+  // Sliders
+  --lf-slider-bg: #{$dark-line};
+  --lf-slider-handle: #{$dark-ink-muted};
+  --lf-slider-handle-hover: #{$dark-ink};
+
+  // Accordion
+  --lf-accordion-bg: #{$dark-surface};
+  --lf-accordion-item-color: #{$dark-ink};
+  --lf-accordion-item-bg-hover: #{$dark-surface-raised};
+  --lf-accordion-border: #{$dark-line};
+  --lf-accordion-content-bg: #{$dark-surface};
+  --lf-accordion-content-color: #{$dark-ink};
+  --lf-accordion-content-border: #{$dark-line};
+
+  // Cards
+  --lf-card-bg: #{$dark-surface};
+  --lf-card-color: #{$dark-ink};
+  --lf-card-divider-bg: #{$dark-surface-raised};
+  --lf-card-border: #{$dark-line};
+  --lf-card-shadow: 0 1px 2px #{rgba(#000, 0.5)};
+
+  // Callouts — tint the palette colour into the dark surface instead of the
+  // light-theme `scale-color($color, $lightness: 85%)` wash.
+  --lf-callout-bg: #{$dark-surface-raised};
+  --lf-callout-color: #{$dark-ink};
+  --lf-callout-border: #{$dark-line};
+
+  @each $name, $color in $foundation-palette {
+    --lf-callout-#{$name}-bg: #{mix($color, $dark-surface, 20%)};
+    --lf-callout-#{$name}-color: #{$dark-ink};
+    --lf-color-#{$name}-track: #{mix($color, $dark-bg, 32%)};
+  }
+
+  // Avatar / chip
+  --lf-avatar-bg: #{$dark-surface-raised};
+  --lf-avatar-color: #{$dark-ink};
+  --lf-avatar-ring-color: #{$dark-bg};
+  --lf-avatar-status-ring: #{$dark-bg};
+  --lf-chip-bg: #{$dark-surface-raised};
+  --lf-chip-color: #{$dark-ink};
+
+  // Spinner / skeleton
+  --lf-spinner-track: #{$dark-line};
+  --lf-skeleton-bg: #{$dark-surface-raised};
+  --lf-skeleton-highlight: #{mix(#fff, $dark-surface-raised, 8%)};
+
+  // Toast / stepper / rating / timeline
+  --lf-toast-bg: #{$dark-surface};
+  --lf-toast-color: #{$dark-ink};
+  --lf-stepper-line: #{$dark-line};
+  --lf-stepper-inactive: #{$dark-line-strong};
+  --lf-stepper-label: #{$dark-ink-muted};
+  --lf-rating-empty: #{$dark-line-strong};
+  --lf-timeline-line: #{$dark-line};
+  --lf-timeline-dot-bg: #{$dark-surface};
+  --lf-timeline-meta-color: #{$dark-ink-muted};
+
+  // Tables
+  --lf-table-bg: #{$dark-surface};
+  --lf-table-border: #{$dark-line};
+  --lf-table-striped-bg: #{$dark-surface-raised};
+  --lf-table-head-bg: #{$dark-surface-raised};
+  --lf-table-head-color: #{$dark-ink};
+  --lf-table-foot-bg: #{$dark-surface-raised};
+  --lf-table-foot-color: #{$dark-ink};
+  --lf-table-row-hover: #{mix(#fff, $dark-surface, 6%)};
+  --lf-table-row-stripe-hover: #{mix(#fff, $dark-surface-raised, 6%)};
+  --lf-table-head-row-hover: #{mix(#fff, $dark-surface-raised, 6%)};
+  --lf-table-foot-row-hover: #{mix(#fff, $dark-surface-raised, 6%)};
+
+  // Meters / progress
+  --lf-progress-bg: #{$dark-line};
+  --lf-meter-bg: #{$dark-line};
+
+  // Navigation
+  --lf-pagination-item-color: #{$dark-ink};
+  --lf-pagination-item-bg-hover: #{$dark-surface-raised};
+  --lf-pagination-item-color-disabled: #{$dark-ink-muted};
+  --lf-pagination-ellipsis-color: #{$dark-ink-muted};
+  --lf-breadcrumbs-item-color: #{$dark-anchor};
+  --lf-breadcrumbs-item-color-current: #{$dark-ink};
+  --lf-breadcrumbs-item-color-disabled: #{$dark-ink-muted};
+  --lf-breadcrumbs-separator-color: #{$dark-ink-muted};
+
+  // Forms
+  --lf-input-color: #{$dark-ink};
+  --lf-input-placeholder: #{$dark-ink-muted};
+  --lf-input-bg: #{$dark-field};
+  --lf-input-bg-focus: #{$dark-field};
+  --lf-input-bg-disabled: #{$dark-surface};
+  --lf-input-border: #{$dark-line-strong};
+  --lf-input-border-focus: #{$dark-anchor};
+  --lf-input-shadow: inset 0 1px 2px #{rgba(#000, 0.4)};
+  --lf-input-shadow-focus: 0 0 0 2px #{rgba($dark-anchor, 0.35)};
+  --lf-input-bg-invalid-soft: #{mix($alert-color, $dark-field, 22%)};
+  --lf-input-error-color: #{scale-color($alert-color, $lightness: 25%)};
+  --lf-form-label-color: #{$dark-ink};
+  --lf-helptext-color: #{$dark-ink-muted};
+  --lf-select-bg: #{$dark-field};
+  --lf-select-triangle: #{$dark-ink-muted};
+  --lf-fieldset-border: #{$dark-line};
+  --lf-input-prefix-color: #{$dark-ink};
+  --lf-input-prefix-bg: #{$dark-surface-raised};
+  --lf-input-prefix-border: #{$dark-line};
+  --lf-switch-bg: #{$dark-line-strong};
+  --lf-switch-bg-focus: #{$dark-ink-muted};
+  --lf-switch-paddle-bg: #{$dark-ink};
+  --lf-choice-border: #{$dark-line-strong};
+  --lf-choice-bg: #{$dark-field};
+  --lf-choice-mark: #{$dark-ink};
+  --lf-choice-focus-ring: #{rgba($dark-anchor, 0.35)};
+
+  // Segmented control / combobox / tag input / quantity / OTP
+  --lf-segmented-bg: #{$dark-surface-raised};
+  --lf-segmented-color: #{$dark-ink-muted};
+  --lf-segmented-thumb-bg: #{$dark-surface};
+  --lf-segmented-color-active: #{$dark-ink};
+  --lf-segmented-border: #{$dark-line};
+  --lf-listbox-bg: #{$dark-surface};
+  --lf-listbox-border: #{$dark-line};
+  --lf-listbox-option-bg-active: #{$dark-surface-raised};
+  --lf-listbox-mark-bg: #{mix($primary-color, $dark-surface, 45%)};
+  --lf-taginput-bg: #{$dark-field};
+  --lf-taginput-border: #{$dark-line-strong};
+  --lf-quantity-bg: #{$dark-field};
+  --lf-quantity-border: #{$dark-line-strong};
+  --lf-quantity-button-color: #{$dark-ink};
+  --lf-quantity-button-bg-hover: #{$dark-surface-raised};
+  --lf-otp-bg: #{$dark-field};
+  --lf-otp-border: #{$dark-line-strong};
+  --lf-otp-color: #{$dark-ink};
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+[data-theme='dark'] {
+  @include dark-tokens;
+}
