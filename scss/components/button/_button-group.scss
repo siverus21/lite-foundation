@@ -33,8 +33,7 @@
       background-color: var(--lf-color-#{$name}, #{$color});
       color: var(--lf-color-#{$name}-contrast);
 
-      &:hover,
-      &:focus {
+      @include lf-hover-focus {
         background-color: var(--lf-color-#{$name}-hover);
       }
     }

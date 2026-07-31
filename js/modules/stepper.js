@@ -31,6 +31,7 @@ import { bool } from '../core/attrs.js';
 
 export class Stepper extends Module {
   static id = 'stepper';
+  static lazySelector = '[data-stepper]';
 
   constructor(root = document) {
     super(root);

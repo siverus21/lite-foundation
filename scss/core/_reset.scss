@@ -91,3 +91,45 @@ pre {
 .is-hidden {
   display: none !important;
 }
+
+// Global reduced-motion policy — component rules may still set `transition: none`
+// explicitly; this covers anything that forgot a local override.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// High Contrast / Windows forced-colors: keep interactive affordances visible.
+@media (forced-colors: active) {
+  .button,
+  .close-button,
+  a.button,
+  .pagination a,
+  .pagination button,
+  .toast-close,
+  .chip-close,
+  .toast-action {
+    forced-color-adjust: auto;
+  }
+
+  :focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .offcanvas-backdrop {
+    background: CanvasText;
+    opacity: 0.35;
+  }
+
+  .modal::backdrop {
+    background: CanvasText;
+    opacity: 0.45;
+  }
+}

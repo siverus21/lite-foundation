@@ -1,0 +1,15 @@
+// Opt-in content-visibility helpers — skip rendering work for offscreen blocks.
+// Pair with a size containment hint so the browser can reserve space.
+
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
+.cv-hidden {
+  content-visibility: hidden;
+}
+
+.cv-visible {
+  content-visibility: visible;
+}

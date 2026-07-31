@@ -162,6 +162,7 @@ export class Popover extends Module {
 
   /** @param {Element} el @param {Element|null} [trigger] */
   toggle(el, trigger = null) {
+    if (!el) return;
     const isOpen = this.support.native
       ? el.matches?.(':popover-open')
       : el.classList.contains('is-open');

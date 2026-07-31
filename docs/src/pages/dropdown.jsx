@@ -1,4 +1,4 @@
-import { Section, Demo, Code, Meta } from '../components/primitives.jsx';
+import { Section, Demo, Code, Meta, Aside } from '../components/primitives.jsx';
 
 export default function DropdownPage() {
   return (
@@ -11,21 +11,20 @@ export default function DropdownPage() {
             <li>
               Не для полноценной навигации сайта — см. <a href="menus.html">Menus</a>
             </li>
-          </ul>
-        </div>
-        <div class="docs-note">
-          <strong>Tooltip</strong>
-          <ul>
-            <li>Пояснение к иконке или термину (1–2 предложения)</li>
-            <li>Не клади внутрь формы и критичные CTA — плохо на тач-устройствах</li>
+            <li>
+              Не для hover-подсказки — см. <a href="tooltip.html">Tooltip</a>
+            </li>
           </ul>
         </div>
       </Section>
 
-      <Section title="Dropdown">
+      <Section title="Разметка">
         <Meta>
           <code>data-dropdown-open="paneId"</code>, панель с тем же <code>id</code> и классом{' '}
-          <code>dropdown-pane</code>. Закрытие: повторный клик, клик снаружи, Esc.
+          <code>dropdown-pane</code>. При открытии модуль ставит <code>role="dialog"</code> (если
+          нет) + <code>aria-modal</code>, ловит Tab и помечает фон <code>inert</code>. Закрытие:
+          повторный клик, клик снаружи, Esc. Дай панели доступное имя (
+          <code>aria-label</code> / <code>aria-labelledby</code>).
         </Meta>
         <Demo>
           <div class="dropdown">
@@ -38,7 +37,12 @@ export default function DropdownPage() {
             >
               Toggle Dropdown
             </button>
-            <div class="dropdown-pane" id="docs-dropdown" aria-hidden="true">
+            <div
+              class="dropdown-pane"
+              id="docs-dropdown"
+              aria-hidden="true"
+              aria-label="Example menu"
+            >
               Example dropdown pane content.
             </div>
           </div>
@@ -49,25 +53,9 @@ export default function DropdownPage() {
   aria-expanded="false" aria-controls="docs-dropdown">
   Toggle
 </button>
-<div class="dropdown-pane" id="docs-dropdown" aria-hidden="true">…</div>`}
+<div class="dropdown-pane" id="docs-dropdown" aria-hidden="true"
+  aria-label="Example menu">…</div>`}
         />
-      </Section>
-
-      <Section title="Tooltip">
-        <Meta>
-          Атрибут специально <code>data-tip</code>, не <code>data-tooltip</code> (чтобы не
-          конфликтовать с title-паттернами).
-        </Meta>
-        <Demo>
-          <p>
-            Hover or focus{' '}
-            <span class="has-tip" data-tip="Tooltip text">
-              this tip
-            </span>{' '}
-            for a tooltip.
-          </p>
-        </Demo>
-        <Code code={`<span class="has-tip" data-tip="Tooltip text">this tip</span>`} />
       </Section>
 
       <Section title="Идеи расширения">
@@ -77,14 +65,17 @@ export default function DropdownPage() {
             <code>data-dropdown-close</code> или клик снаружи.
           </li>
           <li>
-            Tooltip только для дополнительного контекста; критичные подписи — видимый текст рядом с
-            полем.
+            Длинные списки — прокрутка внутри <code>.dropdown-pane</code>, не растягивайте страницу.
           </li>
           <li>
-            Длинные списки в dropdown — прокрутка внутри <code>.dropdown-pane</code>, не
-            растягивайте страницу.
+            Hover/focus tip без клика — <a href="tooltip.html">Tooltip</a>; панель с richer UI —{' '}
+            <a href="popover.html">Popover</a>.
           </li>
         </ul>
+        <Aside>
+          Подсказка (CSS + лёгкий aria-sync) вынесена на отдельную страницу{' '}
+          <a href="tooltip.html">tooltip.html</a>.
+        </Aside>
       </Section>
     </>
   );

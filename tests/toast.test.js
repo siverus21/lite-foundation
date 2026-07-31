@@ -23,6 +23,19 @@ describe('Toast', () => {
     toast.destroy();
   });
 
+  it('places the stack using data-toast-position (logical corner)', () => {
+    document.body.setAttribute('data-toast-position', 'bottom-start');
+    const toast = new Toast(document);
+    toast.show({ message: 'corner' });
+
+    const stack = document.querySelector('.toast-stack');
+    expect(stack.classList.contains('bottom-start')).toBe(true);
+    expect(document.querySelector('.toast-close').getAttribute('aria-label')).toBeTruthy();
+
+    toast.destroy();
+    document.body.removeAttribute('data-toast-position');
+  });
+
   it('shows title, message and variant class from lf:toast:show event detail', async () => {
     const toast = new Toast(document);
     document.dispatchEvent(

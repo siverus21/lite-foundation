@@ -23,6 +23,7 @@
  */
 import { Module } from '../core/Module.js';
 import { num, str } from '../core/attrs.js';
+import { t } from '../core/i18n.js';
 
 const DEFAULT_TIMEOUT = 1500;
 
@@ -66,10 +67,10 @@ export class Copy extends Module {
 
     try {
       await writeClipboard(text);
-      this.#feedback(button, str(button, 'data-copy-label') || 'Скопировано');
+      this.#feedback(button, str(button, 'data-copy-label') || t('copied'));
       this.emit(button, 'copied', { text });
     } catch (error) {
-      this.#feedback(button, 'Не удалось', true);
+      this.#feedback(button, t('copyFailed'), true);
       this.emit(button, 'failed', { error });
     }
   }
@@ -77,7 +78,13 @@ export class Copy extends Module {
   static #textFor(button) {
     if (button.hasAttribute('data-copy-text')) return button.getAttribute('data-copy-text');
 
-    const target = document.querySelector(button.getAttribute('data-copy'));
+    const selector = button.getAttribute('data-copy');
+    if (!selector) return null;
+    // Same tree as the button first (subtree / ShadowRoot), then document.
+    const tree = button.getRootNode?.() ?? document;
+    const target =
+      (typeof tree.querySelector === 'function' && tree.querySelector(selector)) ||
+      document.querySelector(selector);
     if (!target) return null;
     return 'value' in target && target.value !== undefined
       ? String(target.value)

@@ -1,6 +1,8 @@
 // All Sass members for components — `@use 'settings/vars' as *`.
 // `:root` tokens: `@use 'settings/css-variables'` (page builds only).
+// Class naming rules: see `_naming.scss` (comments only — no Sass members).
 
+@forward 'naming';
 @forward 'foundation';
 
 @forward 'forms';

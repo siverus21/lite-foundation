@@ -10,6 +10,7 @@ import defaultFeatures, {
 } from '../config/features.js';
 
 const __filename = fileURLToPath(import.meta.url);
+const __modulesPath = '../../modules';
 
 /** Vite / tooling id: `import 'virtual:lf-scss/full'` → generated Sass string. */
 export const VIRTUAL_SCSS_PREFIX = 'virtual:lf-scss/';
@@ -18,81 +19,82 @@ export const VIRTUAL_ENTRY_PREFIX = 'virtual:lf-entry/';
 export const VIRTUAL_MODULES_PREFIX = 'virtual:lf-modules/';
 export const VIRTUAL_VENDORS_PREFIX = 'virtual:lf-vendors/';
 
-/** Map style feature → scss/components folder name */
+/** Map style feature → scss/components folder name (alphabetical keys). */
 export const STYLE_FOLDERS = {
-  modal: 'modal',
-  slider: 'slider',
-  sticky: 'sticky',
-  titleBar: 'title-bar',
-  topBar: 'top-bar',
-  tabs: 'tabs',
   accordion: 'accordion',
-  offcanvas: 'offcanvas',
-  dropdown: 'dropdown',
-  tooltip: 'tooltip',
-  menu: 'menu',
+  avatar: 'avatar',
+  badge: 'badge',
   breadcrumbs: 'breadcrumbs',
-  pagination: 'pagination',
-  mediaObject: 'media-object',
-  thumbnail: 'thumbnail',
-  responsiveEmbed: 'responsive-embed',
+  button: 'button',
   callout: 'callout',
   card: 'card',
-  label: 'label',
-  badge: 'badge',
-  progress: 'progress',
-  meter: 'meter',
-  table: 'table',
-  button: 'button',
-  forms: 'forms',
-  avatar: 'avatar',
   chip: 'chip',
-  spinner: 'spinner',
-  toast: 'toast',
-  stepper: 'stepper',
-  rating: 'rating',
-  segmented: 'segmented',
-  timeline: 'timeline',
-  popover: 'popover',
-  quantity: 'quantity',
-  listbox: 'listbox',
   combobox: 'combobox',
-  tagInput: 'tag-input',
-  otp: 'otp',
   copy: 'copy',
+  dropdown: 'dropdown',
+  forms: 'forms',
+  label: 'label',
+  listbox: 'listbox',
+  mediaObject: 'media-object',
+  menu: 'menu',
+  meter: 'meter',
+  modal: 'modal',
+  offcanvas: 'offcanvas',
+  otp: 'otp',
+  pagination: 'pagination',
+  popover: 'popover',
+  progress: 'progress',
+  quantity: 'quantity',
+  rating: 'rating',
+  responsiveEmbed: 'responsive-embed',
+  segmented: 'segmented',
+  slider: 'slider',
+  spinner: 'spinner',
+  stepper: 'stepper',
+  sticky: 'sticky',
+  table: 'table',
+  tabs: 'tabs',
+  tagInput: 'tag-input',
+  thumbnail: 'thumbnail',
+  timeline: 'timeline',
+  titleBar: 'title-bar',
+  toast: 'toast',
+  tooltip: 'tooltip',
+  topBar: 'top-bar',
 };
 
-/** Map script feature → { className, file } (file rewritten to /js/modules/... for virtual entries) */
+/** Map script feature → { className, file } (alphabetical keys; files → /js/modules/…). */
 export const SCRIPT_MODULES = {
-  modal: { file: '../../modules/modal.js', className: 'Modal' },
-  slider: { file: '../../modules/slider.js', className: 'Slider' },
-  formSlider: { file: '../../modules/form-slider.js', className: 'FormSlider' },
-  animations: { file: '../../modules/animations.js', className: 'Animations' },
-  tabs: { file: '../../modules/tabs.js', className: 'Tabs' },
-  accordion: { file: '../../modules/accordion.js', className: 'Accordion' },
-  offcanvas: { file: '../../modules/offcanvas.js', className: 'Offcanvas' },
-  dropdown: { file: '../../modules/dropdown.js', className: 'Dropdown' },
-  tooltip: { file: '../../modules/tooltip.js', className: 'Tooltip' },
-  menuDropdown: { file: '../../modules/menu-dropdown.js', className: 'MenuDropdown' },
-  menuAccordion: { file: '../../modules/menu-accordion.js', className: 'MenuAccordion' },
-  menuDrilldown: { file: '../../modules/menu-drilldown.js', className: 'MenuDrilldown' },
-  dismiss: { file: '../../modules/dismiss.js', className: 'Dismiss' },
-  toast: { file: '../../modules/toast.js', className: 'Toast' },
-  stepper: { file: '../../modules/stepper.js', className: 'Stepper' },
-  rating: { file: '../../modules/rating.js', className: 'Rating' },
-  theme: { file: '../../modules/theme.js', className: 'Theme' },
-  popover: { file: '../../modules/popover.js', className: 'Popover' },
-  quantity: { file: '../../modules/quantity.js', className: 'Quantity' },
-  combobox: { file: '../../modules/combobox.js', className: 'Combobox' },
-  tagInput: { file: '../../modules/tag-input.js', className: 'TagInput' },
-  tableSort: { file: '../../modules/table-sort.js', className: 'TableSort' },
-  otp: { file: '../../modules/otp.js', className: 'Otp' },
-  copy: { file: '../../modules/copy.js', className: 'Copy' },
-  charCounter: { file: '../../modules/char-counter.js', className: 'CharCounter' },
+  accordion: { file: __modulesPath + '/accordion.js', className: 'Accordion' },
+  animations: { file: __modulesPath + '/animations.js', className: 'Animations' },
+  charCounter: { file: __modulesPath + '/char-counter.js', className: 'CharCounter' },
+  combobox: { file: __modulesPath + '/combobox.js', className: 'Combobox' },
+  copy: { file: __modulesPath + '/copy.js', className: 'Copy' },
+  dismiss: { file: __modulesPath + '/dismiss.js', className: 'Dismiss' },
+  dropdown: { file: __modulesPath + '/dropdown.js', className: 'Dropdown' },
+  formSlider: { file: __modulesPath + '/form-slider.js', className: 'FormSlider' },
+  inputRecipes: { file: __modulesPath + '/input-recipes.js', className: 'InputRecipes' },
+  menuAccordion: { file: __modulesPath + '/menu-accordion.js', className: 'MenuAccordion' },
+  menuDrilldown: { file: __modulesPath + '/menu-drilldown.js', className: 'MenuDrilldown' },
+  menuDropdown: { file: __modulesPath + '/menu-dropdown.js', className: 'MenuDropdown' },
+  modal: { file: __modulesPath + '/modal.js', className: 'Modal' },
+  offcanvas: { file: __modulesPath + '/offcanvas.js', className: 'Offcanvas' },
+  otp: { file: __modulesPath + '/otp.js', className: 'Otp' },
   passwordStrength: {
-    file: '../../modules/password-strength.js',
+    file: __modulesPath + '/password-strength.js',
     className: 'PasswordStrength',
   },
+  popover: { file: __modulesPath + '/popover.js', className: 'Popover' },
+  quantity: { file: __modulesPath + '/quantity.js', className: 'Quantity' },
+  rating: { file: __modulesPath + '/rating.js', className: 'Rating' },
+  slider: { file: __modulesPath + '/slider.js', className: 'Slider' },
+  stepper: { file: __modulesPath + '/stepper.js', className: 'Stepper' },
+  tableSort: { file: __modulesPath + '/table-sort.js', className: 'TableSort' },
+  tabs: { file: __modulesPath + '/tabs.js', className: 'Tabs' },
+  tagInput: { file: __modulesPath + '/tag-input.js', className: 'TagInput' },
+  theme: { file: __modulesPath + '/theme.js', className: 'Theme' },
+  toast: { file: __modulesPath + '/toast.js', className: 'Toast' },
+  tooltip: { file: __modulesPath + '/tooltip.js', className: 'Tooltip' },
 };
 
 function enabledEntries(map = {}) {
@@ -130,7 +132,7 @@ function deepMerge(base, override = {}) {
 /** Empty feature set — everything off. */
 export function emptyFeatures() {
   return {
-    vendors: { cash: false, swiper: false, animate: false },
+    vendors: { animate: false, cash: false, swiper: false },
     utilities: false,
     styles: Object.fromEntries(Object.keys(STYLE_FOLDERS).map((k) => [k, false])),
     scripts: Object.fromEntries(Object.keys(SCRIPT_MODULES).map((k) => [k, false])),
@@ -160,7 +162,9 @@ function scssImport(rel, indent = '') {
  * key here used to disable a whole module's behavior with no build-time signal.
  */
 export function generateModulesIndex(features) {
-  const imports = ["import { createModuleRuntime } from '/js/core/runtime.js';"];
+  const imports = [
+    "import { createModuleRuntime, createLF as createLFRuntime } from '/js/core/runtime.js';",
+  ];
   const classes = [];
 
   for (const [key, on] of enabledEntries(features.scripts)) {
@@ -180,14 +184,21 @@ export function generateModulesIndex(features) {
  * Register and run enabled UI modules (see config/features.js builds).
  * GENERATED — do not edit by hand.
  */
-const runtime = createModuleRuntime([
+const MODULES = [
 ${classes.join('\n')}
-]);
+];
+
+const runtime = createModuleRuntime(MODULES);
 
 export const initModules = runtime.init;
 export const destroyModules = runtime.destroy;
 export const refreshModules = runtime.refresh;
 export const unmountModules = runtime.unmount;
+
+/** Multi-instance helper bound to this build's module list. */
+export function createLF(root = document) {
+  return createLFRuntime(MODULES, root);
+}
 `;
 }
 
@@ -334,6 +345,7 @@ export function generateBuildScssSource(features, { kind = 'page' } = {}) {
       loadCss('utilities/flex'),
       loadCss('utilities/visibility'),
       loadCss('utilities/container'),
+      loadCss('utilities/content-visibility'),
       '}',
     );
   }
@@ -380,7 +392,13 @@ function generateBuildEntry(buildName) {
   const { css } = buildOutputNames(buildName);
 
   return `import '${VIRTUAL_VENDORS_PREFIX}${buildName}';
-import { initModules } from '${VIRTUAL_MODULES_PREFIX}${buildName}';
+import {
+  initModules,
+  destroyModules,
+  refreshModules,
+  unmountModules,
+  createLF,
+} from '${VIRTUAL_MODULES_PREFIX}${buildName}';
 import { boot } from '/js/boot.js';
 
 boot({
@@ -392,6 +410,8 @@ boot({
       }
     : undefined,
 });
+
+export { initModules, destroyModules, refreshModules, unmountModules, createLF };
 `;
 }
 

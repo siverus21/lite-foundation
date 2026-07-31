@@ -34,9 +34,7 @@
       color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($chip-color-alt, $chip-color))});
 
       &.hollow {
-        border-color: var(--lf-color-#{$name}, #{$color});
-        background: transparent;
-        color: var(--lf-color-#{$name}, #{$color});
+        @include lf-palette-hollow($name);
       }
     }
   }
@@ -57,10 +55,9 @@
   opacity: 0.6;
   cursor: pointer;
 
-  &:hover,
-  &:focus {
+  @include lf-hover-focus {
     opacity: 1;
-    background: rgba($black, 0.08);
+    background: var(--lf-overlay-soft, #{rgba($black, 0.08)});
   }
 
   &::before {

@@ -1,7 +1,10 @@
 @use '../../settings/vars' as *;
 // Table (replaces Foundation table). Uses settings/_feedback.scss.
 
-table {
+// Bare `table` keeps Foundation-style global styling. Opt-in `.table` lets
+// authors scope the same look when a page resets native tables.
+table,
+.table {
   width: 100%;
   margin-bottom: $global-margin;
   border-collapse: collapse;

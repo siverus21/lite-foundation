@@ -1,11 +1,8 @@
 @use '../foundation' as *;
-// Modal (Reveal)
+// Modal (native <dialog>) — settings consumed by CSS variables + component.
 
-$reveal-background: $white;
-$reveal-width: 600px;
-$reveal-max-width: $global-width;
-$reveal-padding: $global-padding;
-$reveal-border: 1px solid $medium-gray;
-$reveal-radius: $global-radius;
-$reveal-zindex: 1005;
-$reveal-overlay-background: rgba($black, 0.45);
+$modal-overlay-background: rgba($black, 0.45);
+$modal-border-color: $medium-gray;
+$modal-radius: $global-radius;
+$modal-padding: $global-padding;
+$modal-max-width: 32rem;

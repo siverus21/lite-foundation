@@ -1,8 +1,20 @@
 /**
- * Accordion menu (data-menu="accordion").
+ * Accordion menu (`data-menu="accordion"`).
  *
- * Events on the toggled `<li>`: `opened.lf.menu-accordion` /
- * `closed.lf.menu-accordion`, detail `{ menu, item }`.
+ *   <ul class="vertical menu" data-menu="accordion">
+ *     <li>
+ *       <a href="#">Section</a>
+ *       <ul class="nested menu">…</ul>
+ *     </li>
+ *   </ul>
+ *
+ * Nested lists are wrapped in `.submenu-panel` so height can animate. Clicking
+ * a parent link toggles `.is-open` / `aria-expanded` on that `<li>` only
+ * (siblings stay open — multi-expand).
+ *
+ * Events on the toggled `<li>`, bubbling:
+ *   opened.lf.menu-accordion  detail { menu, item }
+ *   closed.lf.menu-accordion  detail { menu, item }
  */
 import { Module } from '../core/Module.js';
 import { markSubmenus } from './menu-utils.js';
@@ -21,6 +33,7 @@ function wrapAccordionPanels(menu) {
 
 export class MenuAccordion extends Module {
   static id = 'menu-accordion';
+  static lazySelector = '[data-menu="accordion"]';
 
   constructor(root = document) {
     super(root);

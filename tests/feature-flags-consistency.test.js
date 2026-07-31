@@ -32,6 +32,20 @@ describe('feature flag keys match their sync-features.js registries', () => {
     }
   });
 
+  it('keeps styles.* / scripts.* keys alphabetically sorted in the full preset', () => {
+    const styles = Object.keys(defaultFeatures.styles);
+    const scripts = Object.keys(defaultFeatures.scripts);
+    expect(styles).toEqual([...styles].sort());
+    expect(scripts).toEqual([...scripts].sort());
+  });
+
+  it('does not keep orphan layout.* flags (titleBar/topBar belong under styles.*)', () => {
+    expect(defaultFeatures.layout, 'use styles.titleBar / styles.topBar').toBeUndefined();
+    for (const [buildName, raw] of Object.entries(builds)) {
+      expect(raw.layout, `builds.${buildName}.layout`).toBeUndefined();
+    }
+  });
+
   it('every build override only uses known scripts/styles/vendors keys', () => {
     for (const [buildName, raw] of Object.entries(builds)) {
       for (const key of Object.keys(raw.scripts ?? {})) {

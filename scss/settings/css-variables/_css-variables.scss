@@ -25,9 +25,33 @@
   --lf-overlay-soft: #{rgba($black, 0.12)};
   --lf-overlay-muted: #{rgba($black, 0.25)};
 
-  // Shadows
-  --lf-shadow-dropdown: 0 2px 8px #{rgba($black, 0.12)};
-  --lf-shadow-modal: 0 0 10px #{rgba($black, 0.25)};
+  // Primitive spacing scale (0–8)
+  --lf-space-0: 0;
+  --lf-space-1: 0.25rem;
+  --lf-space-2: 0.5rem;
+  --lf-space-3: 0.75rem;
+  --lf-space-4: 1rem;
+  --lf-space-5: 1.5rem;
+  --lf-space-6: 2rem;
+  --lf-space-7: 2.5rem;
+  --lf-space-8: 3rem;
+
+  // Motion tokens
+  --lf-duration-instant: 0ms;
+  --lf-duration-fast: 150ms;
+  --lf-duration-normal: 250ms;
+  --lf-duration-slow: 400ms;
+  --lf-ease-standard: ease;
+  --lf-ease-out: ease-out;
+
+  // Elevation scale + component aliases
+  --lf-shadow-0: none;
+  --lf-shadow-1: 0 1px 2px #{rgba($black, 0.08)};
+  --lf-shadow-2: 0 2px 8px #{rgba($black, 0.12)};
+  --lf-shadow-3: 0 0 10px #{rgba($black, 0.25)};
+  --lf-shadow-4: 0 8px 24px #{rgba($black, 0.18)};
+  --lf-shadow-dropdown: var(--lf-shadow-2);
+  --lf-shadow-modal: var(--lf-shadow-3);
 
   // Z-index scale → --lf-z-*
   @each $name, $value in $z-index {
@@ -129,9 +153,9 @@
     --lf-offcanvas-bg: #{$offcanvas-background};
   }
 
-  @if variable-exists(reveal-overlay-background) {
+  @if variable-exists(modal-overlay-background) {
     --lf-modal-border: #{$medium-gray};
-    --lf-modal-overlay: #{$reveal-overlay-background};
+    --lf-modal-overlay: #{$modal-overlay-background};
   }
 
   @if variable-exists(slider-background) {
@@ -382,6 +406,8 @@
     --lf-helptext-color: #{$helptext-color};
     --lf-select-bg: #{$select-background};
     --lf-select-triangle: #{$select-triangle-color};
+    // Full chevron image (not just a color) so dark/runtime themes can swap it.
+    --lf-select-chevron: #{lf-select-chevron-uri($select-triangle-color)};
     --lf-fieldset-border: #{$medium-gray};
     --lf-input-prefix-color: #{$input-prefix-color};
     --lf-input-prefix-bg: #{$input-prefix-background};

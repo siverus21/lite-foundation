@@ -26,6 +26,7 @@
  */
 import { Module } from '../core/Module.js';
 import { clamp, int, str } from '../core/attrs.js';
+import { t } from '../core/i18n.js';
 
 export class Otp extends Module {
   static id = 'otp';
@@ -48,7 +49,7 @@ export class Otp extends Module {
       input.inputMode = digits ? 'numeric' : 'text';
       if (digits) input.pattern = '[0-9]*';
       input.autocomplete = i === 0 ? 'one-time-code' : 'off';
-      input.setAttribute('aria-label', `${i + 1}`);
+      input.setAttribute('aria-label', t('otpDigit', i + 1, length));
       el.appendChild(input);
       fields.push(input);
     }

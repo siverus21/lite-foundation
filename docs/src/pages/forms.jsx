@@ -56,6 +56,124 @@ export default function FormsPage() {
         />
       </Section>
 
+      <Section title="Form control">
+        <p>
+          Оболочка label + поле + hint/error. Только CSS (<code>styles.forms</code>), JS не нужен.
+          Состояния: <code>.is-invalid</code>, <code>.is-disabled</code>, опционально{' '}
+          <code>.inline</code>.
+        </p>
+        <Demo>
+          <div class="form-control">
+            <label class="form-control-label" for="docs-email">
+              Email
+            </label>
+            <input id="docs-email" type="email" class="input" placeholder="you@example.com" />
+            <p class="form-control-hint">We never share this.</p>
+          </div>
+          <div class="form-control is-invalid">
+            <label class="form-control-label" for="docs-view">
+              View
+            </label>
+            <select id="docs-view" class="input">
+              <option value="">Pick…</option>
+              <option>List</option>
+            </select>
+            <p class="form-control-error">Pick a view.</p>
+          </div>
+        </Demo>
+        <Code
+          code={`<div class="form-control">
+  <label class="form-control-label" for="email">Email</label>
+  <input id="email" type="email" class="input">
+  <p class="form-control-hint">We never share this.</p>
+</div>
+
+<div class="form-control is-invalid">
+  <label class="form-control-label" for="view">View</label>
+  <select id="view" class="input">…</select>
+  <p class="form-control-error">Pick a view.</p>
+</div>`}
+        />
+      </Section>
+
+      <Section title="Password & search recipes">
+        <p>
+          Паттерны на базе <code>.input-group</code>. Стили — в <code>styles.forms</code>; поведение
+          (toggle type / clear) — флаг <code>scripts.inputRecipes</code> (
+          <code>js/modules/input-recipes.js</code>).
+        </p>
+        <Demo>
+          <label for="docs-password">Password</label>
+          <div class="input-group password-input">
+            <input
+              id="docs-password"
+              class="input-group-field"
+              type="password"
+              name="docsPassword"
+              autocomplete="current-password"
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              class="button secondary password-input-toggle"
+              data-password-toggle
+              data-text-show="Show"
+              data-text-hide="Hide"
+              data-label-show="Show password"
+              data-label-hide="Hide password"
+              aria-pressed="false"
+              aria-label="Show password"
+            >
+              Show
+            </button>
+          </div>
+          <label for="docs-search" style={{ marginTop: '1rem', display: 'block' }}>
+            Search
+          </label>
+          <div class="input-group search-input">
+            <span class="input-group-label search-input-icon" aria-hidden="true"></span>
+            <input
+              id="docs-search"
+              class="input-group-field"
+              type="search"
+              name="docsSearch"
+              placeholder="Search…"
+            />
+            <button
+              type="button"
+              class="button clear search-input-clear"
+              data-search-clear
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          </div>
+        </Demo>
+        <Code
+          code={`<div class="input-group password-input">
+  <input class="input-group-field" type="password" autocomplete="current-password">
+  <button type="button" class="button secondary password-input-toggle"
+    data-password-toggle
+    data-text-show="Show" data-text-hide="Hide"
+    data-label-show="Show password" data-label-hide="Hide password"
+    aria-pressed="false" aria-label="Show password">Show</button>
+</div>
+
+<div class="input-group search-input">
+  <span class="input-group-label search-input-icon" aria-hidden="true"></span>
+  <input class="input-group-field" type="search" placeholder="Search…">
+  <button type="button" class="button clear search-input-clear"
+    data-search-clear aria-label="Clear search">×</button>
+</div>`}
+        />
+        <Aside>
+          Кнопка clear скрывается через <code>:has(:placeholder-shown)</code>, пока поле пустое.
+          Модуль ставит <code>lazySelector</code> на{' '}
+          <code>.password-input, .search-input, …</code> — без разметки на странице инстанс не
+          создаётся.
+        </Aside>
+      </Section>
+
       <Section title="Checkbox & Radio">
         <p>
           Opt-in кастом: класс <code>.checkbox</code> / <code>.radio</code> на <code>&lt;label&gt;</code>.

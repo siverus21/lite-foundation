@@ -199,6 +199,7 @@ $dark-anchor: #7eb8f0; // links (primary, lightened for contrast on dark)
   --lf-helptext-color: #{$dark-ink-muted};
   --lf-select-bg: #{$dark-field};
   --lf-select-triangle: #{$dark-ink-muted};
+  --lf-select-chevron: #{lf-select-chevron-uri($dark-ink-muted)};
   --lf-fieldset-border: #{$dark-line};
   --lf-input-prefix-color: #{$dark-ink};
   --lf-input-prefix-bg: #{$dark-surface-raised};

@@ -186,4 +186,58 @@ describe('Popover (fallback tier)', () => {
     expect(document.getElementById('p1').classList.contains('is-open')).toBe(false);
     expect(document.getElementById('p2').classList.contains('is-open')).toBe(true);
   });
+
+  it('ignores a popovertarget that points at a missing panel id', () => {
+    document.body.innerHTML = `
+      <button id="trigger" popovertarget="missing">Open</button>
+      <div id="panel" class="popover" popover data-popover>x</div>
+    `;
+    popover = new Popover(document);
+    const trigger = document.getElementById('trigger');
+    const panel = document.getElementById('panel');
+
+    expect(() => trigger.click()).not.toThrow();
+    expect(panel.classList.contains('is-open')).toBe(false);
+    expect(() => popover.toggle(null)).not.toThrow();
+  });
+
+  it('places inline-end / inline-start panels beside the trigger', () => {
+    vi.spyOn(CSS, 'supports').mockImplementation(() => false);
+    const { trigger, panel } = mount('inline-end');
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+      top: 40,
+      bottom: 70,
+      left: 10,
+      right: 90,
+      width: 80,
+      height: 30,
+    });
+    popover = new Popover(document);
+    vi.spyOn(panel, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 40,
+      left: 0,
+      right: 120,
+      width: 120,
+      height: 40,
+    });
+
+    trigger.click();
+    expect(Number.parseFloat(panel.style.left)).toBeGreaterThanOrEqual(90);
+
+    popover.hide(panel);
+    panel.className = 'popover inline-start';
+    trigger.click();
+    expect(Number.parseFloat(panel.style.left)).toBeLessThan(90);
+  });
+
+  it('destroy hides open panels', () => {
+    const { trigger, panel } = mount();
+    popover = new Popover(document);
+    trigger.click();
+    expect(panel.classList.contains('is-open')).toBe(true);
+    popover.destroy();
+    popover = null;
+    expect(panel.classList.contains('is-open')).toBe(false);
+  });
 });

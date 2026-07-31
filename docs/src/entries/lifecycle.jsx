@@ -50,17 +50,20 @@ mountDocs({
         return;
       }
       refreshModules(mount);
-      const enhanced = mount.querySelectorAll('[data-lf-enhanced]').length;
-      setStatus(`refreshModules — enhanced групп: ${enhanced}.`);
+      // Accordion ставит data-lf-enhanced на корень группы — удобный маркер именно для этого демо.
+      const accordionReady = mount.querySelectorAll('[data-accordion][data-lf-enhanced]').length;
+      setStatus(
+        `refreshModules — accordion с JS: ${accordionReady} (атрибут data-lf-enhanced только у Accordion).`,
+      );
     });
 
     document.getElementById('docs-destroy')?.addEventListener('click', () => {
       destroyModules(mount);
-      const enhanced = mount.querySelectorAll('[data-lf-enhanced]').length;
+      const accordionReady = mount.querySelectorAll('[data-accordion][data-lf-enhanced]').length;
       setStatus(
-        enhanced === 0
+        accordionReady === 0
           ? 'destroyModules — JS снят, HTML на месте (native details).'
-          : `destroyModules вызван, но enhanced ещё: ${enhanced} (не было init на mount?).`,
+          : `destroyModules вызван, но data-lf-enhanced ещё: ${accordionReady} (не было init на mount?).`,
       );
     });
 

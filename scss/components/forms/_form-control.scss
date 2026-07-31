@@ -1,0 +1,84 @@
+@use '../../settings/vars' as *;
+// Shared FormControl shell — label + control + optional hint/error.
+// Works with native inputs, `.segmented`, and `.switch` without extra JS.
+//
+// <div class="form-control">
+//   <label class="form-control-label" for="email">Email</label>
+//   <input id="email" type="email" class="input">
+//   <p class="form-control-hint">We never share this.</p>
+// </div>
+//
+// <div class="form-control is-invalid">
+//   <label class="form-control-label">View</label>
+//   <div class="segmented">…</div>
+//   <p class="form-control-error">Pick a view.</p>
+// </div>
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  margin-bottom: $global-margin;
+
+  &.inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+
+    .form-control-label {
+      margin-bottom: 0;
+    }
+  }
+
+  // Switch / segmented sit flush with the label on one row.
+  &:has(> .switch),
+  &:has(> .segmented) {
+    &.inline {
+      align-items: center;
+    }
+  }
+}
+
+.form-control-label {
+  display: block;
+  margin: 0;
+  font-weight: $global-weight-bold;
+  font-size: 0.9rem;
+  color: var(--lf-body-font-color, #{$body-font-color});
+}
+
+.form-control-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--lf-form-helptext-color, #{$medium-gray});
+}
+
+.form-control-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--lf-color-alert, #{$alert-color});
+}
+
+.form-control.is-invalid {
+  .form-control-label {
+    color: var(--lf-color-alert, #{$alert-color});
+  }
+
+  // Highlight native fields inside the shell.
+  #{text-inputs()},
+  textarea,
+  select {
+    border-color: var(--lf-color-alert, #{$alert-color});
+  }
+
+  .segmented {
+    border-color: var(--lf-color-alert, #{$alert-color});
+  }
+}
+
+.form-control.is-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}

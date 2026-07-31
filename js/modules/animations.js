@@ -1,45 +1,103 @@
 /**
- * Animate.css demo helpers (kitchen-sink only — enable scripts.animations).
+ * Animate.css show/hide helper.
+ *
+ *   <div data-lf-animate id="hero-box">…</div>
+ *   <button type="button" data-lf-animate-trigger="hero-box">Toggle</button>
+ *
+ * While a transition runs, the box gets `aria-busy="true"` (public signal —
+ * second clicks are ignored until it clears).
+ *
+ * Kitchen-sink still works via legacy ids `ks-animate-box` / `ks-animate-trigger`
+ * when the data attributes are absent.
  */
 import { Module } from '../core/Module.js';
 
 export class Animations extends Module {
   static id = 'animations';
+  static lazySelector = '[data-lf-animate], #ks-animate-box, [data-lf-animate-trigger]';
 
   constructor(root = document) {
     super(root);
-    this.box = root.getElementById?.('ks-animate-box') ?? document.getElementById('ks-animate-box');
-    this.trigger =
-      root.getElementById?.('ks-animate-trigger') ?? document.getElementById('ks-animate-trigger');
-    if (!this.box || !this.trigger) return;
+    /** @type {{ box: HTMLElement, trigger: Element, visible: boolean, busy: boolean, pad: object }[]} */
+    this._pairs = [];
 
-    this.visible = true;
-    this.busy = false;
+    this.mountAll('[data-lf-animate]', (box) => {
+      if (!(box instanceof HTMLElement)) return;
+      const trigger = this.#triggerFor(box);
+      if (trigger) this.#bindPair(box, trigger);
+    });
 
-    this.box.style.overflow = 'hidden';
-    this.box.style.transition =
-      'height 0.3s ease, margin 0.3s ease, padding 0.3s ease, border-width 0.3s ease';
+    // Legacy kitchen-sink ids (single pair).
+    if (!this._pairs.length) {
+      const box =
+        root.getElementById?.('ks-animate-box') ?? document.getElementById('ks-animate-box');
+      const trigger =
+        root.getElementById?.('ks-animate-trigger') ??
+        document.getElementById('ks-animate-trigger');
+      if (box instanceof HTMLElement && trigger) this.#bindPair(box, trigger);
+    }
+  }
 
-    this.pad = {
-      top: getComputedStyle(this.box).paddingTop,
-      bottom: getComputedStyle(this.box).paddingBottom,
-      marginBottom: getComputedStyle(this.box).marginBottom,
+  /** @param {HTMLElement} box */
+  #triggerFor(box) {
+    const id = box.id;
+    if (id) {
+      const byFor =
+        this.root.querySelector?.(`[data-lf-animate-trigger="${id}"]`) ||
+        document.querySelector(`[data-lf-animate-trigger="${id}"]`);
+      if (byFor) return byFor;
+    }
+    return (
+      box.querySelector(':scope > [data-lf-animate-trigger], :scope [data-lf-animate-trigger]') ||
+      null
+    );
+  }
+
+  /** @param {HTMLElement} box @param {Element} trigger */
+  #bindPair(box, trigger) {
+    const pair = {
+      box,
+      trigger,
+      visible: true,
+      busy: false,
+      pad: {
+        top: getComputedStyle(box).paddingTop,
+        bottom: getComputedStyle(box).paddingBottom,
+        marginBottom: getComputedStyle(box).marginBottom,
+      },
     };
 
-    this.on(this.trigger, 'click', () => this.#toggle());
+    box.style.overflow = 'hidden';
+    box.style.transition =
+      'height 0.3s ease, margin 0.3s ease, padding 0.3s ease, border-width 0.3s ease';
+
+    this.on(trigger, 'click', () => this.#toggle(pair));
+    this._pairs.push(pair);
   }
 
-  #toggle() {
-    if (this.busy) return;
-    this.busy = true;
-    this.box.classList.remove('animated', 'fadeIn', 'fadeOut');
-
-    if (this.visible) this.#hide();
-    else this.#show();
+  /**
+   * @param {{ box: HTMLElement, busy: boolean }} pair
+   * @param {boolean} busy
+   */
+  #setBusy(pair, busy) {
+    pair.busy = busy;
+    if (busy) pair.box.setAttribute('aria-busy', 'true');
+    else pair.box.removeAttribute('aria-busy');
   }
 
-  #hide() {
-    const { box } = this;
+  /** @param {{ box: HTMLElement, visible: boolean, busy: boolean, pad: object }} pair */
+  #toggle(pair) {
+    if (pair.busy) return;
+    this.#setBusy(pair, true);
+    pair.box.classList.remove('animated', 'fadeIn', 'fadeOut');
+
+    if (pair.visible) this.#hide(pair);
+    else this.#show(pair);
+  }
+
+  /** @param {{ box: HTMLElement, visible: boolean, busy: boolean }} pair */
+  #hide(pair) {
+    const { box } = pair;
     box.style.height = `${box.offsetHeight}px`;
     void box.offsetHeight;
     box.classList.add('animated', 'fadeOut');
@@ -56,8 +114,8 @@ export class Animations extends Module {
       box.style.height = '0';
 
       const finish = () => {
-        this.visible = false;
-        this.busy = false;
+        pair.visible = false;
+        this.#setBusy(pair, false);
       };
 
       const onCollapse = (e) => {
@@ -72,8 +130,9 @@ export class Animations extends Module {
     box.addEventListener('animationend', onFadeOut);
   }
 
-  #show() {
-    const { box, pad } = this;
+  /** @param {{ box: HTMLElement, visible: boolean, busy: boolean, pad: object }} pair */
+  #show(pair) {
+    const { box, pad } = pair;
     box.style.opacity = '0';
     box.style.borderWidth = '';
     box.style.paddingTop = pad.top;
@@ -94,15 +153,15 @@ export class Animations extends Module {
         if (event.target !== box) return;
         box.removeEventListener('animationend', onFadeIn);
         box.classList.remove('animated', 'fadeIn');
-        this.visible = true;
-        this.busy = false;
+        pair.visible = true;
+        this.#setBusy(pair, false);
       };
       box.addEventListener('animationend', onFadeIn);
       window.setTimeout(() => {
-        if (!this.busy) return;
+        if (!pair.busy) return;
         box.classList.remove('animated', 'fadeIn');
-        this.visible = true;
-        this.busy = false;
+        pair.visible = true;
+        this.#setBusy(pair, false);
       }, 1000);
     };
 
@@ -114,7 +173,7 @@ export class Animations extends Module {
 
     box.addEventListener('transitionend', onExpand);
     window.setTimeout(() => {
-      if (this.visible || !this.busy) return;
+      if (pair.visible || !pair.busy) return;
       box.removeEventListener('transitionend', onExpand);
       startFadeIn();
     }, 350);

@@ -5,14 +5,46 @@
 .toast-stack {
   position: fixed;
   z-index: var(--lf-z-toast);
-  top: $global-position;
-  right: $global-position;
+  inset-block-start: $global-position;
+  inset-inline-end: $global-position;
   display: flex;
   flex-direction: column;
   gap: var(--lf-toast-gap, #{$toast-gap});
   width: var(--lf-toast-width, #{$toast-width});
   max-width: calc(100vw - #{$toast-gap} * 2);
   pointer-events: none;
+
+  // Position modifiers — set on the stack (JS leaves className as `.toast-stack`
+  // plus one of these, or authors can place a stack in markup).
+  &.top-start,
+  &.top-left {
+    inset-block-start: $global-position;
+    inset-inline-start: $global-position;
+    inset-inline-end: auto;
+  }
+
+  &.top-end,
+  &.top-right {
+    inset-block-start: $global-position;
+    inset-inline-end: $global-position;
+    inset-inline-start: auto;
+  }
+
+  &.bottom-start,
+  &.bottom-left {
+    inset-block-start: auto;
+    inset-block-end: $global-position;
+    inset-inline-start: $global-position;
+    inset-inline-end: auto;
+  }
+
+  &.bottom-end,
+  &.bottom-right {
+    inset-block-start: auto;
+    inset-block-end: $global-position;
+    inset-inline-end: $global-position;
+    inset-inline-start: auto;
+  }
 }
 
 .toast {
@@ -26,10 +58,17 @@
   color: var(--lf-toast-color, #{$toast-color});
   box-shadow: var(--lf-toast-shadow, #{$toast-shadow});
   opacity: 0;
+  // Enter from the inline-end edge (flipped under [dir=rtl]).
   transform: translateX(1.5rem);
-  transition: opacity var(--lf-toast-transition, #{$toast-transition-duration}) ease-out,
-    transform var(--lf-toast-transition, #{$toast-transition-duration}) ease-out;
+  transition: opacity var(--lf-toast-transition, var(--lf-duration-normal, #{$toast-transition-duration}))
+      var(--lf-ease-out, ease-out),
+    transform var(--lf-toast-transition, var(--lf-duration-normal, #{$toast-transition-duration}))
+      var(--lf-ease-out, ease-out);
   pointer-events: auto;
+
+  [dir='rtl'] & {
+    transform: translateX(-1.5rem);
+  }
 
   &.is-visible {
     opacity: 1;
@@ -68,16 +107,15 @@
   text-decoration: underline;
   cursor: pointer;
 
-  &:hover,
-  &:focus {
+  @include lf-hover-focus {
     text-decoration: none;
   }
 }
 
 .toast-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
   width: 1.4rem;
   height: 1.4rem;
   padding: 0;
@@ -88,8 +126,7 @@
   cursor: pointer;
   line-height: 1;
 
-  &:hover,
-  &:focus {
+  @include lf-hover-focus {
     opacity: 1;
   }
 

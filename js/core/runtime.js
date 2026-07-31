@@ -22,6 +22,22 @@ function isSafeDomRoot(root) {
 }
 
 /**
+ * Skip constructing a module when it declares `static lazySelector` and the
+ * root has no matches — avoids binding listeners for unused widgets.
+ * @param {Function} Module
+ * @param {ParentNode} root
+ */
+function shouldInitModule(Module, root) {
+  const selector = Module?.lazySelector;
+  if (!selector || typeof root?.querySelector !== 'function') return true;
+  try {
+    return Boolean(root.querySelector(selector));
+  } catch {
+    return true;
+  }
+}
+
+/**
  * @param {Array<new (root?: ParentNode) => { destroy?: () => void }>} ModuleClasses
  */
 export function createModuleRuntime(ModuleClasses) {
@@ -29,6 +45,7 @@ export function createModuleRuntime(ModuleClasses) {
     const reg = registryFor(root);
     for (const Module of ModuleClasses) {
       if (reg.has(Module)) continue;
+      if (!shouldInitModule(Module, root)) continue;
       try {
         const instance = new Module(root);
         reg.set(Module, instance);
@@ -78,4 +95,27 @@ export function createModuleRuntime(ModuleClasses) {
   }
 
   return { init, destroy, refresh, unmount };
+}
+
+/**
+ * Thin multi-instance wrapper: create a runtime bound to one root.
+ *
+ *   import { Accordion, Tabs } from '…';
+ *   import { createLF } from '/js/core/runtime.js';
+ *   const lf = createLF([Accordion, Tabs], panel);
+ *   // later: lf.destroy();
+ *
+ * @param {Array<new (root?: ParentNode) => { destroy?: () => void }>} ModuleClasses
+ * @param {ParentNode} [root=document]
+ */
+export function createLF(ModuleClasses, root = document) {
+  const runtime = createModuleRuntime(ModuleClasses);
+  runtime.init(root);
+  return {
+    root,
+    init: () => runtime.init(root),
+    destroy: () => runtime.destroy(root),
+    refresh: () => runtime.refresh(root),
+    unmount: (options) => runtime.unmount(root, options),
+  };
 }

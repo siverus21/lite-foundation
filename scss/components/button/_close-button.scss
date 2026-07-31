@@ -3,9 +3,9 @@
 
 .close-button {
   position: absolute;
-  z-index: var(--lf-z-closebutton, #{$closebutton-z-index});
-  right: map-get($closebutton-offset-horizontal, $closebutton-default-size);
-  top: map-get($closebutton-offset-vertical, $closebutton-default-size);
+  z-index: var(--lf-z-closebutton, #{z(closebutton)});
+  inset-inline-end: map-get($closebutton-offset-horizontal, $closebutton-default-size);
+  inset-block-start: map-get($closebutton-offset-vertical, $closebutton-default-size);
   padding: 0;
   border: 0;
   background: transparent;
@@ -14,15 +14,14 @@
   line-height: $closebutton-lineheight;
   cursor: pointer;
 
-  &:hover,
-  &:focus {
+  @include lf-hover-focus {
     color: var(--lf-closebutton-color-hover, #{$closebutton-color-hover});
   }
 
   @each $name, $size in $closebutton-size {
     &.#{$name} {
-      right: map-get($closebutton-offset-horizontal, $name);
-      top: map-get($closebutton-offset-vertical, $name);
+      inset-inline-end: map-get($closebutton-offset-horizontal, $name);
+      inset-block-start: map-get($closebutton-offset-vertical, $name);
       font-size: $size;
     }
   }

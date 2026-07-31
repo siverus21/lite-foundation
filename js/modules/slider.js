@@ -1,11 +1,21 @@
 /**
  * Swiper carousel (library build `swiper` — not the form range slider).
  *
- * Markup: `.swiper[data-swiper]` (or kitchen-sink `.swiper.ks-swiper`) with the
- * usual Swiper wrapper / slide / nav / pagination children.
+ *   <div class="swiper" data-swiper>
+ *     <div class="swiper-wrapper">
+ *       <div class="swiper-slide">…</div>
+ *     </div>
+ *     <div class="swiper-button-prev"></div>
+ *     <div class="swiper-button-next"></div>
+ *     <div class="swiper-pagination"></div>
+ *   </div>
  *
- * Events / commands are not wrapped — talk to the Swiper instance if you need
- * them. This module only owns lifecycle: create on mount, destroy on teardown.
+ * Kitchen-sink also matches `.swiper.ks-swiper`. Navigation / pagination
+ * elements are optional — missing nodes are passed through as `null`.
+ *
+ * Events / commands are not wrapped — use the Swiper instance on
+ * `instance.instances[]` if you need them. This module only owns lifecycle:
+ * create on mount (`mountOnce`), `destroy()` tears every Swiper down.
  */
 import Swiper from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';

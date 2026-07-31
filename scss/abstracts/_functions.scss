@@ -194,6 +194,21 @@ $black: #0a0a0a !default;
   @return null;
 }
 
+/// Encode a color as `rgb%28r, g, b%29` for use inside a data-URI SVG fill.
+@function lf-svg-fill-rgb($color) {
+  $red: math.round(color.channel($color, 'red', $space: rgb));
+  $green: math.round(color.channel($color, 'green', $space: rgb));
+  $blue: math.round(color.channel($color, 'blue', $space: rgb));
+  @return 'rgb%28#{$red}, #{$green}, #{$blue}%29';
+}
+
+/// Select / disclosure chevron as a data-URI — emit into `--lf-select-chevron`
+/// so themes can swap the image (or rebuild it) at runtime without Sass.
+@function lf-select-chevron-uri($color) {
+  $rgb: lf-svg-fill-rgb($color);
+  @return url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="24" viewBox="0 0 32 24"><polygon points="0,0 32,0 16,24" style="fill: #{$rgb}"></polygon></svg>');
+}
+
 @function text-inputs($types: ()) {
   $return: ();
   $types: if(

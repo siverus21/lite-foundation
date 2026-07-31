@@ -10,7 +10,7 @@
   list-style: none;
 
   li {
-    margin-right: $pagination-item-spacing;
+    margin-inline-end: $pagination-item-spacing;
     border-radius: $pagination-radius;
     font-size: $pagination-font-size;
 
@@ -82,7 +82,7 @@
     a::before,
     &.disabled::before {
       display: inline-block;
-      margin-right: 0.5rem;
+      margin-inline-end: 0.5rem;
       content: $pagination-arrow-previous;
     }
   }
@@ -91,7 +91,7 @@
     a::after,
     &.disabled::after {
       display: inline-block;
-      margin-left: 0.5rem;
+      margin-inline-start: 0.5rem;
       content: $pagination-arrow-next;
     }
   }

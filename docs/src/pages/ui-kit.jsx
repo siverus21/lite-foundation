@@ -288,12 +288,15 @@ export default function UiKitPage() {
       </Section>
 
       <Section title="Tooltip" id="tooltip">
+        <p class="docs-meta">
+          Документация: <a href="tooltip.html">tooltip.html</a>
+        </p>
         <Demo>
           <p>
             Hover or focus{' '}
-            <span class="has-tip" data-tip="Tooltip text">
-              this tip
-            </span>
+            <button type="button" class="button tiny has-tip" data-tip="Tooltip text">
+              ?
+            </button>
             .
           </p>
         </Demo>

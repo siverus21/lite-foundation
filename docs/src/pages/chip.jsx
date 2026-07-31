@@ -7,7 +7,7 @@ export default function ChipPage() {
         <When
           good={['Активные фильтры, выбранные значения, категории/теги статьи']}
           bad={[
-            'Статус сущности (заказ/платёж) — бери <a href="ui-kit.html#badge">Badge/Label</a>',
+            'Статус сущности (заказ/платёж) — бери <a href="css-only.html#badge">Badge</a> / <a href="css-only.html#label">Label</a>',
           ]}
         />
       </Section>

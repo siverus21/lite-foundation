@@ -1,15 +1,27 @@
 /**
- * Dropdown menu (data-menu="dropdown").
+ * Dropdown menu (`data-menu="dropdown"`).
  *
- * Events on the open/closed `<li>` (bubble): `opened.lf.menu-dropdown`,
- * `closed.lf.menu-dropdown`, detail `{ menu, item }`.
+ *   <ul class="dropdown menu" data-menu="dropdown">
+ *     <li>
+ *       <a href="#">Parent</a>
+ *       <ul class="menu">…</ul>
+ *     </li>
+ *   </ul>
+ *
+ * Opening one top-level item closes siblings. Escape closes every open item
+ * owned by this instance (scoped to `this.root`).
+ *
+ * Events on the toggled `<li>`, bubbling:
+ *   opened.lf.menu-dropdown  detail { menu, item }
+ *   closed.lf.menu-dropdown  detail { menu, item }
  */
 import { Module } from '../core/Module.js';
 import { markSubmenus } from './menu-utils.js';
 import { onEscape } from '../core/global-events.js';
 
-function closeAllMenus(emitClosed) {
-  document.querySelectorAll('[data-menu="dropdown"] > li.is-open').forEach((li) => {
+/** Close open items only inside `root` — never tear down another instance's menus. */
+function closeAllMenus(root, emitClosed) {
+  root.querySelectorAll('[data-menu="dropdown"] > li.is-open').forEach((li) => {
     li.classList.remove('is-open');
     li.setAttribute('aria-expanded', 'false');
     emitClosed?.(li);
@@ -50,13 +62,13 @@ export class MenuDropdown extends Module {
 
     this.on(document, 'click', (event) => {
       if (event.target.closest('[data-menu="dropdown"]')) return;
-      closeAllMenus((li) =>
+      closeAllMenus(this.root, (li) =>
         this.emit(li, 'closed', { menu: li.closest('[data-menu="dropdown"]'), item: li }),
       );
     });
 
     onEscape(this.signal, () => {
-      closeAllMenus((li) =>
+      closeAllMenus(this.root, (li) =>
         this.emit(li, 'closed', { menu: li.closest('[data-menu="dropdown"]'), item: li }),
       );
     });

@@ -4,20 +4,23 @@
 .offcanvas {
   display: none;
   position: fixed;
-  top: 0;
-  bottom: 0;
+  inset-block: 0;
   inset-inline-start: 0;
   z-index: var(--lf-z-offcanvas);
   width: map-get($offcanvas-sizes, small);
   max-width: 85vw;
-  padding: 1rem;
-  padding-top: 2.5rem;
+  padding: var(--lf-space-4, 1rem);
+  padding-block-start: var(--lf-space-7, 2.5rem);
   background: var(--lf-offcanvas-bg);
-  // Physical translate: pairs with inset-inline-start for LTR drawer hide.
+  // Hide off the inline-start edge; flip under RTL.
   transform: translateX(-100%);
-  transition: transform 0.3s ease;
+  transition: transform var(--lf-duration-normal, 0.3s) var(--lf-ease-standard, ease);
   overflow-y: auto;
   pointer-events: none;
+
+  [dir='rtl'] & {
+    transform: translateX(100%);
+  }
 
   &.is-open {
     display: block;
@@ -31,7 +34,7 @@
   .close-button {
     position: absolute;
     inset-inline-end: 0.75rem;
-    top: 0.35rem;
+    inset-block-start: 0.35rem;
   }
 }
 
@@ -43,7 +46,8 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity var(--lf-duration-normal, 0.3s) var(--lf-ease-standard, ease),
+    visibility var(--lf-duration-normal, 0.3s) var(--lf-ease-standard, ease);
 
   &.is-open {
     opacity: 1;

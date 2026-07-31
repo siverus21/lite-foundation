@@ -57,6 +57,8 @@ $blockquote-padding: rem-calc(9 20 0 19);
 $blockquote-border: 1px solid $medium-gray;
 $enable-cite-block: true;
 $enable-keystroke: false;
+// Heavy print reset (* backgrounds, href expansion, orphans). Light utilities
+// `.show-for-print` / `.hide-for-print` always ship — flip this for the full pack.
 $enable-print-styles: false;
 $keystroke-font: $font-family-monospace;
 $keystroke-color: $black;

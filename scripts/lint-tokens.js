@@ -20,7 +20,10 @@ const SCAN_DIRS = ['scss/components', 'scss/core', 'scss/utilities'];
 const CRITICAL_DIR = 'scss/critical';
 
 const HEX = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
+/** Numeric rgb()/hsl() — e.g. `rgba(0, 0, 0, 0.5)`. */
 const RGB = /\b(?:rgba?|hsla?)\(\s*\d/gi;
+/** Sass-variable rgb()/hsl() — e.g. `rgba($black, 0.08)` (previously bypassed RGB). */
+const RGB_SASS = /\b(?:rgba?|hsla?)\(\s*\$[\w-]+/gi;
 const Z_INDEX = /z-index\s*:\s*-?\d+/gi;
 
 const ansi = {
@@ -58,15 +61,16 @@ function stripComments(source) {
 }
 
 function lineAllowsLiteral(line) {
+  // Consuming a token …
   if (/var\(\s*--lf-/.test(line)) return true;
+  // … or defining one (`--lf-choice-focus-ring: #{rgba($color, 0.35)}`).
+  if (/--lf-[\w-]+\s*:/.test(line)) return true;
   return false;
 }
 
-function lintFile(file) {
-  const rel = path.relative(root, file);
-  const raw = readFileSync(file, 'utf8');
-  const source = stripComments(raw);
-  const lines = source.split('\n');
+/** Lint a SCSS source string (exported for unit tests). */
+export function lintSource(source, { rel = 'virtual.scss' } = {}) {
+  const lines = stripComments(source).split('\n');
   const hits = [];
 
   lines.forEach((line, i) => {
@@ -80,12 +84,21 @@ function lintFile(file) {
     for (const match of line.matchAll(RGB)) {
       hits.push({ line: i + 1, kind: 'color', value: match[0], text: trimmed });
     }
+    for (const match of line.matchAll(RGB_SASS)) {
+      hits.push({ line: i + 1, kind: 'color', value: match[0], text: trimmed });
+    }
     for (const match of line.matchAll(Z_INDEX)) {
       hits.push({ line: i + 1, kind: 'z-index', value: match[0], text: trimmed });
     }
   });
 
   return { rel, hits };
+}
+
+function lintFile(file) {
+  const rel = path.relative(root, file);
+  const raw = readFileSync(file, 'utf8');
+  return lintSource(raw, { rel });
 }
 
 /** List non-empty hotfix partials that should eventually move into components. */

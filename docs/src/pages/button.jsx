@@ -56,6 +56,14 @@ export default function ButtonPage() {
               part: '.button-group',
               detail: 'Обёртка, которая склеивает соседние кнопки в один блок.',
             },
+            {
+              part: '.is-loading / aria-busy',
+              detail: 'Блокирует клики, прячет текст, показывает CSS-spinner.',
+            },
+            {
+              part: '.icon-only / .icon-button',
+              detail: 'Квадратная кнопка под SVG/иконку. Нужен <code>aria-label</code>.',
+            },
           ]}
         />
       </Section>
@@ -172,10 +180,52 @@ export default function ButtonPage() {
           code={`<button type="button" class="button primary" disabled>Disabled</button>
 <!-- Для ссылок-кнопок: aria-disabled="true" + pointer-events / tabindex="-1" -->`}
         />
-        <p>
-          Загрузка: не подменяйте текст молча — добавьте <code>aria-busy="true"</code> и видимый
-          индикатор (<a href="spinner.html">Spinner</a>).
-        </p>
+        <Demo label="is-loading">
+          <button type="button" class="button primary is-loading" aria-busy="true">
+            Saving
+          </button>{' '}
+          <button type="button" class="button hollow is-loading" aria-busy="true">
+            Saving
+          </button>{' '}
+          <button type="button" class="button" aria-busy="true">
+            Via aria-busy
+          </button>
+        </Demo>
+        <Code
+          title="HTML"
+          code={`<button type="button" class="button primary is-loading" aria-busy="true">Saving</button>
+<!-- Эквивалент: .button[aria-busy="true"] — тот же CSS-spinner, без отдельного Spinner -->`}
+        />
+        <Aside>
+          Текст остаётся в DOM (для скринридеров / после снятия состояния), визуально скрыт через{' '}
+          <code>color: transparent</code>. Пока идёт запрос — не подменяйте label молча.
+        </Aside>
+        <Demo label="icon-only">
+          <button type="button" class="button icon-only secondary" aria-label="Settings">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <circle cx="8" cy="8" r="2.5" fill="currentColor" />
+              <path
+                d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"
+                stroke="currentColor"
+                stroke-width="1.25"
+                fill="none"
+              />
+            </svg>
+          </button>{' '}
+          <button type="button" class="button icon-only tiny primary" aria-label="More">
+            <span aria-hidden="true">⋯</span>
+          </button>{' '}
+          <button type="button" class="icon-button hollow" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </Demo>
+        <Code
+          title="HTML"
+          code={`<button type="button" class="button icon-only secondary" aria-label="Settings">
+  <svg width="16" height="16" aria-hidden="true" focusable="false">…</svg>
+</button>
+<!-- Алиас: class="icon-button" — тот же квадратный хост -->`}
+        />
       </Section>
 
       <Section title="Токены">

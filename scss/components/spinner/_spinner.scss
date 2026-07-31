@@ -92,6 +92,47 @@
   height: 8rem;
 }
 
+// Composition recipes — nest the primitives above; no JS required.
+//
+//   <div class="skeleton-media">
+//     <span class="skeleton skeleton-circle"></span>
+//     <div class="skeleton-media-body">
+//       <span class="skeleton skeleton-text"></span>
+//       <span class="skeleton skeleton-text"></span>
+//     </div>
+//   </div>
+.skeleton-media {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.skeleton-media-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: var(--lf-space-4, 1rem);
+  border: 1px solid var(--lf-card-border, #{$light-gray});
+  border-radius: var(--lf-global-radius, #{$global-radius});
+  background: var(--lf-card-bg, #{$white});
+
+  .skeleton-rect {
+    height: 6rem;
+    margin: 0;
+  }
+}
+
+.skeleton-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 @keyframes lf-shimmer {
   0% {
     background-position: 200% 0;

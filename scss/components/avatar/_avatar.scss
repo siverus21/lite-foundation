@@ -43,8 +43,22 @@
   }
 }
 
-.avatar-initials::before {
+// Initials fallback — either class or the attribute alone.
+.avatar-initials::before,
+.avatar[data-initials]::before {
   content: attr(data-initials);
+}
+
+// Broken/missing images fall back to initials when data-initials is set.
+.avatar[data-initials] img {
+  position: absolute;
+  inset: 0;
+
+  &:not([src]),
+  &[src=''],
+  &[data-lf-broken] {
+    display: none;
+  }
 }
 
 .avatar-status {

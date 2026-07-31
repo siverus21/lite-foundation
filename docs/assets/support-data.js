@@ -250,6 +250,16 @@ export const PAGE_FEATURES = {
   'spinner.html': ['prefers-reduced-motion'],
   'toast.html': ['prefers-reduced-motion'],
   'slider.html': ['prefers-reduced-motion'],
+  'authoring.html': ['cascade-layers', 'custom-properties', 'abortsignal-listener'],
+  'troubleshooting.html': ['cascade-layers', 'custom-properties'],
+  'faq.html': ['cascade-layers'],
+  'tooltip.html': ['focus-visible', 'logical-properties'],
+  'css-only.html': [
+    'custom-properties',
+    'logical-properties',
+    'position-sticky',
+    'meter',
+  ],
   'ui-kit.html': [
     'popover',
     'anchor-positioning',

@@ -68,7 +68,9 @@ export class Modal extends Module {
     const openBtn = event.target.closest('[data-dialog-open]');
     if (openBtn) {
       event.preventDefault();
-      this.open(document.getElementById(openBtn.getAttribute('data-dialog-open')), openBtn);
+      const dialog = document.getElementById(openBtn.getAttribute('data-dialog-open'));
+      if (!dialog) return;
+      this.open(dialog, openBtn);
       return;
     }
 

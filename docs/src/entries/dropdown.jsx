@@ -4,14 +4,14 @@ import DropdownPage from '../pages/dropdown.jsx';
 mountDocs({
   file: 'dropdown.html',
   documentTitle: 'Dropdown — lite-foundation docs',
-  title: 'Dropdown & Tooltip',
+  title: 'Dropdown',
   kicker: 'Component',
   lead: (
     <>
-      Лёгкие всплывающие панели у триггера. Dropdown — по клику; tooltip — по hover/focus. Не
-      блокируют страницу (в отличие от modal).
+      Лёгкая всплывающая панель у триггера по клику. Не блокирует страницу (в отличие от modal).
+      Hover-подсказка — отдельно: <a href="tooltip.html">Tooltip</a>.
     </>
   ),
-  flags: ['styles.dropdown', 'scripts.dropdown', 'styles.tooltip', 'scripts.tooltip'],
+  flags: ['styles.dropdown', 'scripts.dropdown'],
   Page: DropdownPage,
 });

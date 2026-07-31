@@ -25,8 +25,7 @@
     background-color: var(--lf-button-bg, #{$button-background});
     color: var(--lf-button-color, #{$button-color});
 
-    &:hover,
-    &:focus {
+    @include lf-hover-focus {
       background-color: var(--lf-button-bg-hover);
       color: var(--lf-button-color, #{$button-color});
     }
@@ -56,8 +55,7 @@
     background-color: transparent;
     color: var(--lf-button-bg, #{$button-background});
 
-    &:hover,
-    &:focus {
+    @include lf-hover-focus {
       border-color: var(--lf-color-primary-hollow-hover, #{scale-color($button-background, $lightness: $button-hollow-hover-lightness)});
       background-color: transparent;
       color: var(--lf-color-primary-hollow-hover, #{scale-color($button-background, $lightness: $button-hollow-hover-lightness)});
@@ -81,8 +79,7 @@
     background-color: transparent;
     color: var(--lf-button-bg, #{$button-background});
 
-    &:hover,
-    &:focus {
+    @include lf-hover-focus {
       border-color: transparent;
       background-color: transparent;
       color: var(--lf-color-primary-hollow-hover, #{scale-color($button-background, $lightness: $button-hollow-hover-lightness)});
@@ -118,8 +115,7 @@
       background-color: var(--lf-color-#{$name}, #{$color});
       color: var(--lf-color-#{$name}-contrast, #{color-pick-contrast($color, ($button-color, $button-color-alt))});
 
-      &:hover,
-      &:focus {
+      @include lf-hover-focus {
         background-color: var(--lf-color-#{$name}-hover);
         color: var(--lf-color-#{$name}-contrast);
       }
@@ -131,20 +127,16 @@
       }
 
       &.hollow {
-        border-color: var(--lf-color-#{$name}, #{$color});
-        background-color: transparent;
-        color: var(--lf-color-#{$name}, #{$color});
+        @include lf-palette-hollow($name);
 
-        &:hover,
-        &:focus {
+        @include lf-hover-focus {
           border-color: var(--lf-color-#{$name}-hollow-hover);
           color: var(--lf-color-#{$name}-hollow-hover);
         }
 
         &.disabled,
         &[disabled] {
-          border-color: var(--lf-color-#{$name}, #{$color});
-          color: var(--lf-color-#{$name}, #{$color});
+          @include lf-palette-hollow($name);
         }
 
         &.dropdown::after {
@@ -155,8 +147,7 @@
       &.clear {
         color: var(--lf-color-#{$name}, #{$color});
 
-        &:hover,
-        &:focus {
+        @include lf-hover-focus {
           color: var(--lf-color-#{$name}-hollow-hover);
         }
 
@@ -169,8 +160,85 @@
 }
 
 a.button {
-  &:hover,
-  &:focus {
+  @include lf-hover-focus {
     text-decoration: none;
+  }
+}
+
+// Loading / pending — keep layout, block interaction, show a CSS spinner.
+.button.is-loading,
+.button[aria-busy='true'] {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: 1em;
+    height: 1em;
+    margin-block-start: -0.5em;
+    margin-inline-start: -0.5em;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    color: var(--lf-button-color, #{$button-color});
+    animation: lf-button-spin var(--lf-duration-slow, 0.6s) linear infinite;
+  }
+
+  &.hollow::after,
+  &.clear::after {
+    color: var(--lf-button-bg, #{$button-background});
+  }
+}
+
+// Square icon host — put an SVG/icon inside; require aria-label on the control.
+.button.icon-only,
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  line-height: 1;
+
+  &.tiny {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  &.small {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  &.large {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  > svg,
+  > img {
+    width: 1.15em;
+    height: 1.15em;
+    display: block;
+  }
+}
+
+@keyframes lf-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button.is-loading::after,
+  .button[aria-busy='true']::after {
+    animation: none;
+    border-color: currentColor;
   }
 }

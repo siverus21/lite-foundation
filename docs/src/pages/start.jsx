@@ -7,7 +7,8 @@ export default function StartPage() {
         <p>
           Нужны Node.js 18+ и npm. Индексы SCSS появляются при старте / sync / build. CSS/JS entry —
           virtual (<code>virtual:lf-scss/…</code>, <code>virtual:lf-entry/…</code>) через{' '}
-          <code>/js/load-build.js?build=…</code>.
+          <code>/js/load-build.js?build=…</code>. Добавляешь компонент или страницу docs — см.{' '}
+          <a href="authoring.html">Авторство</a>.
         </p>
         <Code
           code={`git clone https://github.com/siverus21/lite-foundation.git

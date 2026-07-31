@@ -42,6 +42,7 @@
  *   open(el), close(el), loading(el, boolean)
  */
 import { Module } from '../core/Module.js';
+import { t } from '../core/i18n.js';
 import { Listbox } from '../core/listbox.js';
 import { bool, num, str } from '../core/attrs.js';
 import { debounce } from '../core/events.js';
@@ -76,6 +77,7 @@ function optionsFromList(listbox) {
 
 export class Combobox extends Module {
   static id = 'combobox';
+  static lazySelector = '[data-combobox]';
 
   constructor(root = document) {
     super(root);
@@ -189,7 +191,7 @@ export class Combobox extends Module {
       owner: this,
       root,
       input,
-      emptyText: str(root, 'data-combobox-empty') || 'Ничего не найдено',
+      emptyText: str(root, 'data-combobox-empty') || t('empty'),
     });
 
     // Value carrier: the original <select>, or a hidden input when the widget was
@@ -211,7 +213,7 @@ export class Combobox extends Module {
       clear = document.createElement('button');
       clear.type = 'button';
       clear.className = 'combobox-clear';
-      clear.setAttribute('aria-label', 'Clear');
+      clear.setAttribute('aria-label', t('clear'));
       clear.hidden = true;
       root.appendChild(clear);
     }

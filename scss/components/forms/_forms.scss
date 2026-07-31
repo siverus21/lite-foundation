@@ -154,12 +154,18 @@ select {
 
   @if $select-triangle-color != transparent {
     padding-inline-end: $form-spacing * 1.5;
+    // Chevron image lives in `--lf-select-chevron` (see css-variables + dark).
+    // Override at runtime: `:root { --lf-select-chevron: url(…); }` or rebuild
+    // from `--lf-select-triangle` via your own data-URI.
+    background-image: var(--lf-select-chevron, #{lf-select-chevron-uri($select-triangle-color)});
     background-origin: content-box;
     background-position: right (-$form-spacing) center;
     background-repeat: no-repeat;
     background-size: 9px 6px;
-    // Data-URI SVG fill is baked at compile time (cannot use CSS vars).
-    @include background-triangle($select-triangle-color);
+
+    [dir='rtl'] & {
+      background-position: left (-$form-spacing) center;
+    }
   }
 
   &:focus {

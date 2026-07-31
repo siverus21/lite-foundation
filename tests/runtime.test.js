@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createModuleRuntime } from '../js/core/runtime.js';
+import { createModuleRuntime, createLF } from '../js/core/runtime.js';
 import { Module } from '../js/core/Module.js';
 
 class Probe extends Module {
@@ -116,5 +116,51 @@ describe('createModuleRuntime', () => {
     expect(Probe.instances).toBe(1);
     spy.mockRestore();
     runtime.destroy(root);
+  });
+
+  it('skips modules whose lazySelector matches nothing in the root', () => {
+    class LazyOnly extends Module {
+      static lazySelector = '[data-lazy-probe]';
+      static instances = 0;
+      constructor(root) {
+        super(root);
+        LazyOnly.instances += 1;
+      }
+      destroy() {
+        LazyOnly.instances -= 1;
+        super.destroy();
+      }
+    }
+
+    LazyOnly.instances = 0;
+    Probe.instances = 0;
+    const root = document.createElement('div');
+    const runtime = createModuleRuntime([LazyOnly, Probe]);
+    runtime.init(root);
+    expect(LazyOnly.instances).toBe(0);
+    expect(Probe.instances).toBe(1);
+
+    root.innerHTML = '<div data-lazy-probe></div>';
+    runtime.destroy(root);
+    runtime.init(root);
+    expect(LazyOnly.instances).toBe(1);
+
+    runtime.destroy(root);
+  });
+});
+
+describe('createLF', () => {
+  it('inits modules on a root and exposes destroy/refresh', () => {
+    Probe.instances = 0;
+    const root = document.createElement('div');
+    const lf = createLF([Probe], root);
+    expect(Probe.instances).toBe(1);
+    expect(lf.root).toBe(root);
+
+    lf.refresh();
+    expect(Probe.instances).toBe(1);
+
+    lf.destroy();
+    expect(Probe.instances).toBe(0);
   });
 });

@@ -91,19 +91,6 @@ $black: #0a0a0a !default;
   }
 }
 
-@mixin -zf-each-breakpoint($small: true) {
-  @each $bp in $breakpoint-classes {
-    @if $small or $bp != $zf-zero-breakpoint {
-      $old-zf-size: $zf-size;
-      $zf-size: $bp !global;
-      @include breakpoint($bp) {
-        @content;
-      }
-      $zf-size: $old-zf-size !global;
-    }
-  }
-}
-
 @mixin show-for($size) {
   $px: map.get($breakpoints, $size);
   $em: zf-bp-to-em($px) - 0.00125;
@@ -147,15 +134,6 @@ $black: #0a0a0a !default;
   }
 }
 
-@mixin background-triangle($color: $black) {
-  $red: math.round(color.channel($color, 'red', $space: rgb));
-  $green: math.round(color.channel($color, 'green', $space: rgb));
-  $blue: math.round(color.channel($color, 'blue', $space: rgb));
-  $rgb: 'rgb%28#{$red}, #{$green}, #{$blue}%29';
-
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="24" viewBox="0 0 32 24"><polygon points="0,0 32,0 16,24" style="fill: #{$rgb}"></polygon></svg>');
-}
-
 /// CSS triangle caret / chevron (border trick).
 /// $direction: down | up | left | right
 @mixin lf-chevron($direction: down, $size: 0.4em, $color: currentColor) {
@@ -191,6 +169,21 @@ $black: #0a0a0a !default;
   height: $size;
   border-inline-end: $thickness solid $color;
   border-bottom: $thickness solid $color;
+}
+
+/// Pointer hover + keyboard focus (skips mouse `:focus` sticky styles).
+@mixin lf-hover-focus {
+  &:hover,
+  &:focus-visible {
+    @content;
+  }
+}
+
+/// Shared hollow / outline palette surface (button, chip, …).
+@mixin lf-palette-hollow($name) {
+  border-color: var(--lf-color-#{$name});
+  background-color: transparent;
+  color: var(--lf-color-#{$name});
 }
 
 @mixin visually-hidden($enforce: true) {

@@ -95,9 +95,19 @@ class AccordionGroup {
       content.style.height = item.open ? 'auto' : '0px';
       item.classList.toggle('is-open', item.open);
 
+      // Primary activation (pointer + keyboard) fires `click` on <summary>.
+      // preventDefault stops the native instant open/close so we can animate
+      // height and enforce single-open — we still flip `details.open` ourselves
+      // in #toggle, so the built-in expanded semantics stay intact.
       this.owner.on(summary, 'click', (event) => {
         event.preventDefault();
         this.enqueue(() => this.#toggle(item));
+      });
+
+      // Space on <summary> also scrolls the page in some UAs; block that without
+      // owning the toggle (the synthesized click above still runs #toggle once).
+      this.owner.on(summary, 'keydown', (event) => {
+        if (event.key === ' ' || event.key === 'Spacebar') event.preventDefault();
       });
     });
 

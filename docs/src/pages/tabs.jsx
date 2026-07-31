@@ -107,8 +107,91 @@ tabs.addEventListener('changed.lf.tabs', (e) => {
 tabs.dispatchEvent(new CustomEvent('lf:tabs:select', { detail: { index: 1 } }));`}
         />
         <Aside>
-          Клавиатура: ←/→ и Home/End — automatic activation (WAI-ARIA). Фокус и выбор двигаются
-          вместе.
+          Клавиатура (горизонтальные): ←/→ и Home/End — automatic activation (WAI-ARIA). Фокус и
+          выбор двигаются вместе.
+        </Aside>
+      </Section>
+
+      <Section title="Vertical">
+        <p>
+          Класс <code>.vertical</code> на tablist (или <code>aria-orientation="vertical"</code> /{' '}
+          <code>data-tabs-vertical</code>). Модуль сам выставит{' '}
+          <code>aria-orientation</code> и переключит стрелки на ↑/↓. Для сайдбар-раскладки оберните
+          список и панели в <code>.tabs-vertical</code>.
+        </p>
+        <Demo>
+          <div class="tabs-vertical">
+            <ul class="tabs vertical" data-tabs id="docs-tabs-v" role="tablist">
+              <li class="tabs-title is-active" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  id="docs-vtab-1"
+                  aria-controls="docs-vpanel-1"
+                  aria-selected="true"
+                  tabindex="0"
+                >
+                  Overview
+                </button>
+              </li>
+              <li class="tabs-title" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  id="docs-vtab-2"
+                  aria-controls="docs-vpanel-2"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  Specs
+                </button>
+              </li>
+            </ul>
+            <div class="tabs-content" data-tabs-content="docs-tabs-v">
+              <div
+                class="tabs-panel is-active"
+                id="docs-vpanel-1"
+                role="tabpanel"
+                aria-labelledby="docs-vtab-1"
+              >
+                <p>Vertical tab panel 1.</p>
+              </div>
+              <div
+                class="tabs-panel"
+                id="docs-vpanel-2"
+                role="tabpanel"
+                aria-labelledby="docs-vtab-2"
+                hidden
+              >
+                <p>Vertical tab panel 2.</p>
+              </div>
+            </div>
+          </div>
+        </Demo>
+        <Code
+          title="HTML"
+          code={`<div class="tabs-vertical">
+  <ul class="tabs vertical" data-tabs id="side-tabs" role="tablist">
+    <li class="tabs-title is-active" role="presentation">
+      <button type="button" role="tab" id="side-1"
+        aria-controls="side-p1" aria-selected="true" tabindex="0">Overview</button>
+    </li>
+    <li class="tabs-title" role="presentation">
+      <button type="button" role="tab" id="side-2"
+        aria-controls="side-p2" aria-selected="false" tabindex="-1">Specs</button>
+    </li>
+  </ul>
+  <div class="tabs-content" data-tabs-content="side-tabs">
+    <div class="tabs-panel is-active" id="side-p1" role="tabpanel"
+      aria-labelledby="side-1">…</div>
+    <div class="tabs-panel" id="side-p2" role="tabpanel"
+      aria-labelledby="side-2" hidden>…</div>
+  </div>
+</div>`}
+        />
+        <Aside>
+          Поперечные стрелки (←/→ у vertical) игнорируются — чтобы не ломать скролл страницы и
+          вложенные виджеты.
         </Aside>
       </Section>
 

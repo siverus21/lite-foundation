@@ -278,6 +278,23 @@
                     <span class="input-group-label">.com</span>
                   </div>
 
+                  <label for="ks-password">Password input</label>
+                  <div class="input-group password-input">
+                    <input id="ks-password" class="input-group-field" type="password" name="ksPassword" autocomplete="current-password" placeholder="••••••••">
+                    <button type="button" class="button secondary password-input-toggle"
+                            data-password-toggle
+                            data-text-show="Show" data-text-hide="Hide"
+                            data-label-show="Show password" data-label-hide="Hide password"
+                            aria-pressed="false" aria-label="Show password">Show</button>
+                  </div>
+
+                  <label for="ks-search">Search input</label>
+                  <div class="input-group search-input">
+                    <span class="input-group-label search-input-icon" aria-hidden="true"></span>
+                    <input id="ks-search" class="input-group-field" type="search" name="ksSearch" placeholder="Search…">
+                    <button type="button" class="button clear search-input-clear" data-search-clear aria-label="Clear search">×</button>
+                  </div>
+
                   <fieldset class="fieldset">
                     <legend>Radios (native)</legend>
                     <input type="radio" name="pokemon" value="Red" id="pokemonRed" checked>
@@ -789,9 +806,9 @@
             </div>
             <p class="ks-meta">Замена Motion UI → модульный <strong>Animate.css</strong> (<code>fadeIn</code> / <code>fadeOut</code>)</p>
             <p>
-              <button type="button" class="button" id="ks-animate-trigger">Toggle fade animation</button>
+              <button type="button" class="button" id="ks-animate-trigger" data-lf-animate-trigger="ks-animate-box">Toggle fade animation</button>
             </p>
-            <div id="ks-animate-box" class="callout primary">
+            <div id="ks-animate-box" class="callout primary" data-lf-animate>
               Этот блок анимируется через Animate.css.
             </div>
           </section>
@@ -954,7 +971,16 @@
               <span class="avatar avatar-initials" data-initials="АИ"></span>
               <span class="chip primary">Tag</span>
               <span class="chip success hollow">Hollow</span>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="button is-loading" aria-busy="true">Saving</span>
             </p>
+            <div class="skeleton-media" style="max-width: 20rem; margin-bottom: 1rem;" aria-hidden="true">
+              <span class="skeleton skeleton-circle"></span>
+              <div class="skeleton-media-body skeleton-stack">
+                <span class="skeleton skeleton-text"></span>
+                <span class="skeleton skeleton-text"></span>
+              </div>
+            </div>
             <p>
               <button class="button tiny success" type="button" data-toast-trigger
                       data-toast-variant="success" data-toast-title="Готово"

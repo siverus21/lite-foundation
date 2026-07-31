@@ -30,6 +30,7 @@
 import { Module } from '../core/Module.js';
 import { num, str } from '../core/attrs.js';
 import { afterTransition } from '../core/transition.js';
+import { t } from '../core/i18n.js';
 
 const DEFAULT_DURATION = 4000;
 const EXIT_DURATION = 350;
@@ -77,7 +78,13 @@ export class Toast extends Module {
     let stack = document.querySelector('.toast-stack[data-lf-toast-stack]');
     if (!stack) {
       stack = document.createElement('div');
-      stack.className = 'toast-stack';
+      // Default corner: top-end (logical). Override via data-toast-position on
+      // <body> or a pre-existing `.toast-stack` in markup.
+      const position =
+        document.body?.getAttribute('data-toast-position') ||
+        document.documentElement?.getAttribute('data-toast-position') ||
+        'top-end';
+      stack.className = `toast-stack ${position}`;
       stack.setAttribute('data-lf-toast-stack', '');
       stack.setAttribute('aria-live', 'polite');
       stack.setAttribute('aria-atomic', 'true');
@@ -142,7 +149,7 @@ export class Toast extends Module {
     closeBtn.type = 'button';
     closeBtn.className = 'toast-close';
     closeBtn.setAttribute('data-close', '');
-    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.setAttribute('aria-label', t('close'));
     toastEl.appendChild(closeBtn);
 
     stack.appendChild(toastEl);

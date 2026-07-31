@@ -332,12 +332,22 @@ $-lf-text-align: (
   }
 }
 
-/* Print (opt-in — heavy Foundation leftover; unused by kitchen-sink) */
-@if $enable-print-styles {
+/* Print — light utilities always on; heavy reset behind $enable-print-styles */
+.show-for-print {
+  display: none !important;
+}
+
+@media print {
   .show-for-print {
-    display: none !important;
+    display: block !important;
   }
 
+  .hide-for-print {
+    display: none !important;
+  }
+}
+
+@if $enable-print-styles {
   @media print {
     @if $print-transparent-backgrounds {
       * {
@@ -353,14 +363,6 @@ $-lf-text-align: (
         box-shadow: none !important;
         text-shadow: none !important;
       }
-    }
-
-    .show-for-print {
-      display: block !important;
-    }
-
-    .hide-for-print {
-      display: none !important;
     }
 
     a,

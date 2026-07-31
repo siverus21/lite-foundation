@@ -215,7 +215,11 @@ body.ks-body .ks-hero-title {
   border: 1px solid var(--ks-line);
   border-radius: calc(var(--ks-radius) + 0.15rem);
   background:
-    linear-gradient(165deg, rgba(255, 255, 255, 0.9) 0%, var(--ks-surface) 100%);
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--ks-raised) 92%, transparent) 0%,
+      var(--ks-surface) 100%
+    );
   animation: ks-rise 0.85s var(--ks-ease) 0.36s both;
 }
 

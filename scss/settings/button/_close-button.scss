@@ -2,7 +2,7 @@
 // Close Button
 
 $closebutton-position: right top;
-$closebutton-z-index: 10;
+// Z-index: use --lf-z-closebutton / $z-index map (settings/core/z-index) — no local duplicate.
 $closebutton-default-size: medium;
 $closebutton-offset-horizontal: (
   small: 0.66rem,

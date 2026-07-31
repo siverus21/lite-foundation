@@ -12,8 +12,11 @@ export const NAV = [
       { href: 'tokens.html', title: 'Токены' },
       { href: 'dark-mode.html', title: 'Тёмная тема' },
       { href: 'lifecycle.html', title: 'JS API' },
+      { href: 'authoring.html', title: 'Авторство' },
       { href: 'support.html', title: 'Поддержка браузеров' },
       { href: 'testing.html', title: 'Тесты' },
+      { href: 'troubleshooting.html', title: 'Troubleshooting' },
+      { href: 'faq.html', title: 'FAQ' },
     ],
   },
   {
@@ -27,6 +30,7 @@ export const NAV = [
       { href: 'segmented.html', title: 'Segmented' },
       { href: 'accordion.html', title: 'Accordion' },
       { href: 'dropdown.html', title: 'Dropdown' },
+      { href: 'tooltip.html', title: 'Tooltip' },
       { href: 'offcanvas.html', title: 'Off-canvas' },
       { href: 'menus.html', title: 'Menus' },
       { href: 'slider.html', title: 'Slider' },
@@ -54,6 +58,7 @@ export const NAV = [
     group: 'UI Kit',
     items: [
       { href: 'modern-css.html', title: 'Современный CSS' },
+      { href: 'css-only.html', title: 'CSS-only' },
       { href: 'ui-kit.html', title: 'UI Kit' },
     ],
   },
@@ -66,7 +71,9 @@ export const TOP_NAV = [
   'builds.html',
   'tokens.html',
   'lifecycle.html',
+  'authoring.html',
   'support.html',
   'testing.html',
+  'faq.html',
   'ui-kit.html',
 ];

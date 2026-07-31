@@ -62,9 +62,21 @@ export default function IndexPage() {
               <code>init</code> / <code>destroy</code> / <code>refresh</code> после AJAX.
             </p>
           </a>
+          <a class="docs-card" href="authoring.html">
+            <h3>Авторство</h3>
+            <p>Новый компонент, тесты, страница в docs.</p>
+          </a>
           <a class="docs-card" href="testing.html">
             <h3>Тесты</h3>
-            <p>Vitest, покрытие, guard от «тихих» опечаток в feature-флагах.</p>
+            <p>Vitest, axe smoke, Playwright e2e, guard feature-флагов.</p>
+          </a>
+          <a class="docs-card" href="troubleshooting.html">
+            <h3>Troubleshooting</h3>
+            <p>Сборка, AJAX lifecycle, overlays, budget.</p>
+          </a>
+          <a class="docs-card" href="faq.html">
+            <h3>FAQ</h3>
+            <p>Границы проекта, флаги, темы, a11y.</p>
           </a>
         </div>
       </Section>
@@ -104,7 +116,11 @@ export default function IndexPage() {
           </a>
           <a class="docs-card" href="dropdown.html">
             <h3>Dropdown</h3>
-            <p>Всплывающие панели и tooltip.</p>
+            <p>Всплывающая панель у кнопки по клику.</p>
+          </a>
+          <a class="docs-card" href="tooltip.html">
+            <h3>Tooltip</h3>
+            <p>Подсказка по hover/focus (<code>data-tip</code>).</p>
           </a>
           <a class="docs-card" href="offcanvas.html">
             <h3>Off-canvas</h3>
@@ -186,6 +202,10 @@ export default function IndexPage() {
           <a class="docs-card" href="ui-kit.html">
             <h3>Витрина компонентов</h3>
             <p>Все компоненты (старые и новые) с вариантами на одной странице.</p>
+          </a>
+          <a class="docs-card" href="css-only.html">
+            <h3>CSS-only</h3>
+            <p>Badge, breadcrumbs, pagination, progress, bars — без JS-модулей.</p>
           </a>
           <a class="docs-card" href="modern-css.html">
             <h3>Современный CSS</h3>

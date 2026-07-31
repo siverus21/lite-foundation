@@ -14,10 +14,13 @@ npm run build          # → dist/
 | Скрипт | Назначение |
 |--------|------------|
 | `npm run start` | Vite + HMR |
-| `npm run build` | CSS/JS бандлы из `config/features.js` |
+| `npm run build` | CSS/JS бандлы из `config/features.js` (+ строгий `lint:tokens`) |
 | `npm run sync:features` | Пересобрать GENERATED-индексы |
-| `npm test` | Vitest (юнит + `feature-flags-consistency`) |
+| `npm run lint:tokens` | Хардкод цвета/z-index в компонентах |
+| `npm run check:budget` | Бюджет размера бандлов `dist/` |
+| `npm test` | Vitest (юнит + a11y smoke + `feature-flags-consistency`) |
 | `npm run test:coverage` | Vitest + отчёт покрытия (`coverage/`, в gitignore) |
+| `npm run test:e2e` | `build` + Playwright smoke (sink + 3 docs; нужен Chromium) |
 
 ## Архитектура
 
@@ -39,11 +42,17 @@ Page-бандл собирается in-memory (`sass.compileString` / `virtual:
 
 - Модули: `js/modules/*` на базе [`Module`](js/core/Module.js)
 - Entry: `/js/load-build.js?build=full` → `virtual:lf-entry/{name}` (папки `js/builds/` нет)
-- Lifecycle: `initModules` / `destroyModules` / `refreshModules` / `unmountModules`
+- Lifecycle: `initModules` / `destroyModules` / `refreshModules` / `unmountModules` / `createLF`
+  (реэкспорт из `virtual:lf-modules/*` и из `dist/lib.js`)
 
 Ленивый mount: атрибут `data-lf-lazy` на корне компонента — init при появлении во viewport (`IntersectionObserver`).
 Не вешай его на корень, скрытый по умолчанию (`<dialog>`, `.offcanvas`, что-то внутри неактивной вкладки/аккордеона) —
 `IntersectionObserver` не сработает для `display: none`, поэтому `Module.mount()` в этом случае просто инициализирует сразу, без отсрочки.
+
+Skip-init: если у класса модуля есть `static lazySelector` и в `root` нет совпадений, runtime не создаёт инстанс
+(бандл при этом всё равно содержит модуль — это не code-split).
+
+Строки chrome UI — [`js/core/i18n.js`](js/core/i18n.js) (`t` / `setMessages`).
 
 Escape для «закрывающихся» компонентов (`Offcanvas`, `Dropdown`, `MenuDropdown`, JS-фолбэк `Popover`) — через общий
 диспетчер [`js/core/global-events.js`](js/core/global-events.js) (`onEscape`), один `document`-листенер на всех,
@@ -100,18 +109,18 @@ Lint: `npm run lint:tokens` (dev-сервер — предупреждение; 
 ## Тесты
 
 Vitest + `happy-dom`. Юнит-тесты лежат рядом по темам (`js/core/*`, `js/modules/*`, `js/boot.js`),
-плюс `tests/feature-flags-consistency.test.js`: проверяет, что каждый включённый флаг
-`styles`/`scripts`/`vendors` в `config/features.js` резолвится в `STYLE_FOLDERS` / `SCRIPT_MODULES` /
-`KNOWN_VENDORS` (`scripts/sync-features.js`). Опечатка/переименование ключа без второй половины
-раньше молча выкидывала CSS/JS компонента из бандла без единой ошибки — теперь генераторы
-(`componentLoads`, `generateModulesIndex`, `vendorLoads`) бросают исключение на неизвестном флаге,
-и тест ловит это же на уровне конфигурации. Подробнее — [`docs/testing.html`](docs/testing.html).
+плюс `tests/a11y.test.js` (axe-core smoke) и `tests/feature-flags-consistency.test.js`: проверяет,
+что каждый включённый флаг `styles`/`scripts`/`vendors` в `config/features.js` резолвится в
+`STYLE_FOLDERS` / `SCRIPT_MODULES` / `KNOWN_VENDORS` (`scripts/sync-features.js`). Опечатка или
+переименование ключа без второй половины раньше молча выкидывала CSS/JS из бандла — теперь генераторы
+бросают исключение на неизвестном флаге, и тест ловит это на уровне конфигурации. После build — `npm run check:budget`. Browser smoke — `npm run test:e2e` (Playwright /
+Chromium). Подробнее — [`docs/testing.html`](docs/testing.html).
 
 ## Документация
 
 - Kitchen sink: [`index.html`](index.html)
-- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `dark-mode`, `lifecycle`, `support`, `testing`, компоненты)
-- Витрина всех компонентов: [`docs/ui-kit.html`](docs/ui-kit.html)
+- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `lifecycle`, `authoring`, `testing`, `troubleshooting`, `faq`, компоненты)
+- CSS-only каталог: [`docs/css-only.html`](docs/css-only.html) · витрина: [`docs/ui-kit.html`](docs/ui-kit.html)
 - Demo: [`about.html`](about.html)
 
 ## Структура

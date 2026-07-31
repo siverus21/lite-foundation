@@ -8,10 +8,11 @@ mountDocs({
   lead: (
     <>
       Стили полей ввода и контролов. Большинство работает без JS; кастомный range (
-      <code>data-slider</code>) требует модуль FormSlider. Кастомные <code>.checkbox</code> /{' '}
-      <code>.radio</code> — opt-in внутри <code>styles.forms</code>.
+      <code>data-slider</code>) требует FormSlider; password/search —{' '}
+      <code>scripts.inputRecipes</code>. Кастомные <code>.checkbox</code> / <code>.radio</code> —
+      opt-in внутри <code>styles.forms</code>.
     </>
   ),
-  flags: ['styles.forms', 'scripts.formSlider'],
+  flags: ['styles.forms', 'scripts.formSlider', 'scripts.inputRecipes'],
   Page: FormsPage,
 });

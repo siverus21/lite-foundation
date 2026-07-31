@@ -7,12 +7,32 @@ export default function TestingPage() {
         <Code
           code={`npm test              # один прогон
 npm run test:watch    # watch-режим
-npm run test:coverage # + отчёт покрытия (text + html в coverage/)`}
+npm run test:coverage # + отчёт покрытия (text + html в coverage/)
+npm run test:e2e      # build + Playwright smoke (sink + docs)
+npm run lint:tokens   # хардкод цвета/z-index в компонентах
+npm run check:budget  # размер бандлов dist/ vs бюджет
+npm run build         # lint:tokens (strict) + сборка`}
         />
         <Aside>
-          <code>npm run build</code> сам гоняет <code>lint:tokens</code> в строгом режиме (падает
-          на хардкод-цветах/z-index в компонентах) — это отдельная проверка, не часть{' '}
-          <code>npm test</code>.
+          <code>npm run build</code> сам гоняет <code>lint:tokens</code> в строгом режиме.{' '}
+          <code>check:budget</code> и <code>test:e2e</code> — отдельные шаги (не внутри{' '}
+          <code>npm test</code>). E2E поднимает Vite и ждёт <code>dist/*.css</code>.
+        </Aside>
+      </Section>
+
+      <Section title="Playwright smoke">
+        <p>
+          Файл <code>e2e/smoke.spec.js</code>: kitchen sink + docs (<code>button</code>,{' '}
+          <code>lifecycle</code>, <code>tooltip</code>). Chromium only. Первый раз:{' '}
+          <code>npx playwright install chromium</code>.
+        </p>
+        <Code
+          code={`npm run test:e2e
+# отчёт/trace при падении — см. playwright-report / trace в конфиге`}
+        />
+        <Aside>
+          Это не визуальная регрессия и не полный a11y CI — только «страница жива, ключевые демо на
+          месте». Storybook не используем: канон демо — sink + docs.
         </Aside>
       </Section>
 
@@ -21,12 +41,19 @@ npm run test:coverage # + отчёт покрытия (text + html в coverage/)
           <ul>
             <li>
               <code>js/core/</code> — <code>Module</code> (lazy mount + <code>data-lf-lazy</code>,
-              включая fallback на элементах без бокса), <code>runtime</code> (init/destroy/refresh/unmount),{' '}
-              <code>scroll-lock</code>, <code>global-events</code> (общий Escape-диспетчер)
+              включая fallback на элементах без бокса), <code>runtime</code> (
+              init/destroy/refresh/unmount, <code>createLF</code>, <code>lazySelector</code>),{' '}
+              <code>scroll-lock</code>, <code>global-events</code> (общий Escape-диспетчер),{' '}
+              <code>i18n</code> (<code>t</code> / <code>setMessages</code>)
             </li>
             <li>
               <code>js/modules/*</code> — по файлу на модуль (modal, tabs, accordion, dropdown,
-              offcanvas, menu-dropdown/accordion/drilldown, form-slider, …)
+              offcanvas, menu-*, form-slider, input-recipes, …)
+            </li>
+            <li>
+              <code>tests/a11y.test.js</code> — smoke axe-core: tabs (в т.ч. vertical), accordion,
+              rating, modal, otp, tooltip, dropdown, form-control + password/search, breadcrumbs /
+              pagination
             </li>
             <li>
               <code>js/boot.js</code> — dev vs prod путь, ожидание stylesheet (
@@ -42,8 +69,28 @@ npm run test:coverage # + отчёт покрытия (text + html в coverage/)
         <Aside>
           Покрытие настроено только на этот список (<code>vitest.config.js</code> →{' '}
           <code>coverage.include</code>) — CLI-скрипты (<code>scripts/build.js</code>,{' '}
-          <code>lint-tokens.js</code>) туда сознательно не входят, это I/O-обвязка, а не логика.
+          <code>lint-tokens.js</code>, <code>check-bundle-budget.js</code>) туда сознательно не
+          входят, это I/O-обвязка, а не логика.
         </Aside>
+      </Section>
+
+      <Section title="i18n">
+        <p>
+          Каталог строк для chrome UI: <code>js/core/i18n.js</code>. Модули (combobox, copy, …)
+          берут лейблы через <code>t('close')</code>. Переопределение — один раз при старте
+          приложения.
+        </p>
+        <Code
+          code={`import { t, setMessages } from '/js/core/i18n.js';
+
+setMessages({
+  close: 'Закрыть',
+  clear: 'Очистить',
+  empty: 'Ничего не найдено',
+});
+
+closeBtn.setAttribute('aria-label', t('close'));`}
+        />
       </Section>
 
       <Section title="feature-flags-consistency.test.js">
@@ -75,9 +122,21 @@ Error: Unknown script flag "menus" — no entry in SCRIPT_MODULES (scripts/sync-
         <Aside>
           Добавляешь новый компонент? Флаг в <code>config/features.js</code> + запись в{' '}
           <code>STYLE_FOLDERS</code>/<code>SCRIPT_MODULES</code> — обязательно оба сразу, иначе тест
-          и билд сообщат об этом явно. См.{' '}
-          <a href="lifecycle.html#свой-модуль">Свой модуль</a>.
+          и билд сообщат об этом явно. Полный гайд — <a href="authoring.html">Авторство</a>; API
+          модуля — <a href="lifecycle.html#свой-модуль">Свой модуль</a>.
         </Aside>
+      </Section>
+
+      <Section title="a11y.test.js">
+        <p>
+          Фикстуры намеренно узкие (happy-dom без полного CSS): отключены color-contrast, region,
+          document-title и т.п. Цель — ловить сломанные роли/имена/связи после init модуля, не
+          заменять browser a11y CI.
+        </p>
+        <Code
+          code={`// Новый виджет → добавь it('…') с разметкой как в docs Demo,
+// вызови new Module(document), затем assertNoAxeViolations().`}
+        />
       </Section>
 
       <Section title="Идеи расширения">
@@ -86,10 +145,15 @@ Error: Unknown script flag "menus" — no entry in SCRIPT_MODULES (scripts/sync-
             Новый модуль — тест рядом с файлом в <code>js/modules/</code>, плюс запись в sync-features.
           </li>
           <li>
-            CI: <code>npm test</code> + <code>npm run build</code> (lint:tokens внутри build).
+            CI: <code>npm test</code> + <code>npm run build</code> + <code>npm run check:budget</code>{' '}
+            + <code>npm run test:e2e</code>.
           </li>
           <li>
             Coverage HTML в <code>coverage/</code> — смотри пробелы перед рефакторингом runtime.
+          </li>
+          <li>
+            Новая aria-строка в модуле — ключ в <code>i18n.js</code> defaults + кейс в{' '}
+            <code>a11y.test.js</code>.
           </li>
         </ul>
       </Section>

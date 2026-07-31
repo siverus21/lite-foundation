@@ -73,6 +73,8 @@ describe('generateModulesIndex', () => {
     expect(js).toContain('Tabs,');
     expect(js).not.toContain('Offcanvas');
     expect(js).toContain('export const initModules = runtime.init;');
+    expect(js).toContain('export function createLF(root = document)');
+    expect(js).toContain('createLFRuntime');
   });
 
   it('throws on an unknown scripts.* flag instead of silently dropping it', () => {
@@ -129,6 +131,25 @@ describe('generateBuildScssSource', () => {
     expect(full).toContain("meta.load-css('components/modal')");
   });
 
+  it('full preset wires titleBar/topBar through styles.* into component CSS loads', () => {
+    const features = resolveBuild('full');
+    expect(features.layout).toBeUndefined();
+    expect(features.styles.titleBar).toBe(true);
+    expect(features.styles.topBar).toBe(true);
+    const css = generateBuildScssSource(features, { kind: 'page' });
+    expect(css).toContain("meta.load-css('components/title-bar')");
+    expect(css).toContain("meta.load-css('components/top-bar')");
+  });
+
+  it('about preset keeps titleBar/topBar off', () => {
+    const features = resolveBuild('about');
+    expect(features.styles.titleBar).toBe(false);
+    expect(features.styles.topBar).toBe(false);
+    const css = generateBuildScssSource(features, { kind: 'page' });
+    expect(css).not.toContain("meta.load-css('components/title-bar')");
+    expect(css).not.toContain("meta.load-css('components/top-bar')");
+  });
+
   it('library build: no core/critical layers, only vendors + components', () => {
     const features = emptyFeatures();
     features.vendors.swiper = true;
@@ -161,7 +182,10 @@ describe('featuresPlugin virtual module resolution', () => {
   });
 
   it('load returns generated sources for known builds, throws for unknown ones', () => {
-    expect(plugin.load('\0virtual:lf-entry/full')).toContain("from '/js/boot.js'");
+    const entry = plugin.load('\0virtual:lf-entry/full');
+    expect(entry).toContain("from '/js/boot.js'");
+    expect(entry).toContain('createLF');
+    expect(entry).toContain('export { initModules, destroyModules, refreshModules, unmountModules, createLF }');
     expect(plugin.load('\0virtual:lf-modules/full')).toContain('createModuleRuntime');
     expect(plugin.load('\0virtual:lf-vendors/full')).toContain('GENERATED');
     expect(plugin.load('\0virtual:lf-scss/full.scss')).toContain('@charset');

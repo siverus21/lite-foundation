@@ -35,6 +35,8 @@ export class Offcanvas extends Module {
   constructor(root = document) {
     super(root);
     this._lastFocus = null;
+    /** Panels owned by this instance (even after relocate to <body>). @type {Set<Element>} */
+    this._panels = new Set();
     this.#ensureBackdrop();
     this.#mountPanels();
     this.#bind();
@@ -53,6 +55,7 @@ export class Offcanvas extends Module {
 
   #mountPanels() {
     this.mountAll('.offcanvas', (panel) => {
+      this._panels.add(panel);
       if (!panel.hasAttribute('aria-modal')) panel.setAttribute('aria-modal', 'true');
       if (!panel.hasAttribute('role')) panel.setAttribute('role', 'dialog');
       if (panel.parentElement !== document.body) document.body.appendChild(panel);
@@ -65,28 +68,54 @@ export class Offcanvas extends Module {
   }
 
   #bind() {
+    // Open triggers stay in the original root (panels relocate to <body>).
     this.on(
       this.root,
       'click',
       (event) => {
         const openBtn = event.target.closest('[data-offcanvas-open]');
-        if (openBtn) {
-          event.preventDefault();
-          event.stopPropagation();
-          this.open(openBtn.getAttribute('data-offcanvas-open'), openBtn);
-          return;
-        }
+        if (!openBtn) return;
+        if (this.root !== document && !this.root.contains(openBtn)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this.open(openBtn.getAttribute('data-offcanvas-open'), openBtn);
+      },
+      true,
+    );
 
+    // Backdrop + in-panel [data-offcanvas-close] + in-panel hash links live on
+    // <body> after relocate — a subtree `this.root` never sees those clicks.
+    this.on(
+      document,
+      'click',
+      (event) => {
         const closeBtn = event.target.closest('[data-offcanvas-close]');
         if (closeBtn) {
-          event.preventDefault();
-          event.stopPropagation();
-          this.close();
+          const panel = closeBtn.closest('.offcanvas');
+          const isBackdrop =
+            closeBtn.classList.contains('offcanvas-backdrop') ||
+            closeBtn.hasAttribute('data-lf-offcanvas-backdrop');
+
+          if (isBackdrop) {
+            if ([...this._panels].some((el) => el.classList.contains('is-open'))) {
+              event.preventDefault();
+              this.close();
+            }
+            return;
+          }
+
+          if (panel && this._panels.has(panel)) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.close();
+          }
           return;
         }
 
         const navLink = event.target.closest('.offcanvas.is-open a[href^="#"]');
-        if (navLink) this.close();
+        if (!navLink) return;
+        const panel = navLink.closest('.offcanvas');
+        if (panel && this._panels.has(panel)) this.close();
       },
       true,
     );
@@ -94,10 +123,10 @@ export class Offcanvas extends Module {
     onEscape(this.signal, () => this.close());
 
     // Focus trap for the open panel (aria-modal promises the rest of the page is
-    // out of reach).
+    // out of reach). Only trap for panels this instance owns.
     this.on(document, 'keydown', (event) => {
       if (event.key !== 'Tab') return;
-      const panel = document.querySelector('.offcanvas.is-open');
+      const panel = [...this._panels].find((el) => el.classList.contains('is-open'));
       if (!panel) return;
 
       const focusable = [...panel.querySelectorAll(FOCUSABLE)].filter(
@@ -124,7 +153,7 @@ export class Offcanvas extends Module {
   open(id, trigger = null) {
     const panel = document.getElementById(id);
     const backdrop = document.querySelector('.offcanvas-backdrop');
-    if (!panel || !id || panel.classList.contains('is-open')) return;
+    if (!panel || !id || !this._panels.has(panel) || panel.classList.contains('is-open')) return;
 
     this._lastFocus = trigger || document.activeElement;
 
@@ -159,7 +188,7 @@ export class Offcanvas extends Module {
   }
 
   close() {
-    const panels = [...document.querySelectorAll('.offcanvas.is-open')];
+    const panels = [...this._panels].filter((panel) => panel.classList.contains('is-open'));
     const backdrop = document.querySelector('.offcanvas-backdrop');
     if (!panels.length) return;
 
@@ -182,14 +211,19 @@ export class Offcanvas extends Module {
       );
     });
 
-    if (backdrop) {
-      backdrop.classList.remove('is-open');
-      backdrop.style.pointerEvents = '';
-      backdrop.setAttribute('aria-hidden', 'true');
+    // Shared backdrop / scroll lock — leave alone while another instance still has a panel open.
+    const foreignOpen = [...document.querySelectorAll('.offcanvas.is-open')].some(
+      (panel) => !panels.includes(panel),
+    );
+    if (!foreignOpen) {
+      if (backdrop) {
+        backdrop.classList.remove('is-open');
+        backdrop.style.pointerEvents = '';
+        backdrop.setAttribute('aria-hidden', 'true');
+      }
+      document.body.classList.remove('is-offcanvas-open');
+      unlockScroll();
     }
-
-    document.body.classList.remove('is-offcanvas-open');
-    unlockScroll();
 
     const restore = this._lastFocus;
     this._lastFocus = null;
@@ -198,6 +232,7 @@ export class Offcanvas extends Module {
 
   destroy() {
     this.close();
+    this._panels.clear();
     super.destroy();
   }
 }

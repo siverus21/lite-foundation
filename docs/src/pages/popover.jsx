@@ -230,7 +230,7 @@ panel.addEventListener('hidden.lf.popover', () => saveDraft(panel));`}
           инициализации страницы).
         </p>
         <Code
-          code={`import { Popover, popoverSupport } from 'lite-foundation/js/modules/popover.js';
+          code={`import { Popover, popoverSupport } from '/js/modules/popover.js';
 
 const popovers = new Popover(document.getElementById('app'));
 

@@ -71,4 +71,38 @@ describe('Accordion', () => {
     // JS no longer toggles is-open; native details may set [open].
     expect(second.classList.contains('is-open')).toBe(false);
   });
+
+  it('keyboard activation on summary toggles open state via the click path', async () => {
+    const acc = new Accordion(document);
+    const second = document.querySelectorAll('details.accordion-item')[1];
+    const summary = second.querySelector('summary');
+
+    // Mirrors HTML: summary activation synthesizes a click (Enter / Space).
+    summary.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    );
+    summary.click();
+    await vi.runAllTimersAsync();
+    expect(second.open).toBe(true);
+    expect(second.classList.contains('is-open')).toBe(true);
+
+    summary.dispatchEvent(
+      new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }),
+    );
+    summary.click();
+    await vi.runAllTimersAsync();
+    expect(second.open).toBe(false);
+    expect(second.classList.contains('is-open')).toBe(false);
+
+    acc.destroy();
+  });
+
+  it('Space keydown on summary is cancelable (no page-scroll side effect)', () => {
+    const acc = new Accordion(document);
+    const summary = document.querySelector('summary.accordion-title');
+    const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+    summary.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
+    acc.destroy();
+  });
 });

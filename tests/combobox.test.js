@@ -154,6 +154,27 @@ describe('Combobox', () => {
     expect(options().map((li) => li.textContent)).toEqual(['Из API']);
   });
 
+  it('async flow: typing → input.lf.combobox → loading → options', () => {
+    vi.useFakeTimers();
+    combobox = mountSelect('data-combobox-filter="none" data-combobox-debounce="100"');
+    const queries = [];
+    root().addEventListener('input.lf.combobox', (event) => {
+      queries.push(event.detail.query);
+      combobox.loading(root(), true);
+      combobox.setOptions(root(), [{ value: 'r1', label: `Remote:${event.detail.query}` }]);
+      combobox.loading(root(), false);
+    });
+
+    type('мос');
+    expect(root().hasAttribute('data-loading')).toBe(false);
+    vi.advanceTimersByTime(100);
+
+    expect(queries).toEqual(['мос']);
+    expect(options().map((li) => li.textContent)).toEqual(['Remote:мос']);
+    expect(root().hasAttribute('data-loading')).toBe(false);
+    vi.useRealTimers();
+  });
+
   it('lf:combobox:set selects by value and lf:combobox:loading marks the root', () => {
     combobox = mountSelect();
 

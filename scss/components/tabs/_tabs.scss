@@ -42,6 +42,20 @@
     }
   }
 
+  &.vertical,
+  &[aria-orientation='vertical'] {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    border-bottom: 0;
+    border-inline-end: 1px solid var(--lf-tab-content-border);
+
+    .tabs-title > [role='tab'],
+    .tabs-title > a {
+      width: 100%;
+      text-align: start;
+    }
+  }
+
   &-content {
     background: var(--lf-tab-content-bg);
     border: 1px solid var(--lf-tab-content-border);
@@ -57,5 +71,24 @@
     &.is-active {
       display: block;
     }
+  }
+}
+
+// Vertical tablist + content side by side when wrapped.
+.tabs-vertical {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+
+  > .tabs.vertical,
+  > .tabs[aria-orientation='vertical'] {
+    flex: 0 0 auto;
+    min-width: 8rem;
+  }
+
+  > .tabs-content {
+    flex: 1 1 auto;
+    border-top: 1px solid var(--lf-tab-content-border);
+    border-inline-start: 0;
   }
 }

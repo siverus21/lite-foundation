@@ -9,9 +9,12 @@
     "build": "node scripts/build.js",
     "sync:features": "node scripts/sync-features.js",
     "lint:tokens": "node scripts/lint-tokens.js",
+    "check:budget": "node scripts/check-bundle-budget.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:ui": "npm run build && playwright test --ui"
   },
   "license": "MIT",
   "engines": {
@@ -19,12 +22,16 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
-    "cash-dom": "^8.1.5",
     "swiper": "^11.2.10"
   },
+  "optionalDependencies": {
+    "cash-dom": "^8.1.5"
+  },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@preact/preset-vite": "^2.10.6",
     "@vitest/coverage-v8": "^4.1.10",
+    "axe-core": "^4.12.1",
     "happy-dom": "^20.11.1",
     "preact": "^10.29.7",
     "sass": "^1.79.3",

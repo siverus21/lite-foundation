@@ -15,8 +15,7 @@
 import { Module } from '../core/Module.js';
 import { afterTransition } from '../core/transition.js';
 import { str } from '../core/attrs.js';
-
-const DEFAULT_BACK_LABEL = 'Назад';
+import { t } from '../core/i18n.js';
 
 export class MenuDrilldown extends Module {
   static id = 'menu-drilldown';
@@ -76,7 +75,7 @@ class DrilldownMenu {
       );
       submenu.setAttribute('data-submenu', '');
       submenu.setAttribute('aria-hidden', 'true');
-      ensureBackLink(submenu, str(this.menu, 'data-drilldown-back') || DEFAULT_BACK_LABEL);
+      ensureBackLink(submenu, str(this.menu, 'data-drilldown-back') || t('back'));
     });
   }
 

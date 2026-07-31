@@ -29,6 +29,7 @@ const NAV_KEYS = ['ArrowRight', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'Home', 'En
 
 export class Rating extends Module {
   static id = 'rating';
+  static lazySelector = '[data-rating]:not([data-readonly])';
 
   constructor(root = document) {
     super(root);

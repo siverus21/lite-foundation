@@ -25,14 +25,21 @@ export default function LifecyclePage() {
   destroyModules,
   refreshModules,
   unmountModules,
+  createLF,
 } from 'virtual:lf-modules/full';
-// production: from 'dist/lib.js' (re-export) or свой entry
+// production / свой entry: те же имена реэкспортирует dist/lib.js
 
 initModules(document);              // boot делает это сам
 refreshModules(ajaxContainer);      // после вставки HTML
 destroyModules(ajaxContainer);      // только JS teardown
 unmountModules(ajaxContainer);      // JS + очистить HTML внутри контейнера
-unmountModules(panel, { removeRoot: true }); // JS + удалить сам элемент`}
+unmountModules(panel, { removeRoot: true }); // JS + удалить сам элемент
+
+// Поддерево / второй корень (SPA-панель, виджет в iframe-like host):
+const lf = createLF(ajaxPanel);     // init всех модулей билда на ajaxPanel
+lf.refresh();                       // destroy + init на том же root
+lf.destroy();                       // снять инстансы
+lf.unmount();                       // destroy + очистить children панели`}
         />
         <ul>
           <li>
@@ -53,15 +60,28 @@ unmountModules(panel, { removeRoot: true }); // JS + удалить сам эл�
             <code>unmountModules(root, {'{ removeRoot: true }'})</code> — destroy +{' '}
             <code>root.remove()</code>
           </li>
+          <li>
+            <code>createLF(root)</code> — тонкая обёртка: сразу <code>init</code> на{' '}
+            <code>root</code> и объект {'{'} root, init, destroy, refresh, unmount {'}'}. Удобно для
+            нескольких независимых корней на странице.
+          </li>
         </ul>
         <Aside>
           <code>unmountModules(document)</code> / <code>body</code> / <code>html</code> только
           делает destroy — страницу не очищает.
         </Aside>
         <Aside>
-          Ленивый init: добавь <code>data-lf-lazy</code> на корень компонента (например{' '}
-          <code>&lt;ul data-tabs data-lf-lazy&gt;</code>) — модуль поднимется при приближении к
-          viewport.
+          Ленивый mount элемента: добавь <code>data-lf-lazy</code> на корень компонента (например{' '}
+          <code>&lt;ul data-tabs data-lf-lazy&gt;</code>) — <code>setup</code> отложится до
+          приближения к viewport (<code>IntersectionObserver</code>).
+        </Aside>
+        <Aside>
+          Skip-init модуля: если класс объявляет <code>static lazySelector</code> и в{' '}
+          <code>root</code> нет совпадений, runtime <strong>не создаёт</strong> инстанс (нет
+          слушателей «впустую»). Это не code-splitting и не динамический{' '}
+          <code>import()</code> — бандл по-прежнему содержит модуль. Примеры селекторов:{' '}
+          <code>[data-tabs]</code>, <code>[data-combobox]</code>,{' '}
+          <code>.password-input, .search-input</code>.
         </Aside>
         <Aside>
           ⚠️ Не вешай <code>data-lf-lazy</code> на корень, который скрыт по умолчанию (
@@ -70,6 +90,17 @@ unmountModules(panel, { removeRoot: true }); // JS + удалить сам эл�
           <code>display: none</code> элемента, поэтому модуль всё равно поднимется сразу (без
           ленивой отсрочки), но лучше просто не размечать такие корни лениво.
         </Aside>
+        <Code
+          title="createLF — только нужные классы"
+          code={`import { createLF } from '/js/core/runtime.js';
+import { Tabs } from '/js/modules/tabs.js';
+import { Accordion } from '/js/modules/accordion.js';
+
+const panel = document.getElementById('widget');
+const lf = createLF([Tabs, Accordion], panel);
+// позже:
+lf.destroy();`}
+        />
       </Section>
 
       <Section title="Базовый класс Module">
@@ -100,7 +131,7 @@ unmountModules(panel, { removeRoot: true }); // JS + удалить сам эл�
           ]}
         />
         <Code
-          code={`import { Module } from '../core/Module.js';
+          code={`import { Module } from '/js/core/Module.js';
 
 export class Quantity extends Module {
   static id = 'quantity';
@@ -168,10 +199,12 @@ export class Quantity extends Module {
           <code>this.on(…)</code> — тогда <code>destroy()</code> снимет их автоматически.
         </p>
         <Code
-          code={`import { Module } from '../core/Module.js';
+          code={`import { Module } from '/js/core/Module.js';
 
 export class MyWidget extends Module {
   static id = 'my-widget';
+  /** Опционально: runtime пропустит класс, если в root нет совпадений */
+  static lazySelector = '[data-my-widget]';
 
   constructor(root = document) {
     super(root);
@@ -188,8 +221,10 @@ export class MyWidget extends Module {
 // Слушать: el.addEventListener('clicked.lf.my-widget', …);`}
         />
         <Aside>
-          Зарегистрируй класс в <code>scripts/sync-features.js</code> (карта модулей) и включи флаг
-          в <code>config/features.js</code>.
+          Зарегистрируй класс в <code>scripts/sync-features.js</code> (
+          <code>SCRIPT_MODULES</code>) и включи флаг в <code>config/features.js</code> (
+          <code>scripts.*</code>). Пошагово: CSS + тесты + docs —{' '}
+          <a href="authoring.html">Авторство</a>.
         </Aside>
       </Section>
 

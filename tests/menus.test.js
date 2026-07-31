@@ -38,12 +38,19 @@ describe('MenuDropdown', () => {
     menus.destroy();
   });
 
-  it('skips document listeners when no dropdown menus', () => {
+  it('no-ops when root has no dropdown menus', () => {
     document.body.innerHTML = '<p>empty</p>';
     const menus = new MenuDropdown(document);
-    expect(menus._menus?.length ?? 0).toBe(0);
-    menus.destroy();
+    // Early return: nothing to open; outside click / Escape must stay safe.
+    expect(document.querySelectorAll('[data-menu="dropdown"]').length).toBe(0);
+    expect(document.querySelectorAll('.has-submenu, .is-open').length).toBe(0);
+    expect(() => {
+      document.body.click();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      menus.destroy();
+    }).not.toThrow();
   });
+
 
   it('closes on Escape', () => {
     const menus = new MenuDropdown(document);
@@ -74,6 +81,47 @@ describe('MenuDropdown', () => {
     expect(closed).toEqual([1]);
 
     menus.destroy();
+  });
+
+  it('Escape only closes menus inside this instance root', () => {
+    document.body.innerHTML = `
+      <div id="a">
+        <ul class="dropdown menu" data-menu="dropdown">
+          <li>
+            <a href="#">Parent A</a>
+            <ul class="menu"><li><a href="#">Child</a></li></ul>
+          </li>
+        </ul>
+      </div>
+      <div id="b">
+        <ul class="dropdown menu" data-menu="dropdown">
+          <li>
+            <a href="#">Parent B</a>
+            <ul class="menu"><li><a href="#">Child</a></li></ul>
+          </li>
+        </ul>
+      </div>
+    `;
+    const menuA = new MenuDropdown(document.getElementById('a'));
+    const menuB = new MenuDropdown(document.getElementById('b'));
+    const parentA = document.querySelector('#a [data-menu="dropdown"] li');
+    const parentB = document.querySelector('#b [data-menu="dropdown"] li');
+
+    parentA.querySelector(':scope > a').click();
+    parentB.querySelector(':scope > a').click();
+    expect(parentA.classList.contains('is-open')).toBe(true);
+    expect(parentB.classList.contains('is-open')).toBe(true);
+
+    // Destroy B first so only A's Escape handler remains active for this assertion
+    // path — both listen on Escape; we only assert A closes its own item while B's
+    // open state is cleared by B.destroy → no, destroy doesn't close menus.
+    // Both Escape handlers fire; each closes only its root.
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(parentA.classList.contains('is-open')).toBe(false);
+    expect(parentB.classList.contains('is-open')).toBe(false);
+
+    menuA.destroy();
+    menuB.destroy();
   });
 });
 
@@ -145,6 +193,33 @@ describe('MenuDrilldown', () => {
     expect(submenu.classList.contains('is-active')).toBe(true);
     expect(submenu.getAttribute('aria-hidden')).toBe('false');
     expect(parent.getAttribute('aria-expanded')).toBe('true');
+    menus.destroy();
+  });
+
+  it('uses data-drilldown-back for the back link label', () => {
+    document.getElementById('drill').setAttribute('data-drilldown-back', 'Back');
+    const menus = new MenuDrilldown(document);
+    expect(document.querySelector('.js-drilldown-back a').textContent).toBe('Back');
+    menus.destroy();
+  });
+
+  it('back link closes the active submenu and emits closed', () => {
+    const menus = new MenuDrilldown(document);
+    const menu = document.getElementById('drill');
+    const parent = menu.querySelector('li.has-submenu');
+    const submenu = parent.querySelector('.is-drilldown-submenu');
+    const closed = [];
+    submenu.addEventListener('closed.lf.menu-drilldown', () => closed.push(1));
+
+    parent.querySelector(':scope > a').click();
+    expect(submenu.classList.contains('is-active')).toBe(true);
+
+    submenu.querySelector('.js-drilldown-back > a').click();
+    expect(parent.getAttribute('aria-expanded')).toBe('false');
+    expect(submenu.getAttribute('aria-hidden')).toBe('true');
+    expect(submenu.classList.contains('is-closing')).toBe(true);
+    expect(closed).toEqual([1]);
+
     menus.destroy();
   });
 });

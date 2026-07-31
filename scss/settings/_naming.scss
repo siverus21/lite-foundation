@@ -1,0 +1,36 @@
+// Naming conventions for lite-foundation CSS (not BEM-strict).
+//
+// Blocks
+//   - One component root class per feature folder: `.tabs`, `.toast`, `.stepper`.
+//   - Multi-word blocks use a single kebab class: `.tag-input`, `.media-object`,
+//     `.close-button` — same spelling as the `scss/components/<folder>` name.
+//
+// Elements (flat, not `__element`)
+//   - Child pieces are sibling classes, not BEM elements:
+//       `.toast` → `.toast-title`, `.toast-message`, `.toast-close`
+//       `.stepper` → `.stepper-step`, `.stepper-step-marker`
+//   - Prefer `block-piece` over `block__piece`. Do not nest selectors deeper than
+//     needed for state (`.stepper-step.is-active .stepper-step-marker` is fine).
+//
+// Modifiers (flat state / size / variant)
+//   - Interaction / ARIA-adjacent state: `.is-open`, `.is-active`, `.is-complete`,
+//     `.is-loading`, `.is-invalid`, `.is-visible` (boolean, prefix `is-`).
+//   - Size / shape / emphasis as a second class on the same node:
+//       `.button.small`, `.button.hollow`, `.avatar.square`, `.tabs.vertical`
+//   - Palette variants reuse foundation names: `.primary`, `.success`, `.alert`.
+//   - Do not invent `.button--primary` / `.button_primary` — stay flat.
+//
+// Data attributes (JS hooks)
+//   - Behaviour markers are `data-<feature>` / `data-<feature>-*`, never classes:
+//       `[data-tabs]`, `[data-dropdown-open]`, `[data-lf-animate]`.
+//   - Ready flags from Module.mountOnce: `data-<id>-ready`.
+//
+// Utilities
+//   - Global helpers stay outside components: `.hide`, `.show-for-medium`, `.cv-auto`.
+//
+// Recipes (composed markup, not new primitives)
+//   - Prefer composing `.input-group` + a recipe class: `.password-input`,
+//     `.search-input`, `.skeleton-media`. Behaviour hooks stay on `data-*`.
+//
+// When adding a component: match an existing neighbour (toast/chip/stepper) before
+// inventing a new naming scheme.

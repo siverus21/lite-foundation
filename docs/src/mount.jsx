@@ -2,6 +2,27 @@ import { render } from 'preact';
 import { DocsPage } from './components/DocsPage.jsx';
 
 /**
+ * Load a named build entry. Same constraint as `js/load-build.js`: each
+ * `import()` argument must be a static string so Vite can resolve `virtual:lf-*`.
+ * @param {string} name
+ */
+async function loadBuild(name) {
+  switch (name) {
+    case 'full':
+      await import('virtual:lf-entry/full');
+      break;
+    case 'about':
+      await import('virtual:lf-entry/about');
+      break;
+    case 'swiper':
+      await import('virtual:lf-entry/swiper');
+      break;
+    default:
+      throw new Error(`Unknown build "${name}"`);
+  }
+}
+
+/**
  * Mount a docs page and load the foundation build for live demos.
  *
  * @param {{
@@ -54,9 +75,9 @@ export async function mountDocs({
     root,
   );
 
-  await import(`/js/load-build.js?build=${build}`);
+  await loadBuild(build);
   for (const extra of extraBuilds) {
-    await import(`/js/load-build.js?build=${extra}`);
+    await loadBuild(extra);
   }
   await onReady?.();
 }

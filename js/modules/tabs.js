@@ -27,6 +27,7 @@ import { Module } from '../core/Module.js';
 
 export class Tabs extends Module {
   static id = 'tabs';
+  static lazySelector = '[data-tabs]';
 
   constructor(root = document) {
     super(root);
@@ -39,7 +40,14 @@ export class Tabs extends Module {
     const panels = contentRoot ? [...contentRoot.querySelectorAll('.tabs-panel')] : [];
     if (!tabs.length || !panels.length) return;
 
-    const state = { tablist, tabs, panels };
+    const vertical =
+      tablist.classList.contains('vertical') ||
+      tablist.getAttribute('aria-orientation') === 'vertical' ||
+      tablist.hasAttribute('data-tabs-vertical');
+    tablist.setAttribute('aria-orientation', vertical ? 'vertical' : 'horizontal');
+    if (vertical) tablist.classList.add('vertical');
+
+    const state = { tablist, tabs, panels, vertical };
     this.states.set(tablist, state);
 
     tabs.forEach((tab) => {
@@ -66,7 +74,12 @@ export class Tabs extends Module {
 
   static #contentRootFor(tablist) {
     if (tablist.id) {
-      const byId = document.querySelector(`[data-tabs-content="${tablist.id}"]`);
+      // Prefer the same tree as the tablist (subtree / ShadowRoot), then document.
+      const tree = tablist.getRootNode?.() ?? document;
+      const byId =
+        (typeof tree.querySelector === 'function' &&
+          tree.querySelector(`[data-tabs-content="${tablist.id}"]`)) ||
+        document.querySelector(`[data-tabs-content="${tablist.id}"]`);
       if (byId) return byId;
     }
     const sibling = tablist.nextElementSibling;
@@ -74,16 +87,22 @@ export class Tabs extends Module {
   }
 
   #onKeydown(state, event, tab) {
-    const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    const nextKey = state.vertical ? 'ArrowDown' : 'ArrowRight';
+    const prevKey = state.vertical ? 'ArrowUp' : 'ArrowLeft';
+    const keys = [nextKey, prevKey, 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
     if (!keys.includes(event.key)) return;
+
+    // Ignore cross-axis arrows so page scroll / nested widgets keep them.
+    if (state.vertical && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) return;
+    if (!state.vertical && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) return;
 
     event.preventDefault();
     const { tabs } = state;
     const index = tabs.indexOf(tab);
     let next = index;
 
-    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
-    if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === nextKey) next = (index + 1) % tabs.length;
+    if (event.key === prevKey) next = (index - 1 + tabs.length) % tabs.length;
     if (event.key === 'Home') next = 0;
     if (event.key === 'End') next = tabs.length - 1;
 
