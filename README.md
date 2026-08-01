@@ -119,8 +119,9 @@ Chromium). Подробнее — [`docs/testing.html`](docs/testing.html).
 ## Документация
 
 - Kitchen sink: [`index.html`](index.html)
-- Docs: [`docs/`](docs/) (`start`, `builds`, `tokens`, `lifecycle`, `authoring`, `testing`, `troubleshooting`, `faq`, компоненты)
-- CSS-only каталог: [`docs/css-only.html`](docs/css-only.html) · витрина: [`docs/ui-kit.html`](docs/ui-kit.html)
+- Docs: [`docs/`](docs/) — один `index.html` shell + `src/entries/*.jsx` (URL вида `/docs/button.html`)
+- CSS-only: [`docs/css-only.html`](docs/css-only.html) · витрина: [`docs/ui-kit.html`](docs/ui-kit.html) ·
+  паттерны: [`docs/patterns.html`](docs/patterns.html)
 - Demo: [`about.html`](about.html)
 
 ## Структура

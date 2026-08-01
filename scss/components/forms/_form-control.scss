@@ -82,3 +82,24 @@
   opacity: 0.6;
   pointer-events: none;
 }
+
+// Compact density — tighter stacks of fields (settings forms, filter bars).
+.form-control.compact,
+.form-compact .form-control {
+  gap: 0.2rem;
+  margin-bottom: 0.65rem;
+
+  .form-control-hint,
+  .form-control-error {
+    font-size: 0.8rem;
+  }
+}
+
+.form-compact {
+  #{text-inputs()},
+  textarea,
+  select {
+    padding-block: 0.4rem;
+    font-size: 0.9rem;
+  }
+}

@@ -1,11 +1,22 @@
 import { slugify } from '../slug.js';
+import { DocsMark } from './DocsMark.jsx';
 
-/** @param {{ title: string, id?: string, children: preact.ComponentChildren }} props */
-export function Section({ title, id, children }) {
+/**
+ * @param {{
+ *   title: string,
+ *   id?: string,
+ *   mark?: 'new' | 'upd' | 'fix',
+ *   children: preact.ComponentChildren,
+ * }} props
+ */
+export function Section({ title, id, mark, children }) {
   const sectionId = id || slugify(title);
   return (
     <section class="docs-section">
-      <h2 id={sectionId}>{title}</h2>
+      <h2 id={sectionId} class={mark ? 'docs-heading-with-mark' : undefined}>
+        <span class="docs-section-title">{title}</span>
+        <DocsMark mark={mark} class="docs-title-mark" />
+      </h2>
       {children}
     </section>
   );

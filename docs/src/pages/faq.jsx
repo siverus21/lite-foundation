@@ -81,7 +81,8 @@ npm run start          # http://localhost:5173/
 
       <Section title="Как добавить свой компонент / страницу docs?">
         <p>
-          Гайд <a href="authoring.html">Авторство</a>: флаги, Module, тесты, HTML + entry + nav.
+          Гайд <a href="authoring.html">Авторство</a>: флаги, Module, тесты,{' '}
+          <code>entries/&lt;slug&gt;.jsx</code> + nav (общий HTML-shell).
         </p>
       </Section>
 

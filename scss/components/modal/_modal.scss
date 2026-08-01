@@ -27,6 +27,23 @@
     inset-inline-end: 1rem;
     top: 0.5rem;
   }
+
+  // Confirm / alert dialog — narrower + action row.
+  &.confirm {
+    max-width: 24rem;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-block-start: 1.25rem;
+
+  .button {
+    margin: 0;
+  }
 }
 
 // Only is-scroll-locked applies position:fixed (set by lockScroll after saving scrollY).

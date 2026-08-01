@@ -19,14 +19,55 @@ function slugify(text) {
     .slice(0, 64);
 }
 
+function headingLabel(h2) {
+  return h2.querySelector('.docs-section-title')?.textContent?.trim() || h2.textContent || '';
+}
+
+function headingMark(h2) {
+  const markEl = h2.querySelector('.docs-nav-mark');
+  const markClass = [...(markEl?.classList || [])].find((c) => c.startsWith('docs-nav-mark--'));
+  return markClass ? markClass.replace('docs-nav-mark--', '') : '';
+}
+
+function appendMark(parent, mark) {
+  if (!mark) return;
+  const el = document.createElement('span');
+  el.className = `docs-nav-mark docs-nav-mark--${mark}`;
+  el.textContent = mark;
+  el.title =
+    mark === 'new' ? 'Новая страница или фича' : mark === 'fix' ? 'Исправление' : 'Обновлено';
+  parent.appendChild(el);
+}
+
+function decoratePageTitle(file) {
+  const mark = FLAT.find((p) => p.href === file)?.mark;
+  if (!mark) return;
+  const h1 = document.querySelector('.docs-main > h1');
+  if (!h1 || h1.querySelector('.docs-nav-mark')) return;
+  const titleText = h1.textContent?.trim() || '';
+  h1.textContent = '';
+  h1.classList.add('docs-heading-with-mark');
+  const span = document.createElement('span');
+  span.className = 'docs-section-title';
+  span.textContent = titleText;
+  h1.appendChild(span);
+  const badge = document.createElement('span');
+  badge.className = `docs-nav-mark docs-nav-mark--${mark} docs-title-mark`;
+  badge.textContent = mark;
+  badge.title =
+    mark === 'new' ? 'Новая страница или фича' : mark === 'fix' ? 'Исправление' : 'Обновлено';
+  h1.appendChild(badge);
+}
+
 function ensureIds(main) {
   const used = new Set();
   main.querySelectorAll('.docs-section > h2').forEach((h2) => {
     if (!h2.id) {
-      let id = slugify(h2.textContent || 'section');
+      const label = headingLabel(h2) || 'section';
+      let id = slugify(label);
       let n = 2;
       while (used.has(id) || document.getElementById(id)) {
-        id = `${slugify(h2.textContent || 'section')}-${n}`;
+        id = `${slugify(label)}-${n}`;
         n += 1;
       }
       h2.id = id;
@@ -64,9 +105,15 @@ function buildSidebar(file, headings) {
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = item.href;
-      a.textContent = item.title;
       if (isActive) a.classList.add('is-active');
       a.setAttribute('aria-current', isActive ? 'page' : 'false');
+
+      const text = document.createElement('span');
+      text.className = 'docs-sidebar-link-text';
+      text.textContent = item.title;
+      a.appendChild(text);
+
+      appendMark(a, item.mark);
       li.appendChild(a);
 
       if (isActive && headings && headings.length) {
@@ -76,7 +123,11 @@ function buildSidebar(file, headings) {
           const subLi = document.createElement('li');
           const subA = document.createElement('a');
           subA.href = `#${h2.id}`;
-          subA.textContent = h2.textContent;
+          const text = document.createElement('span');
+          text.className = 'docs-sidebar-link-text';
+          text.textContent = headingLabel(h2);
+          subA.appendChild(text);
+          appendMark(subA, headingMark(h2));
           subLi.appendChild(subA);
           sub.appendChild(subLi);
         });
@@ -87,6 +138,15 @@ function buildSidebar(file, headings) {
     });
     aside.appendChild(list);
   });
+
+  const legend = document.createElement('p');
+  legend.className = 'docs-sidebar-legend';
+  legend.setAttribute('aria-hidden', 'true');
+  legend.innerHTML =
+    '<span class="docs-nav-mark docs-nav-mark--new">new</span> фича · ' +
+    '<span class="docs-nav-mark docs-nav-mark--upd">upd</span> правка · ' +
+    '<span class="docs-nav-mark docs-nav-mark--fix">fix</span> фикс';
+  aside.appendChild(legend);
 
   const sink = document.createElement('a');
   sink.className = 'docs-sidebar-extra';
@@ -116,7 +176,10 @@ function buildToc(main) {
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = `#${h2.id}`;
-    a.textContent = h2.textContent;
+    const text = document.createElement('span');
+    text.textContent = headingLabel(h2);
+    a.appendChild(text);
+    appendMark(a, headingMark(h2));
     li.appendChild(a);
     list.appendChild(li);
   });
@@ -351,6 +414,7 @@ if (document.getElementById('app') && !document.querySelector('.docs-main')) {
   // page still booting Preact; nothing to enhance yet
 } else if (!document.getElementById('app')) {
   enhanceTopNav(file);
+  decoratePageTitle(file);
   insertSupport(file);
   wrapLayout(file);
   setupCopyButtons();

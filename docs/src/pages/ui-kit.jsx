@@ -25,7 +25,10 @@ export default function UiKitPage() {
         UI Kit
       </span>
 
-      <Section title="Button" id="button">
+      <Section title="Button" id="button" mark="upd">
+        <p class="docs-meta">
+          Docs: <a href="button.html">button.html</a>
+        </p>
         <Demo>
           <button type="button" class="button primary">
             Primary
@@ -62,29 +65,89 @@ export default function UiKitPage() {
             <a class="button">Two</a>
             <a class="button">Three</a>
           </div>
+          <p style={{ marginTop: '0.75rem' }}>
+            <button type="button" class="button primary is-loading" aria-busy="true">
+              Saving
+            </button>{' '}
+            <button type="button" class="button hollow is-loading" aria-busy="true">
+              Saving
+            </button>{' '}
+            <button type="button" class="button icon-only secondary" aria-label="Settings">
+              <span aria-hidden="true">⚙</span>
+            </button>{' '}
+            <button type="button" class="button icon-only tiny primary" aria-label="More">
+              <span aria-hidden="true">⋯</span>
+            </button>
+          </p>
         </Demo>
       </Section>
 
-      <Section title="Forms" id="forms">
+      <Section title="Forms" id="forms" mark="upd">
+        <p class="docs-meta">
+          Docs: <a href="forms.html">forms.html</a>
+        </p>
         <Demo>
           <div class="grid-x grid-padding-x">
             <div class="large-6 cell">
-              <label>
-                Text input
-                <input type="text" placeholder="Type here" />
-              </label>
-              <label>
-                Select
-                <select>
-                  <option>One</option>
-                  <option>Two</option>
-                </select>
-              </label>
-              <div class="switch">
-                <input class="switch-input" id="uiKitSwitch" type="checkbox" />
-                <label class="switch-paddle" for="uiKitSwitch">
-                  <span class="show-for-sr">Switch</span>
+              <div class="form-control">
+                <label class="form-control-label" for="uiKitEmail">
+                  Email
                 </label>
+                <input id="uiKitEmail" type="email" class="input" placeholder="you@example.com" />
+                <p class="form-control-hint">Form-control shell</p>
+              </div>
+              <div class="form-control is-invalid">
+                <label class="form-control-label" for="uiKitView">
+                  View
+                </label>
+                <select id="uiKitView" class="input">
+                  <option value="">Pick…</option>
+                  <option>List</option>
+                </select>
+                <p class="form-control-error">Pick a view.</p>
+              </div>
+              <label for="uiKitPassword">Password</label>
+              <div class="input-group password-input">
+                <input
+                  id="uiKitPassword"
+                  class="input-group-field"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  class="button secondary password-input-toggle"
+                  data-password-toggle
+                  data-text-show="Show"
+                  data-text-hide="Hide"
+                  data-label-show="Show password"
+                  data-label-hide="Hide password"
+                  aria-pressed="false"
+                  aria-label="Show password"
+                >
+                  Show
+                </button>
+              </div>
+              <label for="uiKitSearch" style={{ marginTop: '0.75rem', display: 'block' }}>
+                Search
+              </label>
+              <div class="input-group search-input">
+                <span class="input-group-label search-input-icon" aria-hidden="true"></span>
+                <input
+                  id="uiKitSearch"
+                  class="input-group-field"
+                  type="search"
+                  placeholder="Search…"
+                />
+                <button
+                  type="button"
+                  class="button clear search-input-clear"
+                  data-search-clear
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
               </div>
             </div>
             <div class="large-6 cell">
@@ -98,6 +161,12 @@ export default function UiKitPage() {
                 <span class="radio-control" aria-hidden="true"></span>
                 Custom radio
               </label>
+              <div class="switch">
+                <input class="switch-input" id="uiKitSwitch" type="checkbox" />
+                <label class="switch-paddle" for="uiKitSwitch">
+                  <span class="show-for-sr">Switch</span>
+                </label>
+              </div>
               <div class="slider" data-slider data-initial-start="60" data-end="100">
                 <span class="slider-handle" data-slider-handle role="slider" tabindex="0"></span>
                 <span class="slider-fill" data-slider-fill></span>
@@ -108,10 +177,16 @@ export default function UiKitPage() {
         </Demo>
       </Section>
 
-      <Section title="Modal" id="modal">
+      <Section title="Modal & Confirm" id="modal" mark="upd">
+        <p class="docs-meta">
+          Docs: <a href="modal.html">modal.html</a>
+        </p>
         <Demo>
           <button class="button primary" type="button" data-dialog-open="uiKitModal">
             Open dialog
+          </button>{' '}
+          <button class="button alert hollow" type="button" data-dialog-open="uiKitConfirm">
+            Confirm delete
           </button>
           <dialog class="modal" id="uiKitModal">
             <button class="close-button" type="button" data-dialog-close aria-label="Close">
@@ -123,10 +198,32 @@ export default function UiKitPage() {
               Close
             </button>
           </dialog>
+          <dialog class="modal confirm" id="uiKitConfirm" aria-labelledby="uiKitConfirmTitle">
+            <h3 class="modal__title" id="uiKitConfirmTitle">
+              Удалить заказ?
+            </h3>
+            <p>Действие нельзя отменить.</p>
+            <div class="modal-actions">
+              <button type="button" class="button hollow" data-dialog-close>
+                Отмена
+              </button>
+              <button
+                type="button"
+                class="button alert"
+                data-dialog-close
+                data-dialog-return="confirm"
+              >
+                Удалить
+              </button>
+            </div>
+          </dialog>
         </Demo>
       </Section>
 
-      <Section title="Tabs" id="tabs">
+      <Section title="Tabs" id="tabs" mark="upd">
+        <p class="docs-meta">
+          Docs: <a href="tabs.html">tabs.html</a> · vertical → ↑/↓
+        </p>
         <Demo>
           <ul class="tabs" data-tabs id="uikit-tabs" role="tablist">
             <li class="tabs-title is-active" role="presentation">
@@ -160,6 +257,53 @@ export default function UiKitPage() {
             </div>
             <div class="tabs-panel" id="uikit-panel-2" role="tabpanel" aria-labelledby="uikit-tab-2" hidden>
               <p>Panel 2.</p>
+            </div>
+          </div>
+          <div class="tabs-vertical" style={{ marginTop: '1.25rem' }}>
+            <ul class="tabs vertical" data-tabs id="uikit-tabs-v" role="tablist">
+              <li class="tabs-title is-active" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  id="uikit-vtab-1"
+                  aria-controls="uikit-vpanel-1"
+                  aria-selected="true"
+                  tabindex="0"
+                >
+                  Overview
+                </button>
+              </li>
+              <li class="tabs-title" role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  id="uikit-vtab-2"
+                  aria-controls="uikit-vpanel-2"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  Specs
+                </button>
+              </li>
+            </ul>
+            <div class="tabs-content" data-tabs-content="uikit-tabs-v">
+              <div
+                class="tabs-panel is-active"
+                id="uikit-vpanel-1"
+                role="tabpanel"
+                aria-labelledby="uikit-vtab-1"
+              >
+                <p>Vertical panel 1.</p>
+              </div>
+              <div
+                class="tabs-panel"
+                id="uikit-vpanel-2"
+                role="tabpanel"
+                aria-labelledby="uikit-vtab-2"
+                hidden
+              >
+                <p>Vertical panel 2.</p>
+              </div>
             </div>
           </div>
         </Demo>
@@ -890,6 +1034,157 @@ export default function UiKitPage() {
           Переключение меняет <code>--lf-*</code> токены — все компоненты на этой странице
           перекрашиваются сразу. См. <a href="dark-mode.html">тёмную тему</a>.
         </Aside>
+      </Section>
+
+      <Section title="Empty state" id="empty-state" mark="new">
+        <p class="docs-meta">
+          Docs: <a href="empty-state.html">empty-state.html</a>
+        </p>
+        <Demo>
+          <div class="empty-state">
+            <span class="empty-state-icon" aria-hidden="true">∅</span>
+            <h3 class="empty-state-title">Пока пусто</h3>
+            <p class="empty-state-text">Добавьте первый элемент, чтобы начать работу.</p>
+            <div class="empty-state-actions">
+              <button type="button" class="button primary">
+                Создать
+              </button>
+              <button type="button" class="button hollow">
+                Импорт
+              </button>
+            </div>
+          </div>
+        </Demo>
+      </Section>
+
+      <Section title="File upload" id="file-upload" mark="new">
+        <p class="docs-meta">
+          Docs: <a href="file-upload.html">file-upload.html</a>
+        </p>
+        <Demo>
+          <div class="file-upload" data-file-upload style={{ maxWidth: '28rem' }}>
+            <input class="file-upload-input" type="file" id="uiKitUpload" multiple />
+            <label class="file-upload-drop" for="uiKitUpload">
+              <span class="file-upload-title">Перетащите файлы сюда</span>
+              <span class="file-upload-hint">или нажмите, чтобы выбрать</span>
+            </label>
+            <ul class="file-upload-list" data-file-upload-list></ul>
+          </div>
+        </Demo>
+      </Section>
+
+      <Section title="Card states" id="card-states" mark="new">
+        <Demo>
+          <div class="grid-x grid-padding-x">
+            <div class="medium-4 cell">
+              <div class="card is-empty">
+                <div class="card-section">
+                  <div class="empty-state compact">
+                    <h3 class="empty-state-title">Нет заказов</h3>
+                    <p class="empty-state-text">Создайте первый.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="medium-4 cell">
+              <div class="card is-loading" aria-busy="true">
+                <div class="card-loading">
+                  <span class="skeleton skeleton-text"></span>
+                  <span class="skeleton skeleton-text"></span>
+                  <span class="skeleton skeleton-text" style={{ width: '60%' }}></span>
+                </div>
+              </div>
+            </div>
+            <div class="medium-4 cell">
+              <div class="card is-error">
+                <div class="card-section">
+                  <div class="callout alert" style={{ margin: 0 }}>
+                    Не удалось загрузить данные.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Demo>
+      </Section>
+
+      <Section title="Table states & density" id="table-states" mark="new">
+        <Demo>
+          <div class="table-shell is-empty">
+            <div class="table-shell-status">
+              <div class="empty-state compact">
+                <h3 class="empty-state-title">Нет строк</h3>
+              </div>
+            </div>
+            <div class="table-shell-body">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>hidden when empty</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <table class="table compact striped" style={{ marginTop: '1rem' }}>
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Qty</th>
+                <th class="table-actions hide-for-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>A-100</td>
+                <td>2</td>
+                <td class="table-actions">
+                  <button type="button" class="button tiny hollow">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>B-200</td>
+                <td>5</td>
+                <td class="table-actions">
+                  <button type="button" class="button tiny hollow">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="docs-meta">
+            <code>.table.compact</code> · колонка действий:{' '}
+            <code>.hide-for-print</code> / <code>.hide-actions-print</code>
+          </p>
+        </Demo>
+      </Section>
+
+      <Section title="Patterns" id="patterns" mark="new">
+        <p class="docs-meta">
+          Полные композиции — <a href="patterns.html">patterns.html</a> (без новых примитивов).
+        </p>
+        <Demo>
+          <form class="form-compact" style={{ maxWidth: '22rem' }} onSubmit={(e) => e.preventDefault()}>
+            <div class="form-control compact">
+              <label class="form-control-label" for="patEmail">
+                Email
+              </label>
+              <input id="patEmail" type="email" class="input" autocomplete="username" />
+            </div>
+            <div class="form-control compact">
+              <label class="form-control-label" for="patPass">
+                Password
+              </label>
+              <input id="patPass" type="password" class="input" autocomplete="current-password" />
+            </div>
+            <button type="submit" class="button primary expanded">
+              Войти
+            </button>
+          </form>
+        </Demo>
       </Section>
 
       <Section title="Идеи расширения">

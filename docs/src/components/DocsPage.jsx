@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'preact/hooks';
 import { FLAT, NAV, TOP_NAV } from '../nav.js';
+import { DocsMark } from './DocsMark.jsx';
 import { Support } from './Support.jsx';
+
+function headingLabel(h2) {
+  return h2.querySelector('.docs-section-title')?.textContent?.trim() || h2.textContent || '';
+}
 
 function Sidebar({ file, headings }) {
   return (
@@ -21,13 +26,17 @@ function Sidebar({ file, headings }) {
                     class={active ? 'is-active' : undefined}
                     aria-current={active ? 'page' : 'false'}
                   >
-                    {item.title}
+                    <span class="docs-sidebar-link-text">{item.title}</span>
+                    <DocsMark mark={item.mark} />
                   </a>
                   {active && headings.length >= 2 ? (
                     <ul class="docs-sidebar-toc">
                       {headings.map((h) => (
                         <li key={h.id}>
-                          <a href={`#${h.id}`}>{h.text}</a>
+                          <a href={`#${h.id}`}>
+                            <span class="docs-sidebar-link-text">{h.text}</span>
+                            <DocsMark mark={h.mark} />
+                          </a>
                         </li>
                       ))}
                     </ul>
@@ -38,6 +47,11 @@ function Sidebar({ file, headings }) {
           </ul>
         </div>
       ))}
+      <p class="docs-sidebar-legend" aria-hidden="true">
+        <span class="docs-nav-mark docs-nav-mark--new">new</span> фича ·{' '}
+        <span class="docs-nav-mark docs-nav-mark--upd">upd</span> правка ·{' '}
+        <span class="docs-nav-mark docs-nav-mark--fix">fix</span> фикс
+      </p>
       <a class="docs-sidebar-extra" href="../index.html">
         Kitchen sink →
       </a>
@@ -104,7 +118,10 @@ function Toc({ headings }) {
       <ul class="docs-toc-list">
         {headings.map((h) => (
           <li key={h.id}>
-            <a href={`#${h.id}`}>{h.text}</a>
+            <a href={`#${h.id}`}>
+              <span>{h.text}</span>
+              <DocsMark mark={h.mark} />
+            </a>
           </li>
         ))}
       </ul>
@@ -163,10 +180,15 @@ export function DocsPage({
   useEffect(() => {
     const main = document.querySelector('.docs-main');
     if (!main) return;
-    const list = [...main.querySelectorAll('.docs-section > h2')].map((h2) => ({
-      id: h2.id,
-      text: h2.textContent || '',
-    }));
+    const list = [...main.querySelectorAll('.docs-section > h2')].map((h2) => {
+      const markEl = h2.querySelector('.docs-nav-mark');
+      const markClass = [...(markEl?.classList || [])].find((c) => c.startsWith('docs-nav-mark--'));
+      return {
+        id: h2.id,
+        text: headingLabel(h2),
+        mark: markClass ? markClass.replace('docs-nav-mark--', '') : undefined,
+      };
+    });
     setHeadings(list);
   }, [children, title]);
 
@@ -196,10 +218,15 @@ export function DocsPage({
     });
   }, [children]);
 
+  const pageMark = FLAT.find((p) => p.href === file)?.mark;
+
   const header = (
     <>
       {kicker ? <p class="docs-kicker">{kicker}</p> : null}
-      <h1>{title}</h1>
+      <h1 class={pageMark ? 'docs-heading-with-mark' : undefined}>
+        <span class="docs-section-title">{title}</span>
+        <DocsMark mark={pageMark} class="docs-title-mark" />
+      </h1>
       {lead ? <p class="docs-lead">{lead}</p> : null}
       {flags.length ? (
         <div class="docs-flags">

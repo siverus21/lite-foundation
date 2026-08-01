@@ -3,7 +3,7 @@ import { Section, Demo, Code, Aside, ApiTable, c } from '../components/primitive
 export default function TablePage() {
   return (
     <>
-      <Section title="Базовые классы">
+      <Section title="Базовые классы" mark="upd">
         <ApiTable
           columns={['Класс', 'Что делает']}
           rows={[
@@ -15,6 +15,8 @@ export default function TablePage() {
             [c('stack'), 'На узких экранах каждая строка становится блоком'],
             [c('sticky-head'), 'Заголовок остаётся на месте при скролле'],
             [c('scroll'), 'Горизонтальный скролл у самой таблицы'],
+            [c('compact'), 'Плотнее ячейки (density)'],
+            [c('hide-actions-print'), 'Скрыть .table-actions при печати'],
           ]}
         />
         <p>
@@ -302,6 +304,56 @@ sorter.destroy();`}
           <code>stack</code> и <code>sticky-head</code> вместе смысла не имеют: в стековом режиме
           заголовка нет. Выбирайте одно из двух в зависимости от того, читают таблицу с телефона или
           с монитора.
+        </Aside>
+      </Section>
+
+      <Section title="Shell: empty / loading / error" mark="new">
+        <p>
+          Обёртка <code>.table-shell</code>: при <code>.is-empty</code> / <code>.is-error</code>{' '}
+          тело <code>.table-shell-body</code> скрыто, статус — в <code>.table-shell-status</code>.
+          Loading — оверлей + <code>aria-busy</code>.
+        </p>
+        <Demo>
+          <div class="table-shell is-empty">
+            <div class="table-shell-status">
+              <div class="empty-state compact">
+                <h3 class="empty-state-title">Нет строк</h3>
+                <p class="empty-state-text">Измените фильтр или добавьте запись.</p>
+              </div>
+            </div>
+            <div class="table-shell-body">
+              <table class="table compact hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Demo>
+        <Code
+          code={`<div class="table-shell is-empty">
+  <div class="table-shell-status">…empty-state…</div>
+  <div class="table-shell-body"><table class="table compact">…</table></div>
+</div>
+
+<div class="table-shell is-loading" aria-busy="true">
+  <div class="table-shell-status"><span class="spinner"></span></div>
+  <div class="table-shell-body">…</div>
+</div>`}
+        />
+        <Aside>
+          Print: <code>.table-shell</code> избегает разрыва страницы; колонка действий — класс{' '}
+          <code>hide-actions-print</code> на таблице. Живые варианты —{' '}
+          <a href="ui-kit.html#table-states">ui-kit</a>.
         </Aside>
       </Section>
 

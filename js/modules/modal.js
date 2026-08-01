@@ -77,7 +77,12 @@ export class Modal extends Module {
     const closeBtn = event.target.closest('[data-dialog-close]');
     if (closeBtn) {
       event.preventDefault();
-      closeBtn.closest('dialog')?.close?.();
+      const dialog = closeBtn.closest('dialog');
+      const value =
+        closeBtn.getAttribute('data-dialog-return') ??
+        (closeBtn instanceof HTMLButtonElement ? closeBtn.value : '') ??
+        '';
+      dialog?.close?.(value);
       return;
     }
 

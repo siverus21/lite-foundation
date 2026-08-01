@@ -215,6 +215,18 @@
     --lf-chip-color: #{$chip-color};
   }
 
+  @if variable-exists(empty-state-padding) {
+    --lf-empty-state-padding: #{$empty-state-padding};
+    --lf-empty-state-gap: #{$empty-state-gap};
+  }
+
+  @if variable-exists(file-upload-padding) {
+    --lf-file-upload-padding: #{$file-upload-padding};
+    --lf-file-upload-radius: #{$file-upload-radius};
+    --lf-file-upload-border: #{$medium-gray};
+    --lf-file-upload-bg: #{rgba($light-gray, 0.35)};
+  }
+
   @if variable-exists(spinner-color) {
     --lf-spinner-track: #{$spinner-track-color};
     --lf-spinner-color: #{$spinner-color};

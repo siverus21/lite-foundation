@@ -10,7 +10,8 @@ function stubDialog(dialog) {
     };
   }
   if (typeof dialog.close !== 'function' || !dialog.close.__lfStub) {
-    dialog.close = function close() {
+    dialog.close = function close(returnValue = '') {
+      this.returnValue = returnValue;
       this.open = false;
       this.dispatchEvent(new Event('close'));
     };
@@ -97,6 +98,31 @@ describe('Modal', () => {
 
     document.querySelector('[data-dialog-close]').click();
     expect(dialog.open).toBe(false);
+
+    modal.destroy();
+  });
+
+  it('passes data-dialog-return into dialog.returnValue', () => {
+    document.body.innerHTML = `
+      <button type="button" data-dialog-open="c1">Open</button>
+      <dialog class="modal confirm" id="c1" aria-labelledby="c1-t">
+        <h2 id="c1-t">Delete?</h2>
+        <div class="modal-actions">
+          <button type="button" class="button hollow" data-dialog-close>Cancel</button>
+          <button type="button" class="button alert" data-dialog-close data-dialog-return="confirm">
+            Delete
+          </button>
+        </div>
+      </dialog>
+    `;
+    const modal = new Modal(document);
+    const dialog = document.getElementById('c1');
+    stubDialog(dialog);
+
+    document.querySelector('[data-dialog-open="c1"]').click();
+    document.querySelector('[data-dialog-return="confirm"]').click();
+    expect(dialog.open).toBe(false);
+    expect(dialog.returnValue).toBe('confirm');
 
     modal.destroy();
   });

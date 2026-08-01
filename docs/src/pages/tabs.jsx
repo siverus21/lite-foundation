@@ -112,7 +112,7 @@ tabs.dispatchEvent(new CustomEvent('lf:tabs:select', { detail: { index: 1 } }));
         </Aside>
       </Section>
 
-      <Section title="Vertical">
+      <Section title="Vertical" mark="new">
         <p>
           Класс <code>.vertical</code> на tablist (или <code>aria-orientation="vertical"</code> /{' '}
           <code>data-tabs-vertical</code>). Модуль сам выставит{' '}

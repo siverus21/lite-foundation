@@ -1,0 +1,34 @@
+@use '../../settings/vars' as *;
+// Card state recipes — compose with empty-state / skeleton / callout.
+
+.card.is-loading,
+.card[aria-busy='true'] {
+  position: relative;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: var(--lf-z-content, 1);
+    background: color-mix(in srgb, var(--lf-card-bg, #{$card-background}) 55%, transparent);
+  }
+}
+
+.card-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: $card-padding;
+}
+
+.card.is-empty .card-section:has(.empty-state) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+}
+
+.card.is-error {
+  border-color: var(--lf-color-alert);
+}

@@ -169,6 +169,62 @@ dialog.dispatchEvent(new CustomEvent('lf:modal:close', {
         </ul>
       </Section>
 
+      <Section title="Confirm dialog" mark="new">
+        <p>
+          Узкий вариант <code>.modal.confirm</code> + ряд действий <code>.modal-actions</code>.
+          Кнопка подтверждения закрывает диалог с <code>data-dialog-return</code> — значение
+          попадает в <code>dialog.returnValue</code> и в <code>closed.lf.modal</code>{' '}
+          (<code>detail.returnValue</code>).
+        </p>
+        <Demo>
+          <button class="button alert hollow" type="button" data-dialog-open="docsConfirm">
+            Удалить…
+          </button>
+          <dialog class="modal confirm" id="docsConfirm" aria-labelledby="docsConfirmTitle">
+            <h3 class="modal__title" id="docsConfirmTitle">
+              Удалить заказ?
+            </h3>
+            <p>Действие нельзя отменить.</p>
+            <div class="modal-actions">
+              <button type="button" class="button hollow" data-dialog-close>
+                Отмена
+              </button>
+              <button
+                type="button"
+                class="button alert"
+                data-dialog-close
+                data-dialog-return="confirm"
+              >
+                Удалить
+              </button>
+            </div>
+          </dialog>
+        </Demo>
+        <Code
+          code={`<dialog class="modal confirm" id="confirmDelete" aria-labelledby="confirmTitle">
+  <h3 class="modal__title" id="confirmTitle">Удалить заказ?</h3>
+  <p>Действие нельзя отменить.</p>
+  <div class="modal-actions">
+    <button type="button" class="button hollow" data-dialog-close>Отмена</button>
+    <button type="button" class="button alert"
+      data-dialog-close data-dialog-return="confirm">Удалить</button>
+  </div>
+</dialog>`}
+        />
+        <Code
+          title="JS"
+          code={`dialog.addEventListener('closed.lf.modal', (e) => {
+  if (e.detail.returnValue === 'confirm') {
+    // вызвать API удаления
+  }
+});`}
+        />
+        <Aside>
+          «Отмена» — только <code>data-dialog-close</code> (пустой returnValue). Не открывайте
+          confirm из другого модала без явной очереди — нативный top layer один.
+        </Aside>
+      </Section>
+
       <Section title="Идеи расширения">
         <ul>
           <li>
@@ -176,12 +232,8 @@ dialog.dispatchEvent(new CustomEvent('lf:modal:close', {
             <code>requestAnimationFrame</code>.
           </li>
           <li>
-            Паттерн confirm: primary «Удалить» вызывает API, hollow «Отмена» только{' '}
-            <code>data-dialog-close</code>.
-          </li>
-          <li>
-            Возвращайте результат через <code>returnValue</code> и читайте его в{' '}
-            <code>closed.lf.modal</code>.
+            Опасное действие: alert-кнопка + <code>data-dialog-return</code>, результат читайте в{' '}
+            <code>closed.lf.modal</code> (см. Confirm выше).
           </li>
         </ul>
       </Section>

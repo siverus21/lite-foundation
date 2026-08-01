@@ -12,7 +12,7 @@ mountDocs({
       единственная часть с JS.
     </>
   ),
-  flags: ['styles.table', 'scripts.tableSort'],
+  flags: ['styles.table', 'styles.emptyState', 'styles.spinner', 'scripts.tableSort'],
   Page: TablePage,
   onReady() {
     document.getElementById('docsSortTable')?.addEventListener('sorted.lf.table', (event) => {

@@ -136,11 +136,15 @@ export default function IndexPage() {
           </a>
           <a class="docs-card" href="callout-card.html">
             <h3>Callout &amp; Card</h3>
-            <p>Статусы, карточки контента.</p>
+            <p>Статусы, карточки контента, empty/loading/error recipes.</p>
+          </a>
+          <a class="docs-card" href="empty-state.html">
+            <h3>Empty state</h3>
+            <p>Плейсхолдер «нет данных» для списков и карточек.</p>
           </a>
           <a class="docs-card" href="table.html">
             <h3>Table</h3>
-            <p>Сортировка, липкий заголовок, стек на мобильных.</p>
+            <p>Сортировка, density, empty/loading shell, print.</p>
           </a>
           <a class="docs-card" href="avatar.html">
             <h3>Avatar</h3>
@@ -190,6 +194,10 @@ export default function IndexPage() {
             <h3>Tag input</h3>
             <p>Мультиселект на чипах, массив в форме.</p>
           </a>
+          <a class="docs-card" href="file-upload.html">
+            <h3>File upload</h3>
+            <p>Dropzone, список файлов, drag-and-drop.</p>
+          </a>
           <a class="docs-card" href="field-extras.html">
             <h3>OTP, счётчик, пароль, copy</h3>
             <p>Четыре мелких модуля поверх нативных элементов.</p>
@@ -202,6 +210,10 @@ export default function IndexPage() {
           <a class="docs-card" href="ui-kit.html">
             <h3>Витрина компонентов</h3>
             <p>Все компоненты (старые и новые) с вариантами на одной странице.</p>
+          </a>
+          <a class="docs-card" href="patterns.html">
+            <h3>Patterns</h3>
+            <p>Login, filter bar, settings — композиции без новых примитивов.</p>
           </a>
           <a class="docs-card" href="css-only.html">
             <h3>CSS-only</h3>

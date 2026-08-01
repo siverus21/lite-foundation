@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { featuresPlugin } from './scripts/sync-features.js';
+import { docsShellPlugin } from './scripts/docs-shell-plugin.js';
 import { lintTokens } from './scripts/lint-tokens.js';
 import { viteScssOptions } from './config/sass-options.js';
 
@@ -21,7 +22,12 @@ function tokenLintPlugin() {
 export default defineConfig({
   publicDir: false,
   // Preact is docs-only (JSX pages under docs/). Library runtime stays vanilla.
-  plugins: [preact({ include: [/\/docs\/src\/.*\.[tj]sx?$/] }), featuresPlugin(), tokenLintPlugin()],
+  plugins: [
+    preact({ include: [/\/docs\/src\/.*\.[tj]sx?$/] }),
+    featuresPlugin(),
+    docsShellPlugin(),
+    tokenLintPlugin(),
+  ],
   css: {
     devSourcemap: true,
     preprocessorOptions: {

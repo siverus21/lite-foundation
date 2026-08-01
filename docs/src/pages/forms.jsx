@@ -56,7 +56,7 @@ export default function FormsPage() {
         />
       </Section>
 
-      <Section title="Form control">
+      <Section title="Form control" mark="upd">
         <p>
           Оболочка label + поле + hint/error. Только CSS (<code>styles.forms</code>), JS не нужен.
           Состояния: <code>.is-invalid</code>, <code>.is-disabled</code>, опционально{' '}
@@ -96,7 +96,7 @@ export default function FormsPage() {
         />
       </Section>
 
-      <Section title="Password & search recipes">
+      <Section title="Password & search recipes" mark="fix">
         <p>
           Паттерны на базе <code>.input-group</code>. Стили — в <code>styles.forms</code>; поведение
           (toggle type / clear) — флаг <code>scripts.inputRecipes</code> (
@@ -167,11 +167,29 @@ export default function FormsPage() {
 </div>`}
         />
         <Aside>
-          Кнопка clear скрывается через <code>:has(:placeholder-shown)</code>, пока поле пустое.
-          Модуль ставит <code>lazySelector</code> на{' '}
-          <code>.password-input, .search-input, …</code> — без разметки на странице инстанс не
-          создаётся.
+          Search — единый shell (без серого <code>.input-group-label</code>): иконка и clear внутри
+          общей рамки, фокус на группе. Clear скрывается через{' '}
+          <code>:has(:placeholder-shown)</code>. Модуль: <code>lazySelector</code> на{' '}
+          <code>.password-input, .search-input, …</code>.
         </Aside>
+      </Section>
+
+      <Section title="Density" mark="new">
+        <p>
+          Компактные формы: класс <code>.compact</code> на <code>.form-control</code> или обёртка{' '}
+          <code>.form-compact</code> на секции. Уменьшает отступы label/hint — удобно для login и
+          filter bar (<a href="patterns.html">patterns</a>).
+        </p>
+        <Demo>
+          <div class="form-compact" style={{ maxWidth: '18rem' }}>
+            <div class="form-control compact">
+              <label class="form-control-label" for="docs-compact">
+                Compact field
+              </label>
+              <input id="docs-compact" type="text" class="input" />
+            </div>
+          </div>
+        </Demo>
       </Section>
 
       <Section title="Checkbox & Radio">

@@ -33,36 +33,103 @@
   }
 }
 
+// One control shell — icon + field + clear share border/background (no gray prefix tile).
 .search-input {
+  // Mask silhouette (luminance); paint comes from `currentColor`.
+  $search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M6.5 2a4.5 4.5 0 1 0 2.8 8.03L12.03 14l1.41-1.41-2.74-2.74A4.5 4.5 0 0 0 6.5 2zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z'/%3E%3C/svg%3E");
+
+  align-items: stretch;
+  border: 1px solid var(--lf-input-border, #{$medium-gray});
+  border-radius: $input-radius;
+  background-color: var(--lf-input-bg, #{$input-background});
+  box-shadow: var(--lf-input-shadow, #{$input-shadow});
+  transition: $input-transition;
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: var(--lf-input-border-focus, #{$dark-gray});
+    box-shadow: var(--lf-input-shadow-focus, #{$input-shadow-focus});
+  }
+
+  > :first-child,
+  > :last-child {
+    border-radius: 0;
+  }
+
   .search-input-icon {
-    min-width: 2.5rem;
-    padding-inline: 0.65rem;
-    font-size: 0.95rem;
-    line-height: 1;
+    flex: 0 0 auto;
+    align-self: stretch;
+    min-width: 2.25rem;
+    padding-inline: 0.7rem 0.15rem;
+    border: 0;
+    background: transparent;
+    color: var(--lf-input-color, #{$input-color});
+    opacity: 0.45;
+    pointer-events: none;
 
     &::before {
       content: '';
       display: block;
-      width: 0.85em;
-      height: 0.85em;
+      width: 1rem;
+      height: 1rem;
       margin-inline: auto;
-      border: 2px solid currentColor;
-      border-radius: 50%;
-      box-shadow: 0.35em 0.35em 0 -0.15em currentColor;
-      transform: translate(-0.1em, -0.1em) rotate(-45deg);
-      opacity: 0.55;
+      background-color: currentColor;
+      mask: $search-icon center / contain no-repeat;
+      -webkit-mask: $search-icon center / contain no-repeat;
+    }
+  }
+
+  .input-group-field {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding-inline-start: 0.35rem;
+
+    &:focus {
+      border: 0;
+      outline: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: color-mix(
+        in srgb,
+        var(--lf-input-color, #{$input-color}) 48%,
+        transparent
+      );
+      opacity: 1;
     }
   }
 
   .search-input-clear {
     flex: 0 0 auto;
-    min-width: 2.5rem;
+    align-self: stretch;
+    min-width: 2.25rem;
+    height: auto;
     margin: 0;
-    padding-inline: 0.5rem;
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
-    font-size: 1.25rem;
+    padding-inline: 0.55rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--lf-input-color, #{$input-color});
+    opacity: 0.45;
+    font-size: 1.15rem;
     line-height: 1;
+    transition: opacity 0.15s ease, background 0.15s ease;
+
+    &:hover,
+    &:focus {
+      opacity: 0.85;
+      background: color-mix(
+        in srgb,
+        var(--lf-input-color, #{$input-color}) 8%,
+        transparent
+      );
+      outline: none;
+    }
   }
 
   // Hide clear while the field is empty (needs a placeholder for :placeholder-shown).

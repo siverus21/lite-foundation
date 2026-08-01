@@ -127,11 +127,14 @@
               <li><a href="docs/forms.html">Forms</a></li>
               <li><a href="docs/modal.html">Modal</a></li>
               <li><a href="docs/popover.html">Popover</a></li>
+              <li><a href="docs/empty-state.html">Empty state</a></li>
               <li><a href="docs/quantity.html">Quantity</a></li>
               <li><a href="docs/combobox.html">Combobox</a></li>
               <li><a href="docs/tag-input.html">Tag input</a></li>
+              <li><a href="docs/file-upload.html">File upload</a></li>
               <li><a href="docs/table.html">Table</a></li>
               <li><a href="docs/ui-kit.html">UI Kit</a></li>
+              <li><a href="docs/patterns.html">Patterns</a></li>
             </ul>
           </div>
         </div>
@@ -746,7 +749,10 @@
               <a class="ks-docs-link" href="docs/modal.html">Docs</a>
             </div>
             <p class="ks-meta">Замена Foundation Reveal → нативный <code>&lt;dialog&gt;</code></p>
-            <p><button class="button" type="button" data-dialog-open="exampleModal">Open dialog</button></p>
+            <p>
+              <button class="button" type="button" data-dialog-open="exampleModal">Open dialog</button>
+              <button class="button alert hollow" type="button" data-dialog-open="exampleConfirm">Confirm</button>
+            </p>
             <dialog class="modal" id="exampleModal">
               <button class="close-button" type="button" data-dialog-close aria-label="Close modal">
                 <span aria-hidden="true">&times;</span>
@@ -755,6 +761,49 @@
               <p>Контент модального окна. Закрытие: крестик, Esc или клик по backdrop.</p>
               <button type="button" class="button" data-dialog-close>Close</button>
             </dialog>
+            <dialog class="modal confirm" id="exampleConfirm" aria-labelledby="exampleConfirmTitle">
+              <h3 class="modal__title" id="exampleConfirmTitle">Удалить?</h3>
+              <p>Действие нельзя отменить.</p>
+              <div class="modal-actions">
+                <button type="button" class="button hollow" data-dialog-close>Отмена</button>
+                <button type="button" class="button alert" data-dialog-close data-dialog-return="confirm">Удалить</button>
+              </div>
+            </dialog>
+          </section>
+
+          <!-- Empty state + File upload -->
+          <section class="ks-section" id="empty-upload">
+            <div class="ks-section-head">
+              <h2>Empty state &amp; File upload</h2>
+              <a class="ks-docs-link" href="docs/empty-state.html">Docs</a>
+            </div>
+            <p class="ks-meta">
+              <a href="docs/empty-state.html">Empty state</a> ·
+              <a href="docs/file-upload.html">File upload</a> ·
+              card/table recipes в <a href="docs/ui-kit.html#card-states">ui-kit</a>
+            </p>
+            <div class="grid-x grid-padding-x">
+              <div class="medium-6 cell">
+                <div class="empty-state compact">
+                  <span class="empty-state-icon" aria-hidden="true">∅</span>
+                  <h3 class="empty-state-title">Пока пусто</h3>
+                  <p class="empty-state-text">Добавьте первый элемент.</p>
+                  <div class="empty-state-actions">
+                    <button type="button" class="button primary tiny">Создать</button>
+                  </div>
+                </div>
+              </div>
+              <div class="medium-6 cell">
+                <div class="file-upload" data-file-upload>
+                  <input class="file-upload-input" type="file" id="ksUpload" multiple>
+                  <label class="file-upload-drop" for="ksUpload">
+                    <span class="file-upload-title">Перетащите файлы сюда</span>
+                    <span class="file-upload-hint">или нажмите, чтобы выбрать</span>
+                  </label>
+                  <ul class="file-upload-list" data-file-upload-list></ul>
+                </div>
+              </div>
+            </div>
           </section>
 
           <!-- Sticky -->

@@ -20,7 +20,8 @@ export default function AuthoringPage() {
             Тесты в <code>tests/</code> (+ axe smoke при интерактивной a11y)
           </li>
           <li>
-            Docs: HTML + entry + page + пункт в <code>nav.js</code> (+ карточка на обзоре)
+            Docs: <code>entries/&lt;slug&gt;.jsx</code> + page + пункт в <code>nav.js</code> (+
+            карточка на обзоре). Отдельный HTML не нужен.
           </li>
           <li>
             Проверка: <code>npm test</code> · <code>npm run build</code> · демо в sink / docs
@@ -214,25 +215,20 @@ describe('StatusPill', () => {
       </Section>
 
       <Section title="4. Страница документации">
-        <p>Четыре артефакта + навигация.</p>
-
-        <h3>4.1 HTML-оболочка</h3>
         <p>
-          Скопируй соседний файл (например <code>docs/toast.html</code>) →{' '}
-          <code>docs/status-pill.html</code>. Поменяй <code>&lt;title&gt;</code> и путь к entry:
+          HTML-оболочка одна: <code>docs/index.html</code> + <code>docs/src/boot.jsx</code>. URL{' '}
+          <code>/docs/status-pill.html</code> Vite отдаёт как shell; boot по pathname грузит{' '}
+          <code>entries/status-pill.jsx</code>. Новый HTML копировать не нужно.
         </p>
-        <Code
-          code={`<script type="module" src="./src/entries/status-pill.jsx"></script>`}
-        />
 
-        <h3>4.2 Entry</h3>
+        <h3>4.1 Entry</h3>
         <Code
           title="docs/src/entries/status-pill.jsx"
           code={`import { mountDocs } from '../mount.jsx';
 import StatusPillPage from '../pages/status-pill.jsx';
 
 mountDocs({
-  file: 'status-pill.html',       // = пункт nav + PAGE_FEATURES
+  file: 'status-pill.html',       // = URL slug + пункт nav + PAGE_FEATURES
   title: 'Status pill',
   kicker: 'Component',            // Component | Guide | UI Kit …
   lead: (
@@ -247,8 +243,12 @@ mountDocs({
   // onReady() { … }             // демо-хуки после initModules
 });`}
         />
+        <Aside>
+          Имя файла entry = slug URL: <code>status-pill.jsx</code> →{' '}
+          <code>/docs/status-pill.html</code>. Title в вкладке ставит <code>DocsPage</code>.
+        </Aside>
 
-        <h3>4.3 Содержимое страницы</h3>
+        <h3>4.2 Содержимое страницы</h3>
         <p>
           Компоненты из <code>docs/src/components/primitives.jsx</code>. Рекомендуемый каркас:
         </p>
@@ -332,10 +332,11 @@ export default function StatusPillPage() {
           </ul>
         </div>
 
-        <h3>4.4 Навигация и обзор</h3>
+        <h3>4.3 Навигация и обзор</h3>
         <Code
           code={`// docs/src/nav.js — группа «Компоненты» (или «Формы и ввод» / «Начать»)
-{ href: 'status-pill.html', title: 'Status pill' },
+// mark: 'new' | 'upd' | 'fix' — бейдж в левом меню (снять, когда уже не актуально)
+{ href: 'status-pill.html', title: 'Status pill', mark: 'new' },
 
 // docs/src/pages/index.jsx — карточка в нужной секции
 <a class="docs-card" href="status-pill.html">
@@ -344,10 +345,13 @@ export default function StatusPillPage() {
 </a>`}
         />
         <p>
-          Опционально: deep-link секция в <a href="ui-kit.html">ui-kit.html</a>, пример в{' '}
-          <code>index.html</code> (kitchen sink), строка в{' '}
-          <code>docs/assets/support-data.js</code> → <code>PAGE_FEATURES</code>, если страница
-          зависит от конкретного platform API.
+          Метки: в <code>nav.js</code> поле <code>mark</code> (бейдж у пункта меню и у{' '}
+          <code>h1</code>), у секции — <code>&lt;Section mark="new"&gt;</code> (бейдж у{' '}
+          <code>h2</code> и в TOC). Значения: <code>new</code> / <code>upd</code> /{' '}
+          <code>fix</code>. Опционально: deep-link в{' '}
+          <a href="ui-kit.html">ui-kit.html</a>, пример в <code>index.html</code> (kitchen sink),
+          строка в <code>docs/assets/support-data.js</code> → <code>PAGE_FEATURES</code>, если
+          страница зависит от platform API.
         </p>
         <Aside>
           Новый build-name? Добавь <code>case</code> в <code>loadBuild()</code> внутри{' '}
@@ -361,9 +365,12 @@ export default function StatusPillPage() {
           code={`npm test
 npm run build
 npm run check:budget   # после заметного роста бандла
-npm run start          # docs/status-pill.html + sink`}
+npm run start          # /docs/status-pill.html + sink`}
         />
         <ul>
+          <li>
+            URL <code>/docs/status-pill.html</code> открывается через единый shell (не 404)
+          </li>
           <li>Demo на docs-странице реально инициализируется (флаги в full-билде)</li>
           <li>
             Нет хардкод-цветов; consistency-тест зелёный

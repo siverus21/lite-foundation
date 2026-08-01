@@ -1,0 +1,67 @@
+@use '../../settings/vars' as *;
+// Table shell states + density.
+
+.table-shell {
+  position: relative;
+  margin-bottom: $global-margin;
+}
+
+.table-shell.is-loading,
+.table-shell[aria-busy='true'] {
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: var(--lf-z-content, 1);
+    background: color-mix(in srgb, var(--lf-table-bg, #{$table-background}) 55%, transparent);
+  }
+
+  .table-shell-status {
+    position: absolute;
+    inset: 0;
+    z-index: var(--lf-z-sticky, 2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.table-shell.is-empty .table-shell-body,
+.table-shell.is-error .table-shell-body {
+  display: none;
+}
+
+.table-shell-status {
+  padding: 1rem;
+}
+
+// Compact density — tighter cells / captions.
+table.compact,
+.table.compact {
+  th,
+  td {
+    padding: calc(#{$table-padding} * 0.55);
+    font-size: 0.9em;
+  }
+
+  th[data-sort] .table-sort-button {
+    padding: calc(#{$table-padding} * 0.55);
+  }
+}
+
+@media print {
+  .table-shell {
+    break-inside: avoid;
+  }
+
+  table.hide-actions-print,
+  .table.hide-actions-print {
+    .table-actions,
+    th.table-actions,
+    td.table-actions {
+      display: none !important;
+    }
+  }
+}

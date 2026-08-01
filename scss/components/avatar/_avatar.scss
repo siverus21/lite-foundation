@@ -10,7 +10,6 @@
   overflow: hidden;
   width: var(--lf-avatar-size, #{map-get($avatar-sizes, default)});
   height: var(--lf-avatar-size, #{map-get($avatar-sizes, default)});
-  border-radius: var(--lf-avatar-radius, #{$avatar-radius});
   background: var(--lf-avatar-bg, #{$avatar-background});
   color: var(--lf-avatar-color, #{$avatar-color});
   font-weight: $avatar-font-weight;
@@ -25,6 +24,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: var(--lf-avatar-radius, #{$avatar-radius});
   }
 
   &.square {

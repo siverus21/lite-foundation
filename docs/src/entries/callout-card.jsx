@@ -12,6 +12,6 @@ mountDocs({
       <code>--lf-color-*</code>. Закрываемые callout — через <code>scripts.dismiss</code>.
     </>
   ),
-  flags: ['styles.callout', 'styles.card', 'scripts.dismiss'],
+  flags: ['styles.callout', 'styles.card', 'styles.emptyState', 'styles.spinner', 'scripts.dismiss'],
   Page: CalloutCardPage,
 });

@@ -166,7 +166,7 @@ export default function ButtonPage() {
         </Note>
       </Section>
 
-      <Section title="Состояния">
+      <Section title="Состояния" mark="upd">
         <Demo label="disabled">
           <button type="button" class="button primary" disabled>
             Disabled

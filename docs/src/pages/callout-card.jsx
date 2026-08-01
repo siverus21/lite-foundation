@@ -86,6 +86,52 @@ export default function CalloutCardPage() {
         />
       </Section>
 
+      <Section title="Card recipes: empty / loading / error" mark="new">
+        <p>
+          Классы на корне card (входят в <code>styles.card</code>). Empty — с{' '}
+          <a href="empty-state.html">empty-state</a>; loading — skeleton / spinner внутри{' '}
+          <code>.card-loading</code>; error — акцентная рамка + callout.
+        </p>
+        <Demo>
+          <div class="grid-x grid-margin-x">
+            <div class="cell medium-4">
+              <div class="card is-empty">
+                <div class="card-section">
+                  <div class="empty-state compact">
+                    <h3 class="empty-state-title">Нет данных</h3>
+                    <p class="empty-state-text">Создайте первый элемент.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cell medium-4">
+              <div class="card is-loading" aria-busy="true">
+                <div class="card-loading">
+                  <span class="skeleton skeleton-text"></span>
+                  <span class="skeleton skeleton-text"></span>
+                </div>
+              </div>
+            </div>
+            <div class="cell medium-4">
+              <div class="card is-error">
+                <div class="card-section">
+                  <div class="callout alert" style={{ margin: 0 }}>
+                    Не удалось загрузить.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Demo>
+        <Code
+          code={`<div class="card is-empty">…empty-state…</div>
+<div class="card is-loading" aria-busy="true">
+  <div class="card-loading">…skeleton…</div>
+</div>
+<div class="card is-error">…callout alert…</div>`}
+        />
+      </Section>
+
       <Section title="Идеи расширения">
         <ul>
           <li>
